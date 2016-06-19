@@ -1,0 +1,90 @@
+/* 
+	MODULE:External program execution 
+	TYPE: Hook
+
+	PrePreprocessor orders (ppp.sh):
+
+	###PATTERNS $PROGRAM_LAUNCHER$EXECUTE(
+*/
+
+#include <string.h>
+#include <iostream>
+#include <sstream>
+
+
+/* PREPARE MACRO */
+#define $PROGRAM_LAUNCHER$PREPARE()\
+		do{\
+			pid_t pid;\
+			\
+			if( (pid = fork())<0)\
+				WARN_ERRNO("fork failed, execution is not going to take place");\
+			\
+			if(pid==0){\
+				char** argvs;\
+				char* buffer;\
+				stringstream stream;\
+				int i,j,offset,numberOfItems;\
+				R nullElement;\
+				bool hasResults;\
+				memset(&nullElement,0,sizeof(R));\
+				uint8_t* pointer __attribute__ ((unused));\
+				numberOfItems=0;\
+				for(i = 0,hasResults = false;i<state.windowState.totalNumberOfBlocks;i++){\
+					for(j = 0;j<auxBlocks[i];j++){\
+						if(memcmp(&results[i*ANALYSIS_TPB+j],&nullElement,sizeof(R))>0){\
+						do{}while(0)	
+	
+
+
+#define $PROGRAM_LAUNCHER$EXECUTE(program_name)\
+		hasResults = true;\
+		}}}\
+		\
+		if(hasResults){\
+			int charLength;\
+			charLength = stream.tellp();\
+			buffer =(char*)malloc(charLength*sizeof(char));\
+			argvs = (char**)malloc((numberOfItems+2)*sizeof(char*));\
+			stream.get(buffer, charLength);\
+			argvs[0] = program_name;\
+			for(i=0, offset=0;offset<charLength;i++){\
+				argvs[i+1] = buffer+offset;\
+				offset += strlen(argvs[i+1])+1;\
+			}\
+			argvs[i+1] = NULL;\
+			\
+			if(execvp(program_name,argvs)<0);\
+				WARN_ERRNO("Execvp failed at:"STR(ANALYSIS_NAME)", ProgramLauncher module. Execution continues");\
+		}\
+		exit(1);\
+		}}while(0)			
+
+
+/* ARG DUMPERS (common)*/
+
+//TEXT
+#define $PROGRAM_LAUNCHER$ADD_TEXT_ARG(text)\
+	if(hasResults==false){\
+		stream<<text;\
+	        stream.write("\0",1);\
+		numberOfItems++;\
+	}do{}while(0)
+
+
+//Structure types
+#define $PROGRAM_LAUNCHER$ADD_ARG(field)\
+	stream<<results[i*ANALYSIS_TPB+j].field<<" ";\
+	stream.write("\0",1);\
+	numberOfItems++
+
+#define $PROGRAM_LAUNCHER$ADD_ARG_AS_NETMASK(field)\
+	$PROGRAM_LAUNCHER$ADD_ARG_AS_IP(field)
+
+#define $PROGRAM_LAUNCHER$ADD_ARG_AS_IP(field)\
+	pointer = (uint8_t*)&results[i*ANALYSIS_TPB+j].field;\
+	stream<<(unsigned int)*(pointer+3)<<"."<<(unsigned int)*(pointer+2)<<"."<<(unsigned int)*(pointer+1)<<"."<<(unsigned int)*(pointer)<<" ";\
+	stream.write("\0",1);\
+	numberOfItems++
+
+

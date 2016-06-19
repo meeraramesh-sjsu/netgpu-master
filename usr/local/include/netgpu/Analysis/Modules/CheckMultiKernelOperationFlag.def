@@ -1,0 +1,4 @@
+#ifdef MULTIKERNEL_OPERATION_PERFORMED
+	#include "PrecodedSyncblocks.def"
+#endif
+

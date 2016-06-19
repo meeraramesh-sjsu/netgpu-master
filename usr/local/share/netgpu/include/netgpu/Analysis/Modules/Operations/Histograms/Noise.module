@@ -1,0 +1,120 @@
+/* 
+	MODULE:Histogram Noise filter
+	TYPE: Operation
+
+	PrePreprocessor orders (ppp.sh): 
+
+	###PATTERNS $HISTOGRAMS$NOISE$FILTER(
+*/
+
+
+
+#ifdef __CUDACC__
+
+//#warning Loaded Histogram Noise operations
+
+#define $HISTOGRAMS$NOISE$FILTER(PERCENTAGE)\
+	IF_OPERATION_HAS_PERMISSION() \
+		COMPOUND_NAME(ANALYSIS_NAME,histogramFilterNoise)<PERCENTAGE>(GPU_results,state)
+
+template<int percentage,typename R>
+__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,histogramFilterNoise)(R* GPU_results, analysisState_t state){ 
+
+	//Save parameter
+	SET_EXTENDED_PARAMETER(2,percentage);			
+
+	/* 
+		Should check Operation flag, but no code is executed until so it's innecessary
+		SET_EXTENDED_PARAMETER is constant and Race condition free* (if different slots are used for all operations)
+		//#include "../../CheckMultiKernelOperationFlag.def"
+	*/
+
+	//Requires Total syncronization
+	/*** Sync ALL BLOCKS ***/
+	#include "../../PrecodedSyncblocks.def"
+
+	uint32_t i,j;
+	float max; 	
+	__shared__ int numberOfElements;
+	__shared__ R blockElements[ANALYSIS_TPB];
+	__shared__ R nullElement; 
+	__shared__ float percentage;
+
+	//Checks if has to be executed (executeCodeWLR flags)	
+	//IF_OPERATION_HAS_PERMISSION(){
+	
+	//only makes sense when WLR
+	if(state.windowState.hasReachedWindowLimit){
+	
+	if(threadIdx.x == 0){
+		//Retrieves last item position (total number of elements after Histogram creation) 
+		numberOfElements = state.GPU_auxBlocks[0];
+		percentage = GET_EXTENDED_PARAMETER(2);
+	}
+	if(threadIdx.x == (ANALYSIS_TPB-1)){
+		//Sets shared value to 0
+		cudaSharedMemset(&nullElement,0);
+	}
+	SYNCTHREADS();
+
+	//Window limit
+	state.blockIterator = blockIdx.x;
+	while( state.blockIterator < state.windowState.totalNumberOfBlocks ){
+	
+		/** Calculate norm value  **/
+
+		for(i=0,max=0;(i*blockDim.x)<numberOfElements;i++){
+	
+			if(threadIdx.x < (numberOfElements-(i*blockDim.x))){
+				blockElements[threadIdx.x] = GPU_results[(i*blockDim.x)+threadIdx.x];
+			}else{
+				blockElements[threadIdx.x] = nullElement;
+			}
+			SYNCTHREADS();
+		
+			for(j=0;j<blockDim.x;j++){
+				//calculate max value
+				if(blockElements[j].counter > max)
+					max = blockElements[j].counter;	
+		
+			}	
+			SYNCTHREADS();
+		}	
+
+		if(threadIdx.x == 0){
+
+			//Deduces nº of elements in our block 
+			numberOfElements= numberOfElements - ((state.blockIterator)*blockDim.x);
+
+			if( numberOfElements > 0){
+				if(numberOfElements > blockDim.x)
+					numberOfElements = blockDim.x;
+			}else{
+				numberOfElements = 0;
+			}
+		}
+
+		SYNCTHREADS();
+
+
+		//Mine elements (if necessary)
+		if(threadIdx.x < numberOfElements){
+
+			blockElements[threadIdx.x] = GPU_results[state.blockIterator*blockDim.x+threadIdx.x];
+			//Checks if is below limit				
+			if((blockElements[threadIdx.x].counter < (max*(percentage/100)) )){
+				GPU_results[state.blockIterator*blockDim.x+threadIdx.x] = nullElement; 
+			}
+		
+		}
+
+		SYNCTHREADS();
+		state.blockIterator += gridDim.x;
+		}// while loop
+	}//window limit has been reached
+}
+
+//Important set multikernel (preprocessor) flag
+#include "../../SetMultiKernelOperationFlag.def"
+
+#endif // __CUDACC__

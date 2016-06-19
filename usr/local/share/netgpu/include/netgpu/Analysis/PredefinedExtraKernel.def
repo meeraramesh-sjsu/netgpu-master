@@ -1,0 +1,8 @@
+#if ITERATOR__ < __SYNCBLOCKS_PRECODED_COUNTER
+		
+	//Extra kernel prototype
+	template<typename T,typename R>\
+	__global__ void COMPOUND_NAME(COMPOUND_NAME(ANALYSIS_NAME,PredefinedKernel),ITERATOR__)(packet_t* GPU_buffer,T* GPU_data,R* GPU_results, analysisState_t state);
+		
+#endif
+#undef ITERATOR__

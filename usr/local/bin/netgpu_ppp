@@ -1,0 +1,21 @@
+#!/bin/sh
+
+PATH_TO_SCRIPTS="/home/meera/gpudir/netgpu-master/usr/local/share/netgpu/Tools/"
+
+# Pre PreProcessor script
+echo "******* Pre Preprocessing Code *******"
+
+# Erase content of files 
+echo > .syncblocks_counters.ppph 
+echo > .dmodule.ppph
+
+#output target file
+echo "[TARGET FILE]"
+echo "$1"
+
+# Dynamically load Libraries
+bash $PATH_TO_SCRIPTS/dmodule.sh $1
+
+# Sets SYNCBLOCKS vars
+bash $PATH_TO_SCRIPTS/syncblocks.sh $1
+

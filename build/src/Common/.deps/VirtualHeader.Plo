@@ -1,0 +1,6 @@
+VirtualHeader.lo: ../../../src/Common/VirtualHeader.cpp \
+ /usr/include/stdc-predef.h ../../../src/Common/VirtualHeader.h
+
+/usr/include/stdc-predef.h:
+
+../../../src/Common/VirtualHeader.h:

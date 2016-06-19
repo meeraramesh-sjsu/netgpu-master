@@ -1,0 +1,132 @@
+/* 
+	MODULE:Histogram Normalizer
+	TYPE: Operation
+
+	PrePreprocessor orders (ppp.sh): 
+
+	###PATTERNS $HISTOGRAMS$NORMALIZER$NORMALIZE_BY_MAX_VALUE(); $HISTOGRAMS$NORMALIZER$NORMALIZE(); 
+*/
+
+#ifdef __CUDACC__
+
+//#warning Loaded Histogram Normalization Operations
+
+#define HIST_NORM_MAX_VALUE 0
+#define HIST_NORM_NUM_OF_ELEMENTS 1
+
+#define $HISTOGRAMS$NORMALIZER$NORMALIZE_BY_MAX_VALUE()\
+	IF_OPERATION_HAS_PERMISSION() \
+		COMPOUND_NAME(ANALYSIS_NAME,histogramNormalize)<HIST_NORM_MAX_VALUE>(GPU_results,state)
+
+#define $HISTOGRAMS$NORMALIZER$NORMALIZE()\
+	IF_OPERATION_HAS_PERMISSION() \
+		COMPOUND_NAME(ANALYSIS_NAME,histogramNormalize)<HIST_NORM_NUM_OF_ELEMENTS>(GPU_results,state)
+
+
+template<int normType, typename R>
+__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,histogramNormalize)(R* GPU_results, analysisState_t state){ 
+
+
+	//Save parameter
+	SET_EXTENDED_PARAMETER(1,normType);			
+	/* 
+		Should check Operation flag, but no code is executed until so it's innecessary
+		SET_EXTENDED_PARAMETER is constant and Race condition free* (if different slots are used for all operations)
+		//#include "../../CheckMultiKernelOperationFlag.def"
+	*/
+
+	//Requires Total syncronization
+	/*** Sync ALL BLOCKS ***/
+	#include "../../PrecodedSyncblocks.def"
+
+	uint32_t i,j;
+	float norm; 	
+	__shared__ int numberOfElements;
+	__shared__ R blockElements[ANALYSIS_TPB];
+	__shared__ R nullElement; 
+	__shared__ int normType;
+
+	//Checks if has to be executed (executeCodeWLR flags)	
+	//IF_OPERATION_HAS_PERMISSION(){
+	
+	//only makes sense when WLR
+	if(state.windowState.hasReachedWindowLimit){
+	
+	if(threadIdx.x == 0){
+		//Retrieves last item position (total number of elements after Histogram creation) 
+		numberOfElements = state.GPU_auxBlocks[0];
+		normType = GET_EXTENDED_PARAMETER(1);
+	}
+	if(threadIdx.x == (ANALYSIS_TPB-1)){
+		//Sets shared value to 0
+		cudaSharedMemset(&nullElement,0);
+	}
+	SYNCTHREADS();
+
+	//Window limit
+	state.blockIterator = blockIdx.x;
+	while( state.blockIterator < state.windowState.totalNumberOfBlocks ){
+	
+		/** Calculate norm value  **/
+
+		for(i=0,norm=0;(i*blockDim.x)<numberOfElements;i++){
+	
+			if(threadIdx.x < (numberOfElements-(i*blockDim.x))){
+				blockElements[threadIdx.x] = GPU_results[(i*blockDim.x)+threadIdx.x];
+			}else{
+				blockElements[threadIdx.x] = nullElement;
+			}
+			SYNCTHREADS();
+		
+			for(j=0;j<blockDim.x;j++){
+					if(normType == HIST_NORM_NUM_OF_ELEMENTS){
+					//calculate total number of elements
+					if(cudaSharedIsNotNull(&blockElements[j]))
+						norm+= blockElements[j].counter;
+				}else{
+					//calculate max value
+					if(blockElements[j].counter > norm)
+						norm = blockElements[j].counter;	
+		
+				}
+			}	
+			SYNCTHREADS();
+		}	
+
+		if(threadIdx.x == 0){
+
+			//Deduces nº of elements in our block 
+			numberOfElements= numberOfElements - ((state.blockIterator)*blockDim.x);
+
+			if( numberOfElements > 0){
+				if(numberOfElements > blockDim.x)
+					numberOfElements = blockDim.x;
+			}else{
+				numberOfElements = 0;
+			}
+		}
+
+		SYNCTHREADS();
+
+
+		//Mine elements (if necessary)
+		if(threadIdx.x < numberOfElements){
+
+			blockElements[threadIdx.x] = GPU_results[state.blockIterator*blockDim.x+threadIdx.x];
+			if(blockElements[threadIdx.x].counter != 0){	
+				//Divide my element by norm and save result
+				blockElements[threadIdx.x].counter = blockElements[threadIdx.x].counter/norm;
+				GPU_results[state.blockIterator*blockDim.x+threadIdx.x].counter = blockElements[threadIdx.x].counter;
+			}	
+		}
+
+		SYNCTHREADS();
+		state.blockIterator += gridDim.x;
+		}// while loop
+	}//has_permission
+}
+
+//Important set multikernel (preprocessor) flag
+#include "../../SetMultiKernelOperationFlag.def"
+
+#endif // __CUDACC__

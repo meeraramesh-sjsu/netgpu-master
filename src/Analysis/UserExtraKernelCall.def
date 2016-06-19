@@ -1,0 +1,12 @@
+
+//#if ITERATOR__ < NUM_OF_USER_SYNCBLOCKS
+
+#if ITERATOR__ < __SYNCBLOCKS_COUNTER
+	//Throwing Extra kernel ITERATOR__
+	DEBUG(STR(ANALYSIS_NAME)"> Throwing Extra kernel %d",ITERATOR__);
+	COMPOUND_NAME(COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis),ITERATOR__)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state);
+	cudaAssert(cudaThreadSynchronize());
+
+#endif
+
+#undef ITERATOR__

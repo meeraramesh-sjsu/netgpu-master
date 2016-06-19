@@ -1,0 +1,3 @@
+#!/bin/sh
+nvcc $1 $2 --host-compilation C++ --compiler-options "-I _library_path_ " --compiler-bindir=/usr/bin/gcc -c -o .analysis.o 
+

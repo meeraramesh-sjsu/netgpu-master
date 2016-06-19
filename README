@@ -1,0 +1,100 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++ This project is no longer maintained, and is available for historical purposes only ++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+NetGPU framework README file
+
+	Netgpu is a Framework that tries to simplify the task of programming network traffic analysis using Graphical Processor Units (GPUs) to enhance performance, and particulary using NVIDIA's CUDA library . 
+
+	The package contains 3 components:
+		* NetGPU framework and tools
+		* Code Modules (~ basic analysis libraries)
+		* Examples
+
+Check www.netgpu.org for documentation and more info.
+
+
+
+NetGPU dependencies&requirements
+------------------
+
+Hardware
+      A CUDA-enabled graphical processor unit (GPU) installed (http://www.nvidia.com/object/cuda_learn_products.html).
+
+Software
+      	GNU/Linux system. 
+      	GCC 4.3 -> !GCC4.4 is not supported currently by CUDA
+      	Autotools 1.11 or above
+      	CUDA libraries 2.1 or above (http://www.nvidia.com/object/cuda_get.html)
+      	LibPCAP (http://www.tcpdump.org/)
+      	POSIX threads (lpthreads)
+      	unixODBC 
+
+	Debian packages list:
+		build-essential
+		automake
+		autoconf
+		gcc4-3 
+		g++4.3 
+		libpcap-dev
+		unixodbc-dev	
+
+
+
+LIBRARY Installation steps
+--------------
+
+To compile and install the framework's LIBRARY and the MODULES:
+
+	./setup
+	cd ./build
+	../configure
+	make 
+	make install
+
+To uninstall it, simply:
+
+	make uninstall
+
+
+EXAMPLES compilation and testing
+--------------------------------
+
+To compile the EXAMPLES contained in the tarball:
+
+	cd ./Examples
+	make
+
+To run the compiled program (will capture packets from loopback):
+
+	./example
+
+
+Troubleshooting
+----------------
+
+
+
+Known Bugs
+-----------
+
+
+Contact
+-------
+
+Marc Sune: marcdevel (at) gmail (dot) com
+
+License
+-------
+All the material contained contained is subject to GPL license
+
+Copyright 2009 Marc Suñe Clos, Isaac Gelado
+
+This file is part of the "NetGPU framework".
+
+The "NetGPU framework" is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+The "NetGPU framework" is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+Take a look at "LICENSE" file for details.
+

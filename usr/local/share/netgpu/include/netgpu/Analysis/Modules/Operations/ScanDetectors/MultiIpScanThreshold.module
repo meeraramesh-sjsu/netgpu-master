@@ -1,0 +1,56 @@
+/* 
+	MODULE: Multi IpScan Threshold
+	TYPE: Operation
+
+	PrePreprocessor orders (ppp.sh): 
+
+	###PATTERNS $IPSCAN_DETECTOR$MULTI_THRESHOLDS$MODIFY_THRESHOLD(  $IPSCAN_DETECTOR$MULTI_THRESHOLDS$EXCLUDE( 
+*/
+
+
+#ifdef __CUDACC__
+
+#define FLOAT_MAX_VALUE ((float)0x7f7fffff)
+
+//#warning Loaded Multi IpScan Thresholds module
+
+#define $IPSCAN_DETECTOR$MULTI_THRESHOLDS$EXCLUDE(COND)\
+	$IPSCAN_DETECTOR$MULTI_THRESHOLDS$MODIFY_THRESHOLD(COND,FLOAT_MAX_VALUE)
+
+#define $IPSCAN_DETECTOR$MULTI_THRESHOLDS$MODIFY_THRESHOLD(COND, NEW_LIMIT)\
+	COMPOUND_NAME(ANALYSIS_NAME,multiIpScanThresholdImplementation)(GPU_results, state, (COND),NEW_LIMIT)
+
+	template<typename R>
+	__device__ void COMPOUND_NAME(ANALYSIS_NAME,multiIpScanThresholdImplementation)(R* GPU_results, analysisState_t state, bool cond, int newLimit){
+
+		#include "../../CheckMultiKernelOperationFlag.def"		
+		//IF_OPERATION_HAS_PERMISSION(){ 
+		//Only makes sense when Window limit has been reached
+		if(state.windowState.hasReachedWindowLimit){
+			__shared__ R nullElement;
+			__shared__ int blockElements;
+			state.blockIterator = blockIdx.x;
+			
+			if(threadIdx.x == 0)
+				cudaSharedMemset(&nullElement,0);
+			
+			while( state.blockIterator < state.windowState.totalNumberOfBlocks ){
+				
+				if(threadIdx.x == 0)
+					blockElements = state.GPU_auxBlocks[state.blockIterator];
+				SYNCTHREADS();
+				
+				if(threadIdx.x < blockElements){
+					if( (cond) && (GPU_results[state.blockIterator*blockDim.x+threadIdx.x].rate < newLimit) )
+						GPU_results[state.blockIterator*blockDim.x+threadIdx.x] = nullElement;
+				}
+				
+				state.blockIterator += gridDim.x;
+				SYNCTHREADS();
+			}
+		}
+	}
+
+//TODO: use CONDITIONS AND FILTERING when implemented
+
+#endif // __CUDACC__

@@ -1,0 +1,108 @@
+#include "IpScan.h" //Include your modified(from Template) .h
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <cuda_runtime_api.h>
+/*
+	Using IPSCAN_DETECTOR module to try to detect ipscans
+*/
+
+
+//__global__ void kernel(int *a, int *b)
+//{
+
+//printf("In Kernel function");
+  // int tx = threadIdx.x;
+
+  // switch( tx )
+   //{
+//case 0:
+  //  *a = *a + 10;
+   // break;
+//case 1:
+  //  *b = *b + 3;
+   // break;
+//default:
+  //  break;
+  // }
+//}
+
+extern void kernel_wrapper(int *a, int *b)
+{
+   int *d_1, *d_2;
+   dim3 threads( 2, 1 );
+   dim3 blocks( 1, 1 );
+
+   cudaMalloc( (void **)&d_1, sizeof(int) );
+   cudaMalloc( (void **)&d_2, sizeof(int) );
+
+   cudaMemcpy( d_1, a, sizeof(int), cudaMemcpyHostToDevice );
+   cudaMemcpy( d_2, b, sizeof(int), cudaMemcpyHostToDevice );
+
+//   kernel<<< blocks, threads >>>( a, b );
+
+   cudaMemcpy( a, d_1, sizeof(int), cudaMemcpyDeviceToHost );
+   cudaMemcpy( b, d_2, sizeof(int), cudaMemcpyDeviceToHost );
+
+   cudaFree(d_1);
+   cudaFree(d_2);
+}
+
+
+template<typename T,typename R>
+__device__ void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state){
+	printf("Mining");	
+	/* CUDA CODE: Implement MINING code here */
+//	$IPSCAN_DETECTOR$AUTO_MINE();
+}
+
+template<typename T,typename R>
+__device__ void COMPOUND_NAME(ANALYSIS_NAME,filtering)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state){
+	printf("Analysis");
+	/* CUDA CODE: Implement PreAnalysis Routine Filtering here. Use predefined Filtering tool or Implement code here IF NECESSARY */
+
+}
+
+template<typename T,typename R>
+__device__ void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state){
+	printf("Analysis");
+	/* CUDA CODE: Implement Analysis Routine here. Use a predefined Analysis or Implement code here */
+//	$IPSCAN_DETECTOR$ANALYSIS(15);
+
+}
+
+template<typename T,typename R>
+__device__ void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state){
+	printf("operations");
+	/* CUDA CODE: Implement post Analysis Operations/Filtering here. Use predefined Operations/Filtering tools or Implement code here IF NECESSARY */
+//	$IPSCAN_DETECTOR$MULTI_THRESHOLDS$EXCLUDE(RESULT_ELEMENT.ipSrc==IP4(82,70,103,152)); //Exclude 82.70.103.152 from results
+}
+
+template<typename R>
+void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks){
+	printf("hooks");
+        /* HOST CODE: Implement HOOKS code here. Use predefined hooks or define new ones. */
+
+	//Dump to stderr
+//	$IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_STDERR(1,1);	
+
+	//Dump to file
+//	DUMP_IPSCAN_ALARMS_TO_FILE("IPSCAN.alarms",7,10);	
+	
+	//Dump to DB
+// $IPSCAN_DETECTOR$DB_DUMPER$DUMP_ALARMS();
+
+
+
+	//Example how to use PROGRAM_LAUNCHER
+#if 0	
+	$PROGRAM_LAUNCHER$PREPARE();
+	$PROGRAM_LAUNCHER$ADD_TEXT_ARG("Test1 ipscan");
+	$PROGRAM_LAUNCHER$ADD_TEXT_ARG("Test2 ipscan");
+	$PROGRAM_LAUNCHER$ADD_TEXT_ARG("Test3 ipscan 1");
+	$PROGRAM_LAUNCHER$ADD_ARG_AS_IP(ipSrc);
+	$PROGRAM_LAUNCHER$EXECUTE("./prova.sh");
+#endif
+}
+
+
+

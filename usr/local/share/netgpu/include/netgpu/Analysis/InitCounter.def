@@ -1,0 +1,9 @@
+//Initializes counter
+
+#ifdef _PRECODED_COUNTER
+	#undef	_PRECODED_COUNTER
+#endif 
+
+#define _PRECODED_COUNTER 0
+
+

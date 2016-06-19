@@ -1,0 +1,79 @@
+/* 
+	MODULE:Histograms DB dumper 
+	TYPE: Hook
+
+	PrePreprocessor orders (ppp.sh):
+
+	###PATTERNS $HISTOGRAMS$DB_DUMPER$DUMP(
+
+*/
+
+//#warning  Histogram Database Dumper Hook loaded
+
+#include <iostream>
+#include <sstream>
+#include "../hostTimeUtils.h"
+
+using namespace std;
+
+#define $HISTOGRAMS$DB_DUMPER$PREPARE_TO_DUMP()\
+	$HISTOGRAMS$DB_DUMPER$PREPARE_TO_DUMP_TO_DBTABLE(STR(ANALYSIS_NAME))
+	
+//	COMPOUND_NAME(ANALYSIS_NAME,dump_ipscan_alarms_to_db_table)(packetBuffer,results,state,auxBlocks,STR(ANALYSIS_NAME),(float)severe,(float)critical)
+/*
+template<typename R>
+void inline COMPOUND_NAME(ANALYSIS_NAME,dump_ipscan_alarms_to_db_table)(PacketBuffer* packetBuffer,R* results, analysisState_t  state, int64_t* auxBlocks,char* tableName,float severe,float critical){
+*/
+
+#define	$HISTOGRAMS$DB_DUMPER$PREPARE_TO_DUMP_TO_DBTABLE(tableName)\
+	do{\
+		int i;\
+		bool hasResults;\
+		stringstream total;\
+		stringstream fixed;\
+		static string to_db;\
+		fixed <<"INSERT INTO "<<tableName<<" ";\
+		stringstream tmp_ids;\
+		stringstream tmp_values;\
+		for(i = 0,hasResults = false;i<auxBlocks[0];i++,total.str(""),tmp_values.str(""),tmp_ids.str("")){\
+			if(results[i].counter > 0){\
+				hasResults = true;\
+				tmp_ids<<"counter,starttime,endtime,dumped";\
+				tmp_values<<results[i].counter<<","<<state.windowState.windowStartTime.tv_sec<<","<<state.windowState.windowEndTime.tv_sec<<",NOW()"
+
+
+#define $HISTOGRAMS$DB_DUMPER$DUMP()\
+				total<<fixed.str()<<" ("<<tmp_ids.str()<<") values ("<<tmp_values.str()<<");";\
+				to_db =  (total.str());\
+				ANALYSIS_NAME::queryManager.scheduleQuery(to_db.c_str());\
+				}\
+			}\
+		\
+		if(hasResults){\
+			ANALYSIS_NAME::queryManager.executePackedQuerys();\
+		}\
+	}while(0)
+
+
+//Simple types
+#define $HISTOGRAMS$DB_DUMPER$ADD_FIELD(mappingToDB)\
+	tmp_ids<<","<<STR(mappingToDB);\
+	tmp_values<<","<<results[i].user
+
+#define $HISTOGRAMS$DB_DUMPER$ADD_FIELD_AS_IP(mappingToDB)\
+	tmp_ids<<","<<STR(mappingToDB);\
+	tmp_values<<",CAST("<<results[i].user<<" as bit(32))"
+
+
+//Structure types
+
+#define $HISTOGRAMS$DB_DUMPER$ADD_FIELD_COMPLEX(field,mappingToDB)\
+	tmp_ids<<","<<STR(mappingToDB);\
+	tmp_values<<","<<results[i].user.field
+
+#define $HISTOGRAMS$DB_DUMPER$ADD_FIELD_AS_IP_COMPLEX(field,mappingToDB)\
+	tmp_ids<<","<<STR(mappingToDB);\
+	tmp_values<<",CAST("<<results[i].user.field<<" as bit(32))"
+
+
+

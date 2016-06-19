@@ -1,0 +1,117 @@
+/* 
+	MODULE:IpScan detector
+	TYPE: Analysis
+
+	PrePreprocessor orders (ppp.sh): 
+
+	###PATTERNS $IPSCAN_DETECTOR$ANALYSIS( 
+
+*/
+
+//#warning IpScan Analysis
+
+#ifndef libAnalysisIpScan_h 
+#define libAnalysisIpScan_h 
+
+#include "../Thresholds/Thresholds.h"
+
+typedef struct{
+	uint32_t ipSrc;
+	uint32_t ipDst;
+	uint32_t counter;
+	uint8_t protocol;
+	uint8_t version;
+	float rate;
+	unsigned char * data;
+	uint16_t sport;
+	uint16_t dport;
+}COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
+
+typedef struct{
+	int result;
+}COMPOUND_NAME(ANALYSIS_NAME,ipScanOutput_t); 
+
+__device__ int indexTcp = 0;
+__device__ int indexUdp = 0;
+__device__ int indexIcmp = 0;
+__device__ int totalThreads=0;
+#endif  //libAnalysisIpScan
+
+/* Redefine TYPES */
+#undef  ANALYSIS_INPUT_TYPE
+#define ANALYSIS_INPUT_TYPE COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t)
+
+#undef ANALYSIS_OUTPUT_TYPE
+#define ANALYSIS_OUTPUT_TYPE COMPOUND_NAME(ANALYSIS_NAME,ipScanOutput_t);
+
+
+#ifdef __CUDACC__
+
+#define $IPSCAN_DETECTOR$AUTO_MINE()\
+	do{\
+	 if(IS_ETHERNET() && IS_IP4() && IS_TCP()){\
+                DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
+                DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
+		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
+		DATA_ELEMENT.sport=GET_FIELD(TCP_HEADER.sport);\
+		DATA_ELEMENT.dport=GET_FIELD(TCP_HEADER.dport);\
+		DATA_ELEMENT.data=GET_FIELD(TCP_HEADER.data);\
+}\
+}while(0)
+	
+/***** IPSCAN DETECTOR ANALYSIS *****/
+#define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
+	COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,counter,threshold);\
+	__syncthreads()
+
+#define SHARED_BUFFER_SIZE MAX_BUFFER_PACKETS/ANALYSIS_TPB
+
+template<typename T,typename R> 
+__device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold){
+
+printf("In ipScaAnalysis");
+/* Erases duplicates and counts elements inside block */
+	__shared__ T elements[ANALYSIS_TPB];
+ 	unsigned char *user_data; 
+	unsigned char *it;  
+	int indexVal=52;
+		
+	//Mine to shared
+		int threadIndex = state.blockIterator*blockDim.x + threadIdx.x;
+		//printf("ThreadIndex = %d \n",threadIndex);
+		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+		//printf("Protocol number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x, elements[threadIdx.x].protocol);
+		if(elements[threadIdx.x].protocol==6) //TCP packet
+		atomicAdd(&GPU_results[0],1);		
+		else if(elements[threadIdx.x].protocol==17) //UDP packet
+		atomicAdd(&GPU_results[1],1);
+		else if(elements[threadIdx.x].protocol==1) //ICMP packet
+		atomicAdd(&GPU_results[2],1);										
+	__syncthreads();
+
+  // atomicAdd(&totalThreads,1);
+}
+
+template<typename T,typename R> 
+__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold){
+
+	ipscananalysis<ANALYSIS_INPUT_TYPE,ANALYSIS_OUTPUT_TPYE>(GPU_buffer,GPU_data,GPU_results,state,counter,thresHold);
+	//while(totalThreads<3840) { }; 
+	printf("TCP= %d UDP=%d ICMP=%d ", GPU_results[0], GPU_results[1], GPU_results[2]); 			
+}
+
+
+
+
+/***** END OF PORTSCAN DETECTOR ANALYSIS *****/
+
+
+#endif //__CUDACC__
+/* Redefine DATA_ELEMENT and RESULT_ELEMENT */
+#undef DATA_ELEMENT
+#define DATA_ELEMENT GPU_data[POS] 
+
+#undef RESULT_ELEMENT
+#define RESULT_ELEMENT GPU_results[POS] 
+
+

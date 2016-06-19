@@ -1,0 +1,74 @@
+//Decrements 1, counter
+
+#if _PRECODED_COUNTER >15
+	#error "Counter has an invalid value"
+#endif
+
+#if _PRECODED_COUNTER > 0
+
+	#if _PRECODED_COUNTER == 1
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  0
+	#endif
+
+	#if _PRECODED_COUNTER == 2
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  1
+	#endif
+	#if _PRECODED_COUNTER == 3
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  2
+	#endif
+	#if _PRECODED_COUNTER == 4
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  3
+	#endif
+	#if _PRECODED_COUNTER == 5
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  4
+	#endif
+	#if _PRECODED_COUNTER == 6
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  5
+	#endif
+	#if _PRECODED_COUNTER == 7
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  6
+	#endif
+	#if _PRECODED_COUNTER == 8
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  7
+	#endif
+	#if _PRECODED_COUNTER == 9
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  8
+	#endif
+	#if _PRECODED_COUNTER == 10
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  9
+	#endif
+	#if _PRECODED_COUNTER == 11
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  10
+	#endif
+	#if _PRECODED_COUNTER == 12
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  11
+	#endif
+	#if _PRECODED_COUNTER == 13
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  12
+	#endif
+	#if _PRECODED_COUNTER == 14
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  13
+	#endif
+	#if _PRECODED_COUNTER == 15
+		#undef _PRECODED_COUNTER	
+		#define _PRECODED_COUNTER  14
+	#endif
+#else
+	#undef _PRECODED_COUNTER
+	#define _PRECODED_COUNTER -1
+#endif 
+

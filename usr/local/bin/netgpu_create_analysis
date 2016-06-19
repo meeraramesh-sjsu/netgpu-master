@@ -1,0 +1,18 @@
+#!/bin/sh
+
+PATH_TO_TEMPLATE="/home/meera/gpudir/netgpu-master/usr/local/share/netgpu/AnalysisTemplate/"
+
+#dir
+mkdir $1
+
+#copy Makefile 
+cp $PATH_TO_TEMPLATE/Makefile ./$1/
+
+#Put correct value to ANALYSIS_NAME macro and copy to target
+sed -e "s/Change_me/$1/"  $PATH_TO_TEMPLATE/AnalysisTemplate.h > ./$1/$1.h
+
+#Modify the include of the .cu file and copy to target
+sed -e "1s/AnalysisTemplate/$1/"  $PATH_TO_TEMPLATE/AnalysisTemplate.cu > ./$1/$1.cu
+
+echo Done.
+#dir

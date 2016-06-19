@@ -1,0 +1,96 @@
+/* 
+	MODULE:IpScan detector
+	TYPE: Analysis
+
+	PrePreprocessor orders (ppp.sh): 
+
+	###PATTERNS $IPSCAN_DETECTOR$ANALYSIS( 
+
+*/
+
+//#warning IpScan Analysis
+
+#ifndef libAnalysisIpScan_h 
+#define libAnalysisIpScan_h 
+
+#include "../Thresholds/Thresholds.h"
+
+typedef struct{
+	uint32_t ipSrc;
+	uint32_t ipDst;
+	uint32_t counter;
+	uint8_t protocol;
+	float rate;
+}COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
+
+#endif  //libAnalysisIpScan
+
+/* Redefine TYPES */
+#undef  ANALYSIS_INPUT_TYPE
+#define ANALYSIS_INPUT_TYPE COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t)
+
+#ifdef __CUDACC__
+
+#define $IPSCAN_DETECTOR$AUTO_MINE()\
+	do{\
+	 if(IS_ETHERNET() && IS_IP4()){\
+                DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
+                DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
+		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
+        }\
+	}while(0)
+	
+/***** IPSCAN DETECTOR ANALYSIS *****/
+#define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
+	COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,counter,threshold);\
+	__syncthreads()
+
+#define SHARED_BUFFER_SIZE MAX_BUFFER_PACKETS/ANALYSIS_TPB
+
+template<typename T,typename R> 
+__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold){
+
+	/* Erases duplicates and counts elements inside block */
+	
+		
+	__shared__ T elements[ANALYSIS_TPB];
+ 	
+	  state.blockIterator = blockIdx.x;
+	
+	//printf("Total Number of Blocks %d",state.windowState.totalNumberOfBlocks);
+	//Looping when array is larger than grid dimensions 
+	while(state.blockIterator==0){
+
+		//Mine to shared
+		elements[threadIdx.x] = cudaSafeGet(&GPU_data[state.blockIterator*blockDim.x+threadIdx.x]);
+		//printf("Protocol number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x, elements[threadIdx.x].protocol);
+		if(elements[threadIdx.x].protocol==6) 
+		{
+		GPU_results[state.blockIterator*blockDim.x+threadIdx.x] = elements[threadIdx.x];
+		printf("Added to GPUresults");
+		atomicAdd(counter,1);
+		printf("The value of counter after adding %d",counter);		
+		}		
+		__syncthreads();
+		state.blockIterator+=gridDim.x;	
+		
+		if(threadIdx.x==0) printf("Value of counter = %d",counter);
+	} //Loop
+}
+/home/meera/gpudir/NetGPU/netgpu-master/src/Analysis/Modules/Analysis/ScanDetectors
+
+
+/***** END OF PORTSCAN DETECTOR ANALYSIS *****/
+
+
+#endif //__CUDACC__
+
+/* Redefine DATA_ELEMENT and RESULT_ELEMENT */
+#undef DATA_ELEMENT
+#define DATA_ELEMENT GPU_data[POS] 
+
+#undef RESULT_ELEMENT
+#define RESULT_ELEMENT GPU_results[POS] 
+
+
+

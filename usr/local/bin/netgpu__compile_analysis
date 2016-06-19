@@ -1,0 +1,3 @@
+#!/bin/sh
+nvcc $1 $2 --host-compilation C++ --compiler-options "-I /home/meera/gpudir/netgpu-master/usr/local/share/netgpu/include/ " --compiler-bindir=/usr/bin/gcc -c -o .analysis.o 
+

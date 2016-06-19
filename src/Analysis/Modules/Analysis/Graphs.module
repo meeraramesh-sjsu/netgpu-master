@@ -1,0 +1,55 @@
+#warning "Graphs Analysis"
+
+/* TIMESTAMP MINING */
+#define GRAPHS_MINE_TIMESTAMP()\
+	DATA_ELEMENT.timestamp = PACKET->timestamp
+
+
+#define GRAPH_TIME_ANALYSIS_T(typeA)\
+	typedef struct{\
+		typeA y;\
+		struct timeval 	timestamp;\
+	}COMPOUND_NAME(ANALYSIS_NAME,GraphAnalysis_t);
+
+#define GRAPH_TIME_2D_ANALYSIS_T(typeA,typeB)\
+	typedef struct{\
+		typeA y;\
+		typeB z;\
+		struct timeval 	timestamp;\
+	}COMPOUND_NAME(ANALYSIS_NAME,GraphAnalysis_t);
+
+#define GRAPH_2D_ANALYSIS_T(typeA,typeB)\
+	typedef struct{\
+		typeA x;\
+		typeB y;\
+	}COMPOUND_NAME(ANALYSIS_NAME,GraphAnalysis_t);
+
+#define GRAPH_3D_ANALYSIS_T(typeA,typeB,typeC)\
+	typedef struct{\
+		typeA x;\
+		typeB y;\
+		typeC z;\
+	}COMPOUND_NAME(ANALYSIS_NAME,GraphAnalysis_t);
+
+
+ANALYSIS_INPUT_TYPE
+
+#undef ANALYSIS_INPUT_TYPE 
+#define ANALYSIS_INPUT_TYPE COMPOUND_NAME(ANALYSIS_NAME,GraphAnalysis_t)
+
+#if HAS_WINDOW == 1
+	#define GRAPHS_ANALYSIS() \
+	do{ \
+		while( state.blockIterator < state.windowState.totalNumberOfBlocks ){\
+		       	GPU_results[threadIdx.x+state.blockIterator*blockDim.x] = GPU_data[threadIdx.x+state.blockIterator*blockDim.x];\
+               		state.blockIterator += gridDim.x;\
+        	}\
+	}while(0)
+#else
+	#define GRAPHS_ANALYSIS() \
+		       	GPU_results[POS] = GPU_data[POS]
+
+#endif
+
+#define LOAD_TIMESTAMP_TO_GRAPH() \
+	GPU_data[POS].timestamp = GPU_buffer[POS].timestamp

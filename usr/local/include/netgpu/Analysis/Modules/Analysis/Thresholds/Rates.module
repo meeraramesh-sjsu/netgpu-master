@@ -1,0 +1,272 @@
+/* 
+	MODULE:Rate Thresholds
+	TYPE: Analysis
+
+	PrePreprocessor orders (ppp.sh): 
+
+	###PATTERNS $RATES$ANALYSIS( 
+*/
+
+
+#include "Thresholds.h"
+//#warning "Rates analysis module"
+
+/*CHECK OF DATA_ELEMENT REDEFINITION AT THE END OF THE FILE */
+
+#ifdef __CUDACC__
+
+
+/***** RATE THRESHOLD ANALYSIS *****/
+#define $RATES$ANALYSIS(a) \
+	COMPOUND_NAME(ANALYSIS_NAME,preDefinedAnalysisCodeRateThreshold)(GPU_buffer,GPU_data,GPU_results,state,a);\
+	__syncthreads()
+
+#define SHARED_BUFFER_SIZE MAX_BUFFER_PACKETS/ANALYSIS_TPB
+
+template<typename T,typename R> __device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,preDefinedAnalysisCodeRateThreshold)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int thresHold){
+	/*Count elements inside block */
+	int i,counter,futurePosition;
+	T myValue;
+
+	__shared__ T elements[ANALYSIS_TPB];
+	__shared__ bool leaders[ANALYSIS_TPB];
+
+
+	state.blockIterator = blockIdx.x;
+	//Looping when array is larger than grid dimensions 
+	while( state.blockIterator < state.windowState.totalNumberOfBlocks ){
+
+		//Mine to shared
+		elements[threadIdx.x] = cudaSafeGet(&GPU_data[state.blockIterator*blockDim.x+threadIdx.x]); 
+
+		//initialize leader flags 
+		if(cudaSharedIsNotNull(&elements[threadIdx.x].user)){
+			leaders[threadIdx.x] = true;
+			if(elements[threadIdx.x].counter == 0)
+				elements[threadIdx.x].counter = 1;
+		}else	
+			leaders[threadIdx.x] = false;
+	
+		myValue = elements[threadIdx.x];	
+		SYNCTHREADS();
+	
+		if(leaders[threadIdx.x]){
+			
+			//Calculate nº of elements like mine
+			for(i=0,counter=0;i<blockDim.x;i++){
+				if(cudaSharedMemcmp(&elements[threadIdx.x].user,&elements[i].user) == 0){
+					if(i<threadIdx.x)
+						leaders[threadIdx.x] = false;
+
+					counter+=elements[i].counter;
+	
+				}
+			
+			}
+		}
+		SYNCTHREADS();
+	
+
+		if(leaders[threadIdx.x]){
+			for(i=(threadIdx.x-1),futurePosition=0;i>=0;i--){
+				if(leaders[i])
+					futurePosition++;	
+			}		
+		
+			myValue.counter = counter;
+			GPU_data[futurePosition+state.blockIterator*blockDim.x] = myValue;
+	
+		}
+
+		if(threadIdx.x == 0){
+			//Calculate number of elements en each block and place it in Position nº 0 of each block on results vector
+			for(i=0,counter=0;i<blockDim.x;i++){
+				if(leaders[i])
+					counter++;				
+			}
+			state.GPU_auxBlocks[state.windowState.totalNumberOfBlocks + state.blockIterator] = counter;
+			
+			if(state.blockIterator == 0)
+				SET_EXTENDED_PARAMETER(0,thresHold);
+		}
+
+		state.blockIterator += gridDim.x;
+		SYNCTHREADS();
+	}
+
+	/*** Sync ALL BLOCKS ***/
+	#include "../../PrecodedSyncblocks.def"
+
+	int counter, i,blockIndex, futurePosition;	
+	blockIndex = blockIdx.x;
+
+	T myValue;	
+	__shared__ bool leaders[ANALYSIS_TPB];
+	__shared__ T blockElements[ANALYSIS_TPB];
+	__shared__ int numOfElementsPerBlock[SHARED_BUFFER_SIZE]; 
+	__shared__ int threshold;
+	__shared__ int step;
+
+	state.blockIterator = blockIdx.x;
+
+	if(threadIdx.x == (ANALYSIS_TPB-1)){
+		threshold = GET_EXTENDED_PARAMETER(0); 
+	}
+	
+	//Looping when array is larger than grid dimensions 
+	while( state.blockIterator < state.windowState.totalNumberOfBlocks ){
+	
+		step = 0;
+		//Mine my block items, num of elements
+
+		if(threadIdx.x == 0){
+			numOfElementsPerBlock[0] = state.GPU_auxBlocks[state.windowState.totalNumberOfBlocks+state.blockIterator];
+		}
+		SYNCTHREADS();
+
+		if(threadIdx.x < numOfElementsPerBlock[0]){ //Save as many global memory accesses as possible
+			blockElements[threadIdx.x] = cudaSafeGet(&GPU_data[state.blockIterator*blockDim.x+threadIdx.x]);
+		}else{
+			cudaSharedMemset(&blockElements[threadIdx.x],0);	
+		}
+
+		//Set leader flags appropiate to content of myValue	
+		if(cudaSharedIsNotNull(&blockElements[threadIdx.x].user))
+			leaders[threadIdx.x] = true;
+		else
+			leaders[threadIdx.x] = false;
+	
+		//Set myValue and counters
+		myValue = blockElements[threadIdx.x];	
+		counter = blockElements[threadIdx.x].counter;	
+
+
+		//Loop for all blocks
+		for(blockIndex = 0;blockIndex<state.windowState.totalNumberOfBlocks;blockIndex++){	
+			
+			//Do not erase this	
+			SYNCTHREADS();
+
+			if(blockIndex == state.blockIterator)
+				continue;
+			
+			bool hasLeaders = false;
+			for(i=0;i<blockDim.x;i++){
+				if(leaders[i]){
+					hasLeaders = true;
+					break;
+				}
+			} 
+		
+			if(!hasLeaders)
+				break;
+
+			//Mine to numOfElements 
+			if(blockIndex >= (step*(SHARED_BUFFER_SIZE))){
+			
+				if(threadIdx.x < (SHARED_BUFFER_SIZE)){
+					numOfElementsPerBlock[threadIdx.x] = state.GPU_auxBlocks[state.windowState.totalNumberOfBlocks+(step*(SHARED_BUFFER_SIZE))+threadIdx.x];
+				}	
+	
+			}	
+			SYNCTHREADS();
+
+			if(blockIndex >= (step*(SHARED_BUFFER_SIZE)) && threadIdx.x == 0){
+					step++;
+			
+			}
+			SYNCTHREADS();
+
+			//Mine blockElements 
+			if(threadIdx.x < numOfElementsPerBlock[blockIndex - ((step-1)*(SHARED_BUFFER_SIZE))]){
+				blockElements[threadIdx.x] = cudaSafeGet(&GPU_data[blockIndex*blockDim.x+threadIdx.x]);
+			}else{
+				cudaSharedMemset(&blockElements[threadIdx.x],0);	
+			}
+			SYNCTHREADS();
+			
+			if(leaders[threadIdx.x]){
+
+				for(i=0;i<numOfElementsPerBlock[blockIndex - ((step-1)*(SHARED_BUFFER_SIZE))];i++){
+
+					if(cudaSharedMemcmp(&myValue.user,&blockElements[i].user) == 0){ //WARN: COMAPRING NOT SHARED ELEMENT
+					
+						if(blockIndex> state.blockIterator)
+							counter += blockElements[i].counter;
+						else
+							leaders[threadIdx.x] = false;
+					}	
+				}
+	
+			}
+
+		}
+
+		SYNCTHREADS();
+		
+		//Calculate rate
+		float rate;
+
+
+		if(leaders[threadIdx.x]){
+			long time_ms= cudaTimevaldiff(state.windowState.windowStartTime,state.windowState.windowEndTime);
+			rate = (float)((float)counter /(float)time_ms);
+			if(rate*1000 < threshold)
+				leaders[threadIdx.x] = false;
+	
+		}
+
+		SYNCTHREADS(); 
+
+		/* Determine future position inside block*/
+		if(leaders[threadIdx.x]){
+			for(i=(threadIdx.x-1),futurePosition=0;i>=0;i--){
+				if(leaders[i])
+					futurePosition++;	
+			}		
+	
+		}
+
+		if(leaders[threadIdx.x]){
+				myValue.counter = counter;	
+				myValue.rate = rate*1000;
+				GPU_results[state.blockIterator*blockDim.x+futurePosition]= myValue;
+		}
+
+		if(threadIdx.x == 0){
+			for(i=0,counter=0;i<blockDim.x;i++){
+				if(leaders[i])
+					counter++;
+			}
+			state.GPU_auxBlocks[state.blockIterator] = counter;
+
+		
+		}	
+
+		SYNCTHREADS();
+		//Iterate
+		state.blockIterator += gridDim.x;
+	}
+
+
+
+		
+	#if __SYNCBLOCKS_COUNTER == 0
+		COMPOUND_NAME(ANALYSIS_NAME,operations)(GPU_buffer, GPU_data, GPU_results,state);
+	#endif 
+
+}
+
+
+/***** END OF RATETHRESHOLD ANALYSIS *****/
+
+
+#endif //__CUDACC__
+
+/* Redefine DATA_ELEMENT */
+#undef DATA_ELEMENT
+#define DATA_ELEMENT GPU_data[POS].user 
+
+#undef RESULT_ELEMENT
+#define RESULT_ELEMENT GPU_results[POS].user 
+
