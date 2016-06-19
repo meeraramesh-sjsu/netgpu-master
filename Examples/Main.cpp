@@ -21,7 +21,7 @@
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
 	
 
-	std::cout <<"Starting analysis now...\n";
+	std::cout <<"Starting analysis in few minutes...\n";
 
 //	std::cout <<"Starting analysis now      ...\n";
 
