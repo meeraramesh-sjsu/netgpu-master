@@ -47,12 +47,12 @@ __device__ int totalThreads=0;
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 	do{\
 	 if(IS_ETHERNET() && IS_IP4() && IS_TCP()){\
-                DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
-                DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
+        DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
+        DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
 		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
 		DATA_ELEMENT.sport=GET_FIELD(TCP_HEADER.sport);\
 		DATA_ELEMENT.dport=GET_FIELD(TCP_HEADER.dport);\
-		DATA_ELEMENT.data=GET_FIELD(TCP_HEADER.data);\
+		//DATA_ELEMENT.data=GET_FIELD(TCP_HEADER.data);\
 }\
 }while(0)
 	
