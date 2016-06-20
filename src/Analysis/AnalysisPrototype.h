@@ -25,8 +25,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 	#define ANALYSIS_OUTPUT_TYPE ANALYSIS_INPUT_TYPE
 #endif
 
-
-
 class ANALYSIS_NAME:public AnalysisSkeleton{
 
 public:
