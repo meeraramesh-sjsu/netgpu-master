@@ -84,12 +84,14 @@ __device__ void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T*
 
 template<typename R>
 void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks){
-//	printf("hooks");
+	printf("hooks");
         /* HOST CODE: Implement HOOKS code here. Use predefined hooks or define new ones. */
 	
 	//Dump to stderr
 	$IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_STDERR(1,1);	
 
+	printf("Dumping to file");
+	printf("TCP = %d, UDP = %d, ICMP = %d",(*GPU_results).indexTcp,(*GPU_results).indexUdp,(*GPU_results).indexIcmp );
 	//Dump to file
 	$IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE("IPSCAN.alarms",7,10);	
 	
