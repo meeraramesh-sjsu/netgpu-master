@@ -1,0 +1,9 @@
+#!bin/bash
+git pull
+chmod 777 module-installer.sh
+chmod 777 cudalt.py
+make
+make install
+cd Examples/
+make
+
