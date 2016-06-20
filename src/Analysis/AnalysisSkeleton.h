@@ -20,9 +20,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "/usr/local/cuda/include/cuda.h"
 #include "/usr/local/cuda/include/cuda_runtime.h"
 
-
-
-
 #include "../Util.h"
 #include "../Common/PacketBuffer.h"
 
