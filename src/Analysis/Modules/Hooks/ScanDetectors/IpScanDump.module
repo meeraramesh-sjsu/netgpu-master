@@ -61,9 +61,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	//time vars	
 	time_t aux;
   	struct tm * timeinfo;
-  	
-	 cout<<"TCP = "<<(*results).indexTcp<<"UDP= "<< (*results).indexUdp<<"ICMP ="<< (*results).indexIcmp; 			
-  	
+  		
 
 	//Dump alarms
 	for(i = 0,hasResults = false;i<state.windowState.totalNumberOfBlocks;i++){
