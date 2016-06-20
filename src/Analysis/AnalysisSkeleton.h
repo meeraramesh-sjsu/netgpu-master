@@ -601,7 +601,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		/*** Host memory allocation***/
 		//results = (R*)malloc(sizeof(R)*MAX_BUFFER_PACKETS);	
-        	cudaAssert(cudaHostAlloc((void**)&results,sizeof(R)*3,0));
+        	cudaAssert(cudaHostAlloc((void**)&results,sizeof(R)*MAX_BUFFER_PACKETS,0));
 
 		//auxBlocks = (int64_t*)malloc(sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB);	
         	cudaAssert(cudaHostAlloc((void**)&auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB,0));
