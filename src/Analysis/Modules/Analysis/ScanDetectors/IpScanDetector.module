@@ -52,7 +52,6 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
 		DATA_ELEMENT.sport=GET_FIELD(TCP_HEADER.sport);\
 		DATA_ELEMENT.dport=GET_FIELD(TCP_HEADER.dport);\
-		//DATA_ELEMENT.data=GET_FIELD(TCP_HEADER.data);\
 }\
 }while(0)
 	
