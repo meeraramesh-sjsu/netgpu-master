@@ -76,6 +76,10 @@ __device__ void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T*
   }
 */ 
 
+//Only Global Thread Index should modify
+int threadIndex = blockIdx.x * blockDim.x + threadIdx.x;
+if(threadIndex==0) printf("TCP= %d UDP=%d ICMP=%d ", (*GPU_results).indexTcp,(*GPU_results).indexUdp, (*GPU_results).indexIcmp); 			
+
 	/* CUDA CODE: Implement post Analysis Operations/Filtering here. Use predefined Operations/Filtering tools or Implement code here IF NECESSARY */
 	$IPSCAN_DETECTOR$MULTI_THRESHOLDS$EXCLUDE(RESULT_ELEMENT.ipSrc==IP4(82,70,103,152)); //Exclude 82.70.103.152 from results
 }
