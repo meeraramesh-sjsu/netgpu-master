@@ -355,6 +355,7 @@ target_alias =
 top_build_prefix = ../../../../
 top_builddir = ../../../..
 top_srcdir = ../../../..
+top_srcDirec=source ../../../..
 MAINTAINERCLEANFILES = Makefile.in
 SUBDIRS = Macros
 noinst_LTLIBRARIES = libanalysis-libs-gpu.la 
@@ -773,7 +774,7 @@ uninstall-am: uninstall-gpuDATA uninstall-library_includeHEADERS
 	$(NVCC) --host-compilation C++ --compiler-bindir=/usr/bin/gcc -c $< -o $@ $(AM_CPPFLAGS) $(DEFS) $(CFLAGS)
 
 .cu.lo:
-	$(top_srcdir)/cudalt.py $@ $(NVCC) -c  $< $(AM_CPPFLAGS) $(DEFS) $(CFLAGS)
+	$(top_srcDirec)/cudalt.py $@ $(NVCC) -c  $< $(AM_CPPFLAGS) $(DEFS) $(CFLAGS)
 
 #$(NVCC) --host-compilation C++ --compiler-bindir=/usr/bin/gcc -c $< -o $@ $($(basename $@)_CPPFLAGS) $(AM_CPPFLAGS) $(DEFS) $(CFLAGS)
 #$(top_srcdir)/cudalt.py $@ $(NVCC) -c  $< $($(basename $@)_CPPFLAGS) $(AM_CPPFLAGS) $(DEFS) $(CFLAGS)
