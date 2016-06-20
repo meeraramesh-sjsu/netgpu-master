@@ -73,18 +73,18 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = state.blockIterator*blockDim.x + threadIdx.x;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-		//printf("Protocol number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x, elements[threadIdx.x].protocol);
+		printf("Protocol number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x, elements[threadIdx.x].protocol);
 		if(elements[threadIdx.x].protocol==6) //TCP packet
 		{
 		printf("Thread Index with protocol 6 = %d \n",threadIdx.x);
 		atomicAdd(&(*GPU_results).indexTcp,1);
 		}		
-		else if(elements[threadIdx.x].protocol==17)  //UDP packet
+		if(elements[threadIdx.x].protocol==17)  //UDP packet
 		{
 		printf("Thread Index with protocol 17 = %d \n",threadIdx.x);
 		atomicAdd(&(*GPU_results).indexUdp,1);
 		}
-		else if(elements[threadIdx.x].protocol==1) //ICMP packet
+		if(elements[threadIdx.x].protocol==1) //ICMP packet
 		{
 		printf("Thread Index with protocol 1 = %d \n",threadIdx.x);
 		atomicAdd(&(*GPU_results).indexIcmp,1);
