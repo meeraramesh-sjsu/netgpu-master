@@ -1,7 +1,6 @@
 #include <cstring>
 #include <iostream>
 
-
 #include <netgpu/netgpu.h>
 //#include "Analysis/Rate/Rate.h"
 //#include "Analysis/Anomalies/Anomalies.h"
@@ -12,6 +11,7 @@
 //#include "Analysis/IpScan/kernel.h"
 //#include "Analysis/Advanced/Advanced.h"
 
+using namespace std;
  int main(int args,char *argv[]) {
 
 	//Capture packets from a pcap capture file (argv[1])
@@ -21,7 +21,7 @@
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
 	
 
-	std::cout <<"Starting analysis in few minutes...\n";
+	cout <<"Starting analysis in few minutes...\n";
 
 //	std::cout <<"Starting analysis now      ...\n";
 
