@@ -91,7 +91,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, a
 	$IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_STDERR(1,1);	
 
 	printf("Dumping to file");
-	printf("TCP = %d, UDP = %d, ICMP = %d",(*GPU_results).indexTcp,(*GPU_results).indexUdp,(*GPU_results).indexIcmp );
+	printf("TCP = %d, UDP = %d, ICMP = %d",(*results).indexTcp,(*results).indexUdp,(*results).indexIcmp );
 	//Dump to file
 	$IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE("IPSCAN.alarms",7,10);	
 	
