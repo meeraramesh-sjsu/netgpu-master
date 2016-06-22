@@ -19,387 +19,86 @@ typedef struct{
 	uint32_t ipSrc;
 	uint32_t ipDst;
 	uint32_t counter;
+	uint8_t protocol;
+	uint8_t version;
 	float rate;
+	unsigned char * data;
+	uint16_t sport;
+	uint16_t dport;
+	int indexTcp;
+	int indexUdp;
+	int indexIcmp;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
+/*__device__ int indexTcp = 0;
+__device__ int indexUdp = 0;
+__device__ int indexIcmp = 0;
+__device__ int totalThreads=0;
+*/
 #endif  //libAnalysisIpScan
 
 /* Redefine TYPES */
 #undef  ANALYSIS_INPUT_TYPE
 #define ANALYSIS_INPUT_TYPE COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t)
 
+
 #ifdef __CUDACC__
 
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 	do{\
-	 if(IS_ETHERNET() && IS_IP4()){\
-                DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
-                DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
-        }\
-	}while(0)
+	 if(IS_ETHERNET() && IS_IP4() && IS_TCP()){\
+        DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
+        DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
+		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
+		DATA_ELEMENT.sport=GET_FIELD(TCP_HEADER.sport);\
+		DATA_ELEMENT.dport=GET_FIELD(TCP_HEADER.dport);\		
+}\
+}while(0)
 	
-/***** PORTSCAN DETECTOR ANALYSIS *****/
+/***** IPSCAN DETECTOR ANALYSIS *****/
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
-	COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,threshold);\
+	COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,counter,threshold);\
 	__syncthreads()
 
 #define SHARED_BUFFER_SIZE MAX_BUFFER_PACKETS/ANALYSIS_TPB
 
 template<typename T,typename R> 
-__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int thresHold){
+__device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold){
 
-	/* Erases duplicates and counts elements inside block */
-	int i,counter,futurePosition;
-	T myValue;
-
+/* Erases duplicates and counts elements inside block */
 	__shared__ T elements[ANALYSIS_TPB];
-	__shared__ bool leaders[ANALYSIS_TPB];
 
-	state.blockIterator = blockIdx.x;
-
-	//Looping when array is larger than grid dimensions 
-	while( state.blockIterator < state.windowState.totalNumberOfBlocks ){
-
-		//Mine to shared
-		elements[threadIdx.x] = cudaSafeGet(&GPU_data[state.blockIterator*blockDim.x+threadIdx.x]); 
-
-		//initialize leader flags 
-		if(cudaSharedIsNotNull(&elements[threadIdx.x])){
-			leaders[threadIdx.x] = true;
-			if(elements[threadIdx.x].counter == 0)
-				elements[threadIdx.x].counter = 1;
-		}else	
-			leaders[threadIdx.x] = false;
-	
-		myValue = elements[threadIdx.x];	
-		SYNCTHREADS();
-	
-		if(leaders[threadIdx.x]){
-			
-			//Calculate nº of elements like mine
-			for(i=0;i<blockDim.x;i++){
-				//if(cudaSharedMemcmp(&elements[threadIdx.x],&elements[i]) == 0){
-				if( (elements[threadIdx.x].ipSrc == elements[i].ipSrc) && (elements[threadIdx.x].ipDst == elements[i].ipDst)){
-					if(i<threadIdx.x)
-						leaders[threadIdx.x] = false;
-
-				}
-			
-			}
+		//Global Thread Index
+		int threadIndex = state.blockIterator*blockDim.x + threadIdx.x;
+		//Mine to Shared to save memory accesses
+		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+		printf("Protocol number of the thread with threadId %d in block %d is %x \n", threadIdx.x,blockIdx.x, elements[threadIdx.x].protocol);
+		if(elements[threadIdx.x].protocol==6) //TCP packet
+		{
+		printf("Thread Index with protocol 6 = %d \n",threadIdx.x);
+		atomicAdd(&(*GPU_results).indexTcp,1);
+		}		
+		if(elements[threadIdx.x].protocol==0x0011)  //UDP packet
+		{
+		printf("Thread Index with protocol 17 = %d \n",threadIdx.x);
+		atomicAdd(&(*GPU_results).indexUdp,1);
 		}
-		SYNCTHREADS();
-	
+		if(elements[threadIdx.x].protocol==1) //ICMP packet
+		{
+		printf("Thread Index with protocol 1 = %d \n",threadIdx.x);
+		atomicAdd(&(*GPU_results).indexIcmp,1);
+		}										
+	__syncthreads();
 
-		if(leaders[threadIdx.x]){
-			for(i=(threadIdx.x-1),futurePosition=0;i>=0;i--){
-				if(leaders[i])
-					futurePosition++;	
-			}
-			myValue.counter = 0;
-			myValue.rate = 0;		
-			GPU_data[futurePosition+state.blockIterator*blockDim.x] = myValue;
-	
-		}
-
-		if(threadIdx.x == 0){
-			//Calculate number of elements en each block and place it in Position nº 0 of each block on results vector
-			for(i=0,counter=0;i<blockDim.x;i++){
-				if(leaders[i])
-					counter++;				
-			}
-			state.GPU_auxBlocks[state.blockIterator] = counter;
-			
-			//Saving threshold
-			if(state.blockIterator == 0)
-				SET_EXTENDED_PARAMETER(0, thresHold);
-		}
-
-		state.blockIterator += gridDim.x;
-		SYNCTHREADS();
-	}
-
-	/*** Sync ALL BLOCKS ***/
-	#include "../../PrecodedSyncblocks.def"
-		
-	/* Removes duplicates in all the array*/
-	int counter, i,blockIndex, futurePosition;	
-	blockIndex = blockIdx.x;
-
-	T myValue;	
-	__shared__ bool leaders[ANALYSIS_TPB];
-	__shared__ T blockElements[ANALYSIS_TPB];
-	__shared__ int numOfElementsPerBlock[SHARED_BUFFER_SIZE]; 
-	__shared__ int step;
-
-	state.blockIterator = blockIdx.x;
-
-	//Looping when array is larger than grid dimensions 
-	while( state.blockIterator < state.windowState.totalNumberOfBlocks ){
-	
-		step = 0;
-	
-		//Mine my block items, num of elements
-		if(threadIdx.x == 0){
-			numOfElementsPerBlock[0] = state.GPU_auxBlocks[state.blockIterator];
-		}
-		SYNCTHREADS();
-
-		if(threadIdx.x < numOfElementsPerBlock[0]){ //Save as many global memory accesses as possible
-			blockElements[threadIdx.x] = cudaSafeGet(&GPU_data[state.blockIterator*blockDim.x+threadIdx.x]);
-		}else{
-			cudaSharedMemset(&blockElements[threadIdx.x],0);	
-		}
-
-		//Set leader flags appropiate to content of myValue	
-		if(cudaSharedIsNotNull(&blockElements[threadIdx.x]))
-			leaders[threadIdx.x] = true;
-		else
-			leaders[threadIdx.x] = false;
-	
-		//Set myValue and counters
-		myValue = blockElements[threadIdx.x];	
-
-		//Loop for all blocks
-		for(blockIndex = 0;blockIndex<state.windowState.totalNumberOfBlocks;blockIndex++){	
-			
-			//Do not erase this	
-			SYNCTHREADS();
-
-			if(blockIndex == state.blockIterator)
-				continue;
-			
-			bool hasLeaders = false;
-			for(i=0;i<blockDim.x;i++){
-				if(leaders[i]){
-					hasLeaders = true;
-					break;
-				}
-			} 
-		
-			if(!hasLeaders)
-				break;
-
-			//Mine to numOfElements 
-			if(blockIndex >= (step*(SHARED_BUFFER_SIZE))){
-			
-				if(threadIdx.x < (SHARED_BUFFER_SIZE)){
-					numOfElementsPerBlock[threadIdx.x] = state.GPU_auxBlocks[(step*(SHARED_BUFFER_SIZE))+threadIdx.x];
-				}
-			}	
-			SYNCTHREADS();
-
-			if(blockIndex >= (step*(SHARED_BUFFER_SIZE)) && threadIdx.x == 0){
-					step++;
-			
-			}
-			SYNCTHREADS();
-
-			//Mine blockElements 
-			if(threadIdx.x < numOfElementsPerBlock[blockIndex - ((step-1)*(SHARED_BUFFER_SIZE))]){
-				blockElements[threadIdx.x] = cudaSafeGet(&GPU_data[blockIndex*blockDim.x+threadIdx.x]);
-			}else{
-				cudaSharedMemset(&blockElements[threadIdx.x],0);	
-			}
-			SYNCTHREADS();
-
-			if(leaders[threadIdx.x]){
-
-				for(i=0;i<numOfElementsPerBlock[blockIndex - ((step-1)*(SHARED_BUFFER_SIZE))];i++){
-
-					//if(cudaSharedMemcmp(&myValue,&blockElements[i]) == 0){ //WARN: COMAPRING NOT SHARED ELEMENT
-					if( (myValue.ipSrc == blockElements[i].ipSrc) && (myValue.ipDst == blockElements[i].ipDst)){ //WARN: COMAPRING NOT SHARED ELEMENT
-						if(blockIndex < state.blockIterator)
-							leaders[threadIdx.x] = false;
-					}	
-				}
-	
-			}
-
-		}
-
-		SYNCTHREADS();
-
-		/* Determine future position inside block*/
-		if(leaders[threadIdx.x]){
-			for(i=(threadIdx.x-1),futurePosition=0;i>=0;i--){
-				if(leaders[i])
-					futurePosition++;	
-			}		
-	
-		}
-
-		if(leaders[threadIdx.x]){
-				if(state.windowState.hasReachedWindowLimit)
-					((T*)state.GPU_aux)[state.blockIterator*blockDim.x+futurePosition]= myValue;
-				else
-					GPU_results[state.blockIterator*blockDim.x+futurePosition]= myValue;
-		}
-
-		if(threadIdx.x == 0){
-			for(i=0,counter=0;i<blockDim.x;i++){
-				if(leaders[i])
-					counter++;
-			}
-			state.GPU_auxBlocks[state.windowState.totalNumberOfBlocks+state.blockIterator] = counter;
-
-		
-		}	
-
-		SYNCTHREADS();
-		
-		//Iterate
-		state.blockIterator += gridDim.x;
-	}
-
-
-	/*** Sync ALL BLOCKS ***/
-	#include "../../PrecodedSyncblocks.def"
-
-	int counter, i,blockIndex, futurePosition;	
-
-	T myValue;	
-	__shared__ bool leaders[ANALYSIS_TPB];
-	__shared__ T blockElements[ANALYSIS_TPB];
-	__shared__ int numOfElementsPerBlock[SHARED_BUFFER_SIZE]; 
-	//__shared__ int step;
-	__shared__ int threshold;
-
-
-	state.blockIterator = blockIdx.x;
-
-	//Only calculate rates when window limit has been reached (average)
-	if(state.windowState.hasReachedWindowLimit){
-
-		if(threadIdx.x == 0){
-			threshold = GET_EXTENDED_PARAMETER(0);	
-		}
-		SYNCTHREADS();
-
-		//Looping when array is larger than grid dimensions 
-		while( state.blockIterator < state.windowState.totalNumberOfBlocks ){
-		
-	//		step = 0;
-			//Mine my block items, num of elements
-	
-			if(threadIdx.x == 0){
-				numOfElementsPerBlock[0] = state.GPU_auxBlocks[state.windowState.totalNumberOfBlocks+state.blockIterator];
-			}
-			SYNCTHREADS();
-
-			if(threadIdx.x < numOfElementsPerBlock[0]){ //Save as many global memory accesses as possible
-				blockElements[threadIdx.x] = cudaSafeGet(&(((T*)state.GPU_aux)[state.blockIterator*blockDim.x+threadIdx.x]));
-			}else{
-				cudaSharedMemset(&blockElements[threadIdx.x],0);	
-			}
-
-			//Set leader flags appropiate to content of myValue	
-			if(cudaSharedIsNotNull(&blockElements[threadIdx.x]))
-				leaders[threadIdx.x] = true;
-			else
-				leaders[threadIdx.x] = false;
-	
-			//Set myValue and counters
-			myValue = blockElements[threadIdx.x];	
-	
-			//Loop for all blocks
-			for(blockIndex = 0,counter=0;blockIndex<state.windowState.totalNumberOfBlocks;blockIndex++){	
-			
-				//Do not erase this	
-				SYNCTHREADS();
-
-				bool hasLeaders = false;
-				for(i=0;i<blockDim.x;i++){
-					if(leaders[i]){
-						hasLeaders = true;
-						break;
-					}
-				} 
-		
-				if(!hasLeaders)
-					break;
-				
-				if(threadIdx.x == 0)
-					numOfElementsPerBlock[0] = state.GPU_auxBlocks[state.windowState.totalNumberOfBlocks+blockIndex];
-					
-				SYNCTHREADS();
-
-				if(threadIdx.x < numOfElementsPerBlock[0]){ //Save as many global memory accesses as possible
-					blockElements[threadIdx.x] = cudaSafeGet(&(((T*)state.GPU_aux)[blockIndex*blockDim.x+threadIdx.x]));
-				}else{
-					cudaSharedMemset(&blockElements[threadIdx.x],0);	
-				}
-
-				SYNCTHREADS();
-				
-				if(leaders[threadIdx.x]){
-					for(i=0;i<numOfElementsPerBlock[0];i++){
-						if(myValue.ipSrc == blockElements[i].ipSrc){
-							if((blockIndex*blockDim.x+i) >= (state.blockIterator*blockDim.x+threadIdx.x))
-								counter++;
-							else{
-								leaders[threadIdx.x] = false;
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			SYNCTHREADS();
-
-
-			//Calculate rate
-			float rate;
-
-			if(leaders[threadIdx.x]){
-				long time_ms= cudaTimevaldiff(state.windowState.windowStartTime,state.windowState.windowEndTime);
-				rate = (float)( (float)counter /(float)time_ms );
-				if(rate*1000 < threshold)
-					leaders[threadIdx.x] = false;
-			}
-	
-			SYNCTHREADS();
-
-			/* Determine future position inside block*/
-			if(leaders[threadIdx.x]){
-				for(i=(threadIdx.x-1),futurePosition=0;i>=0;i--){
-					if(leaders[i])
-						futurePosition++;	
-				}		
-		
-			}
-	
-			if(leaders[threadIdx.x]){
-					myValue.counter = counter;
-					myValue.rate = rate*1000;
-					GPU_results[state.blockIterator*blockDim.x+futurePosition]= myValue;
-			}
-
-			if(threadIdx.x == 0){
-				for(i=0,counter=0;i<blockDim.x;i++){
-					if(leaders[i])
-						counter++;
-				}
-				state.GPU_auxBlocks[state.blockIterator] = counter;
-
-		
-			}	
-
-			SYNCTHREADS();
-		
-			//Iterate
-			state.blockIterator += gridDim.x;
-		}//Loop
-	}//hasReachedWindowLimit
-	SYNCTHREADS();	
-	#if __SYNCBLOCKS_COUNTER == 0
-		COMPOUND_NAME(ANALYSIS_NAME,operations)(GPU_buffer, GPU_data, GPU_results,state);
-	#endif
-
+  // atomicAdd(&totalThreads,1);
 }
 
+template<typename T,typename R> 
+__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold){
 
-
+	ipscananalysis<ANALYSIS_INPUT_TYPE,ANALYSIS_INPUT_TYPE>(GPU_buffer,GPU_data,GPU_results,state,counter,thresHold);
+	//while(totalThreads<3840) { }; 
+	}
 
 
 
@@ -408,7 +107,6 @@ __device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packe
 
 
 #endif //__CUDACC__
-
 /* Redefine DATA_ELEMENT and RESULT_ELEMENT */
 #undef DATA_ELEMENT
 #define DATA_ELEMENT GPU_data[POS] 

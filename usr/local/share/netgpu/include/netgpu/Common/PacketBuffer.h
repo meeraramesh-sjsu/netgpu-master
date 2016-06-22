@@ -64,13 +64,14 @@ class PacketBuffer {
 	
 	bool inline getFlushFlag(void){return flushWindows;}
 	void inline setFlushFlag(bool value){flushWindows = value;}
+	packet_t* buffer;
  protected:
 	//DataLink info for all packets
 	int deviceDataLink;
 
 	unsigned int lastPacketIndex;
 	unsigned int lostPackets;
-	packet_t* buffer;
+	//packet_t* buffer;
 
 	//Flag to flush all windows (end of data or interrupted)
 	bool flushWindows;

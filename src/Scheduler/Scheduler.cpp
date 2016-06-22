@@ -62,31 +62,38 @@ void Scheduler::programHandler(void){
 packet_t* Scheduler::loadBufferToGPU(PacketBuffer* packetBuffer){
 	
 	/* Loads buffer to the GPU */	
-		cout<<"Loading Buffer To GPU "<<endl;        
-//cout<<"Loading buffer to GPU"<<endl;
+	//cout<<"Loading Buffer To GPU "<<endl;        
+
+        cout<<"\n ---- buffer from CPU to GPU \n" <<endl;
+
 	packet_t* GPU_buffer;
 	int size = sizeof(packet_t)*MAX_BUFFER_PACKETS;
-	
 
 	BMMS::mallocBMMS((void**)&GPU_buffer,size);
 	cudaAssert(cudaThreadSynchronize());
 
+        cout<<"\n ---- ******************************************************************" <<endl;
+
 	/* Checks if buffer is NULL */
 	if(packetBuffer == NULL)
-		return NULL;
+        {
+          cout<<"\n ---- packet buffer is NULL \n" <<endl;
+	  return NULL;
+        } 
 	
 	if(GPU_buffer == NULL)
-			ABORT("cudaMalloc failed at Scheduler");
+          ABORT("cudaMalloc failed at Scheduler");
 	if(packetBuffer->getBuffer()==NULL)
-			ABORT("PacketBuffer is NULL");
+    	  ABORT("PacketBuffer is NULL");
 
-	cudaAssert(cudaMemcpy(GPU_buffer,packetBuffer->getBuffer(),size,cudaMemcpyHostToDevice));
+        cudaAssert(cudaMemcpy(GPU_buffer,packetBuffer->getBuffer(),size,cudaMemcpyHostToDevice));
 	cudaAssert(cudaThreadSynchronize());
 
+/*
 // added on June 1st 
 //Modified: June 7th Uncomment the below block if needed to print the packets passing from the CPU
    int index=packetBuffer->getNumOfPackets();
-   /*
+   
    for(int i=0;i<index;i++)
    {
 	packet_t* curpacket=packetBuffer->getPacket(i);
@@ -96,13 +103,12 @@ packet_t* Scheduler::loadBufferToGPU(PacketBuffer* packetBuffer){
 
 	for(int i=0;i<94;i++)
 	{
-  cout<<ntohs(curpacket->packet[i]);
+           cout<<ntohs(curpacket->packet[i]);
 	//  cout<<endl;
 	}
 cout<<endl;
    }
 */
-
   return GPU_buffer;	
 }
 
@@ -155,7 +161,9 @@ void Scheduler::addFeederToPool(PacketFeeder* feeder,int limit){
 /* Adds an analysis to the pool */
 
 void Scheduler::addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer)){
-	int i;	
+	int i;
+        
+        cout << "\n ---- addAnalysisToPool called \n";
 
 	for(i=0;i<SCHEDULER_MAX_ANALYSIS_POOL_SIZE;i++){
 		if(analysisFunctions[i] == NULL){
@@ -177,6 +185,8 @@ void Scheduler::analyzeBuffer(PacketBuffer* packetBuffer){
 
 	DEBUG("Entering analyzeBuffer");
 	
+        cout <<"\n ---- calling loadBufferToGPU \n"; 
+
 	//Load buffer from PacketBuffer to GPU
 	GPU_buffer = loadBufferToGPU(packetBuffer);
 	
@@ -221,6 +231,7 @@ void Scheduler::start(void){
 				buffer = feedersPool[i].feeder->getSniffedPacketBuffer();
 			
 				//Analyse it
+                                cout<< " \n ---- calling analyze function \n";
 			        analyzeBuffer(buffer);
 
 				//Check if(offline) feeder has no more packets to get

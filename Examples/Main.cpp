@@ -42,7 +42,7 @@ using namespace std;
 	//Starting execution (infinite loop)
 	Scheduler::start();
 
-	std::cout<<"Ending."<<endl;
+	std::cout<<" \n Ending ......."<<endl;
 
 	delete feeder;
 	exit(EXIT_SUCCESS);

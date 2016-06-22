@@ -17,7 +17,9 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <inttypes.h>
 #include <iostream>
 #include <arpa/inet.h>
-#include <cuda.h>
+#include "/usr/local/cuda/include/cuda.h"
+#include "/usr/local/cuda/include/cuda_runtime.h"
+
 
 /*Inline functions*/
 	

@@ -13,7 +13,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #ifndef CudaSharedMemoryOperations_h
 #define CudaSharedMemoryOperations_h
 
-#include <cuda.h>
+#include "/usr/local/cuda/include/cuda.h"
 #include <inttypes.h>
 
 #ifdef __CUDACC__

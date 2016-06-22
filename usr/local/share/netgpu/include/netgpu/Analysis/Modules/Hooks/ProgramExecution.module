@@ -24,6 +24,7 @@
 				char** argvs;\
 				char* buffer;\
 				stringstream stream;\
+				cout<<"In program Launcher prepare";\
 				int i,j,offset,numberOfItems;\
 				R nullElement;\
 				bool hasResults;\
@@ -47,6 +48,7 @@
 			buffer =(char*)malloc(charLength*sizeof(char));\
 			argvs = (char**)malloc((numberOfItems+2)*sizeof(char*));\
 			stream.get(buffer, charLength);\
+			cout<<"In program execution";\
 			argvs[0] = program_name;\
 			for(i=0, offset=0;offset<charLength;i++){\
 				argvs[i+1] = buffer+offset;\

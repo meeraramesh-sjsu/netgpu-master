@@ -56,6 +56,7 @@ struct tcp_header{
 	uint16_t	window;			// window 
 	uint16_t	checksum;			// checksum 
 	uint16_t	urp;			// urgent pointer 
+	//unsigned char *data;		//User Data
 };
 
 class TcpHeader : public VirtualHeader {
