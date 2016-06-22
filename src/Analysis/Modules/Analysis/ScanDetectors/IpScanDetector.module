@@ -51,12 +51,12 @@ __device__ int totalThreads=0;
         DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
 		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
 		}\
-		if(IS_TCP())
-		{
+		if(IS_TCP())\
+		{\
 		DATA_ELEMENT.sport = GET_FIELD(TCP_HEADER.sport);\
 		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\		
-		}
-}while(0)
+		}\
+}while(0);
 	
 /***** IPSCAN DETECTOR ANALYSIS *****/
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
