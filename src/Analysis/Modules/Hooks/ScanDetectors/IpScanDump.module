@@ -23,8 +23,8 @@
 template<typename R>
 void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, char* filename,int severeLimit, int criticalLimit){
 
-	 cout<<"TCP = "<<(*results).indexTcp<<"UDP= "<< (*results).indexUdp<<"ICMP ="<< (*results).indexIcmp; 			
-  
+	 //cout<<"TCP = "<<(*results).indexTcp<<"UDP= "<< (*results).indexUdp<<"ICMP ="<< (*results).indexIcmp; 			
+  	cout<<"TCP = "<<results[0].indexTcp<<"UDP= "<< results[0].indexUdp<<"ICMP ="<< results[0].indexIcmp;
 	bool alreadyExists;
 	ofstream file;
 	fstream fin;
