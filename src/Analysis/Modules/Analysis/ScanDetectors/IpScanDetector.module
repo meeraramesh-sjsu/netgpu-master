@@ -79,20 +79,20 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		//printf("Protocol number of the thread with threadId %d in block %d is %x \n", threadIdx.x,blockIdx.x, elements[threadIdx.x].protocol);
 		if(elements[threadIdx.x].protocol==6) //TCP packet
 		{
-		atomicAdd(&GPU_results[0].indexTcp,1);
+		atomicAdd(&(GPU_results[0].indexTcp),1);
 		}		
 		if(elements[threadIdx.x].protocol==0x0011)  //UDP packet
 		{
-		atomicAdd(&GPU_results[0].indexUdp,1);
+		atomicAdd(&(GPU_results[0].indexUdp),1);
 		}
 		if(elements[threadIdx.x].protocol==1) //ICMP packet
 		{
-		atomicAdd(&GPU_results[0].indexIcmp,1);
+		atomicAdd(&(GPU_results[0].indexIcmp),1);
 		}
 		/*Rules for Detecting Malicious IP Packets */
 		if(elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6)
 		{
-		atomicXor(&GPU_results[threadIndex].malicious,1);
+		atomicXor(&(GPU_results[threadIndex].malicious),1);
 		} 												
 	__syncthreads();
 
