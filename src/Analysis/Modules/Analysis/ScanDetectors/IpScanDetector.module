@@ -29,12 +29,8 @@ typedef struct{
 	int indexUdp;
 	int indexIcmp;
 	int malicious;
-}packetHeaderVals;
+}COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
-packetHeaderVals COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t) = 
-{
-.malicious=0;
-};
 /*__device__ int indexTcp = 0;
 __device__ int indexUdp = 0;
 __device__ int indexIcmp = 0;
@@ -45,7 +41,7 @@ __device__ int totalThreads=0;
 /* Redefine TYPES */
 #undef  ANALYSIS_INPUT_TYPE
 #define ANALYSIS_INPUT_TYPE COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t)
-
+ANALYSIS_INPUT_TPYE.malicious = 0;
 
 #ifdef __CUDACC__
 
