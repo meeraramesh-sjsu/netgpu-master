@@ -41,7 +41,6 @@ __device__ int totalThreads=0;
 /* Redefine TYPES */
 #undef  ANALYSIS_INPUT_TYPE
 #define ANALYSIS_INPUT_TYPE COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t)
-ANALYSIS_INPUT_TPYE.malicious = 0;
 
 #ifdef __CUDACC__
 
