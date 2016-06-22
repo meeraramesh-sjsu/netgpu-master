@@ -46,13 +46,16 @@ __device__ int totalThreads=0;
 
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 	do{\
-	 if(IS_ETHERNET() && IS_IP4() && IS_TCP()){\
+	 if(IS_ETHERNET() && IS_IP4()){\
         DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
         DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
 		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
-		DATA_ELEMENT.sport=GET_FIELD(TCP_HEADER.sport);\
-		DATA_ELEMENT.dport=GET_FIELD(TCP_HEADER.dport);\		
-}\
+		}\
+		if(IS_TCP())
+		{
+		DATA_ELEMENT.sport = GET_FIELD(TCP_HEADER.sport);\
+		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\		
+		}
 }while(0)
 	
 /***** IPSCAN DETECTOR ANALYSIS *****/
@@ -72,20 +75,20 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = state.blockIterator*blockDim.x + threadIdx.x;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-		printf("Protocol number of the thread with threadId %d in block %d is %x \n", threadIdx.x,blockIdx.x, elements[threadIdx.x].protocol);
+		//printf("Protocol number of the thread with threadId %d in block %d is %x \n", threadIdx.x,blockIdx.x, elements[threadIdx.x].protocol);
 		if(elements[threadIdx.x].protocol==6) //TCP packet
 		{
-		printf("Thread Index with protocol 6 = %d \n",threadIdx.x);
+		//printf("Thread Index with protocol 6 = %d \n",threadIdx.x);
 		atomicAdd(&(*GPU_results).indexTcp,1);
 		}		
 		if(elements[threadIdx.x].protocol==0x0011)  //UDP packet
 		{
-		printf("Thread Index with protocol 17 = %d \n",threadIdx.x);
+		//printf("Thread Index with protocol 17 = %d \n",threadIdx.x);
 		atomicAdd(&(*GPU_results).indexUdp,1);
 		}
 		if(elements[threadIdx.x].protocol==1) //ICMP packet
 		{
-		printf("Thread Index with protocol 1 = %d \n",threadIdx.x);
+		//printf("Thread Index with protocol 1 = %d \n",threadIdx.x);
 		atomicAdd(&(*GPU_results).indexIcmp,1);
 		}										
 	__syncthreads();
