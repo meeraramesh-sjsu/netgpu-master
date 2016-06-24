@@ -61,6 +61,10 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.sport = GET_FIELD(TCP_HEADER.sport);\
 		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\		
 		}\
+		if(IS_IP6())\
+		{\
+		DATA_ELEMENT.version = IP6_HEADER.version;\
+		}\
 }while(0)
 	
 /***** IPSCAN DETECTOR ANALYSIS *****/
