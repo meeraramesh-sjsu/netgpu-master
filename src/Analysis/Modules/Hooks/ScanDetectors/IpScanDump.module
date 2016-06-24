@@ -81,7 +81,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		cout<<"Hello inside j loop Hooks"<<auxBlocks[i]<<endl;
 			//cout<<"Results = "<< results[i*ANALYSIS_TPB+j].rate << " " << results[i*ANALYSIS_TPB+j].counter<<" ";
 				
-			cout<<"Results = "<<results[i*ANALYSIS_TPB+j].malicious<<endl;
+			//cout<<"Results = "<<results[i*ANALYSIS_TPB+j].malicious<<endl;
 			
 			//Check if result is valid (has not been post filtered) 
 			if(results[i*ANALYSIS_TPB+j].rate != 0.0){
