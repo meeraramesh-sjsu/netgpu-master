@@ -94,9 +94,12 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		atomicAdd(&(GPU_results[0].indexIcmp),1);
 		}
 		/*Rules for Detecting Malicious IP Packets */
-		if(elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6)
+		/* In actual implementatiion REPLACE below line with 
+		elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6
+		Since we have not injected malicous packets using below comparison*/
+		if(elements[threadIdx.x].version==6) //Malicious version
 		{
-		atomicXor(&(GPU_results[threadIndex].malicious),1);
+		GPU_results[threadIndex].malicious = 1;
 		} 												
 	__syncthreads();
 

@@ -24,7 +24,8 @@ template<typename R>
 void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, char* filename,int severeLimit, int criticalLimit){
 
 	 //cout<<"TCP = "<<(*results).indexTcp<<"UDP= "<< (*results).indexUdp<<"ICMP ="<< (*results).indexIcmp; 			
-  	cout<<"TCP = "<<results[0].indexTcp<<"UDP= "<< results[0].indexUdp<<"ICMP ="<< results[0].indexIcmp;
+  	cout<<endl<<"*********************CPU SECTION***********************************"<<endl;
+  	cout<<"TCP = "<<results[0].indexTcp<<"UDP= "<< results[0].indexUdp<<"ICMP = "<< results[0].indexIcmp<<endl;
 	bool alreadyExists;
 	ofstream file;
 	fstream fin;
@@ -62,14 +63,15 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	time_t aux;
   	struct tm * timeinfo;
   		
-
+	
 	//Dump alarms
 	for(i = 0,hasResults = false;i<state.windowState.totalNumberOfBlocks;i++){
-	
+		cout<<"Hello inside i loop Hooks"<<state.windowState.totalNumberOfBlocks<<endl;
 		for(j = 0;j<auxBlocks[i];j++){
-
-			cout<<"Results = "<< results[i*ANALYSIS_TPB+j].rate << " " << results[i*ANALYSIS_TPB+j].counter<<" ";
+		cout<<"Hello inside j loop Hooks"<<auxBlocks[i]<<endl;
+			//cout<<"Results = "<< results[i*ANALYSIS_TPB+j].rate << " " << results[i*ANALYSIS_TPB+j].counter<<" ";
 				
+			cout<<"Results = "<<results[i*ANALYSIS_TPB+j].malicious<<endl;
 			
 			//Check if result is valid (has not been post filtered) 
 			if(results[i*ANALYSIS_TPB+j].rate != 0.0){

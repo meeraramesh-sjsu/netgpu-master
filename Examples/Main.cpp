@@ -21,7 +21,7 @@ using namespace std;
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
 	
 
-	cout <<"Starting analysis in few minutes...\n";
+	//cout <<"Starting analysis in few minutes...\n";
 
 //	std::cout <<"Starting analysis now      ...\n";
 
@@ -42,7 +42,7 @@ using namespace std;
 	//Starting execution (infinite loop)
 	Scheduler::start();
 
-	std::cout<<" \n Ending ......."<<endl;
+	//std::cout<<" \n Ending ......."<<endl;
 
 	delete feeder;
 	exit(EXIT_SUCCESS);
