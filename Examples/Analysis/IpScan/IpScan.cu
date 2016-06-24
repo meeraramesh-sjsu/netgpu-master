@@ -21,8 +21,6 @@ __device__ void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU
   }
 */
 	$IPSCAN_DETECTOR$AUTO_MINE();
- 
-
 }
 
 template<typename T,typename R>
