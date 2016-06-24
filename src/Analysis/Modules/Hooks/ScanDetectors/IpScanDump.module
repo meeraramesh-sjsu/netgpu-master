@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <iomanip>
+using namespace std;
 #include "../hostTimeUtils.h"
 
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE(filename,severe,critical)\
