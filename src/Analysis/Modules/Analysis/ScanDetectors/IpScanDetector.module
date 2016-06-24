@@ -28,7 +28,8 @@ typedef struct{
 	int indexTcp;
 	int indexUdp;
 	int indexIcmp;
-	int malicious;
+	int maliciousVer;
+	int maliciousIP;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
 /*__device__ int indexTcp = 0;
@@ -54,16 +55,13 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.indexTcp=0;\
 		DATA_ELEMENT.indexUdp=0;\
 		DATA_ELEMENT.indexIcmp=0;\
-		DATA_ELEMENT.malicious=0;\
+		DATA_ELEMENT.maliciousVer=0;\
+		
 		}\
 		if(IS_TCP())\
 		{\
 		DATA_ELEMENT.sport = GET_FIELD(TCP_HEADER.sport);\
 		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\		
-		}\
-		if(IS_IP6())\
-		{\
-		DATA_ELEMENT.version = IP6_HEADER.version;\
 		}\
 }while(0)
 	
@@ -84,7 +82,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-		if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
+		if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
+		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
 		if(elements[threadIdx.x].protocol==6) //TCP packet
 		{
 		atomicAdd(&(GPU_results[0].indexTcp),1);
@@ -101,10 +100,11 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		/* In actual implementatiion REPLACE below line with 
 		elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6
 		Since we have not injected malicous packets using below comparison*/
-		if(elements[threadIdx.x].version==4) //Malicious version
+		if(elements[threadIdx.x].version==4) //Should be Malicious version
 		{
-		GPU_results[threadIndex].malicious = 1;
-		} 												
+		GPU_results[threadIndex].maliciousVer = 1;
+		}
+		 												
 	__syncthreads();
 
   // atomicAdd(&totalThreads,1);

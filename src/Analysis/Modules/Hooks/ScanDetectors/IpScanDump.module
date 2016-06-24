@@ -11,6 +11,7 @@
 //#warning  IpScan Dumper Hook loaded
 
 #include <iostream>
+#include <iomanip>
 #include "../hostTimeUtils.h"
 
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE(filename,severe,critical)\
@@ -67,10 +68,12 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	//Dump alarms
 	for(i = 0,hasResults = false;i<state.windowState.totalNumberOfBlocks;i++){
 		//cout<<"Hello inside i loop Hooks"<<state.windowState.totalNumberOfBlocks<<endl;
+		cout<<"*************Crafted Packets***************"<<endl;
+		cout<<setw(10)<<"Source IP address"<<endl;
 		for(j=0;j<128;j++)
 		{
-		if(results[i*ANALYSIS_TPB+j].malicious == 1)
-		cout<<"Results = "<<results[i*ANALYSIS_TPB+j].malicious<<endl;					
+		if(results[i*ANALYSIS_TPB+j].maliciousVer == 1)
+		cout<<"Incorrect version number = "<<results[i*ANALYSIS_TPB+j].ipSrc<<endl;					
 		}
 				
 		for(j = 0;j<auxBlocks[i];j++){
