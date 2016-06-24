@@ -84,7 +84,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-		if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x, elements[threadIdx.x].version);
+		if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
 		if(elements[threadIdx.x].protocol==6) //TCP packet
 		{
 		atomicAdd(&(GPU_results[0].indexTcp),1);
@@ -101,7 +101,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		/* In actual implementatiion REPLACE below line with 
 		elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6
 		Since we have not injected malicous packets using below comparison*/
-		if(elements[threadIdx.x].version==6) //Malicious version
+		if(elements[threadIdx.x].version==4) //Malicious version
 		{
 		GPU_results[threadIndex].malicious = 1;
 		} 												
