@@ -1,6 +1,30 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <arpa/inet.h>
+#include <stdbool.h>
+
+bool IsPrivateAddress(uint32_t ip)
+{
+    uint8_t b1, b2, b3, b4;
+    b1 = (uint8_t)(ip >> 24);
+    b2 = (uint8_t)((ip >> 16) & 0x0ff);
+    b3 = (uint8_t)((ip >> 8) & 0x0ff);
+    b3 = (uint8_t)(ip & 0x0ff);
+
+    // 10.x.y.z
+    if (b1 == 10)
+        return true;
+
+    // 172.16.0.0 - 172.31.255.255
+    if ((b1 == 172) && (b2 >= 16) && (b2 <= 31))
+        return true;
+
+    // 192.168.0.0 - 192.168.255.255
+    if ((b1 == 192) && (b2 == 168))
+        return true;
+
+    return false;
+}
 
 int main(int argc, char **argv) {
   struct in_addr pin;

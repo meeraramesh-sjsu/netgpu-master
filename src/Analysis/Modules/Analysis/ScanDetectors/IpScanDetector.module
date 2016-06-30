@@ -51,14 +51,14 @@ __device__ int totalThreads=0;
 	do{\
 	 if(IS_ETHERNET() && IS_IP4()){\
         DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
-        DATA_ELEMENT.ipSrcNetwork = GET_FIELDNETWORK(IP4_HEADER.ip_src);\
         DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
 		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
 		DATA_ELEMENT.version = IP4_HEADER.version;\
 		DATA_ELEMENT.indexTcp=0;\
 		DATA_ELEMENT.indexUdp=0;\
 		DATA_ELEMENT.indexIcmp=0;\
-		DATA_ELEMENT.maliciousVer=0;\		
+		DATA_ELEMENT.maliciousVer=0;\	
+		DATA_ELEMENT.maliciousIP=0;\	
 		}\
 		if(IS_TCP())\
 		{\
@@ -84,8 +84,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-		if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
-		if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrcNetwork);
+		unsigned int octet1,octet2,octet3,octet4;
+		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
 		
 		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
 		if(elements[threadIdx.x].protocol==6) //TCP packet
@@ -108,6 +108,26 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		{
 		GPU_results[threadIndex].maliciousVer = 1;
 		}
+		
+		//Checking if the source IP address is in Private Address range
+		uint32_t sourceAddress = elements[threadIdx.x].ipSrc;
+		 octet1 = (sourceAddress & 0xff000000) >> 24;
+		 octet2 = (sourceAddress & 0x00ff0000) >> 16;
+		 octet3 = (sourceAddress & 0x0000ff00) >> 8;
+		 octet4 = (sourceAddress & 0x000000ff);
+		
+		 if (octet1 == 10)
+        	GPU_results[threadIndex].maliciousIP=1;
+
+    // 172.16.0.0 - 172.31.255.255
+  	  if ((octet1 == 172) && (octet2 >= 16) && (octet2 <= 31))
+        GPU_results[threadIndex].maliciousIP=1;
+
+    // 192.168.0.0 - 192.168.255.255
+   	 if ((octet1 == 192) && (octet2 == 168))
+      GPU_results[threadIndex].maliciousIP=1;
+		
+	 printf("Source IP address is %u.%u.%u.%u\n",octet1,octet2,octet3,octet4);
 		 												
 	__syncthreads();
 
