@@ -14,6 +14,7 @@
 #define libAnalysisIpScan_h 
 
 #include "../Thresholds/Thresholds.h"
+#include <inttypes.h>
 
 typedef struct{
 	uint32_t ipSrc;
@@ -81,7 +82,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-		if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
+		if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
 		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
 		if(elements[threadIdx.x].protocol==6) //TCP packet
 		{
