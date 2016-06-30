@@ -15,6 +15,7 @@
 
 #include "../Thresholds/Thresholds.h"
 #include <inttypes.h>
+#include <string>
 
 typedef struct{
 	uint32_t ipSrc;
@@ -32,6 +33,7 @@ typedef struct{
 	int indexIcmp;
 	int maliciousVer;
 	int maliciousIP;
+	string ipSrcStr;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
 /*__device__ int indexTcp = 0;
@@ -117,16 +119,23 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		 octet4 = (sourceAddress & 0x000000ff);
 		
 		 if (octet1 == 10)
+		 {
+		 	GPU_results[threadIndex].ipSrcStr = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
         	GPU_results[threadIndex].maliciousIP=1;
+        	}
 
     // 172.16.0.0 - 172.31.255.255
   	  if ((octet1 == 172) && (octet2 >= 16) && (octet2 <= 31))
+  	  {
+  	  	GPU_results[threadIndex].ipSrcStr = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
         GPU_results[threadIndex].maliciousIP=1;
-
+		}
     // 192.168.0.0 - 192.168.255.255
    	 if ((octet1 == 192) && (octet2 == 168))
+   	 {
+   	 	GPU_results[threadIndex].ipSrcStr = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
       GPU_results[threadIndex].maliciousIP=1;
-		
+	}	
 	 //printf("Source IP address is %u.%u.%u.%u\n",octet1,octet2,octet3,octet4);
 		 												
 	__syncthreads();

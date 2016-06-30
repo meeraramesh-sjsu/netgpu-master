@@ -76,9 +76,9 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 				for(j=0;j<128;j++)
 		{
 		if(results[i*ANALYSIS_TPB+j].maliciousVer == 1)
-		cout<<"Incorrect version number = "<<results[i*ANALYSIS_TPB+j].maliciousVer<<"Of Packet with source IP"<<inet_ntoa(*(struct in_addr*)results[i*ANALYSIS_TPB+j].ipSrc)<<endl;	
+		cout<<"Incorrect version number = "<<results[i*ANALYSIS_TPB+j].maliciousVer<<"Of Packet with source IP"<<results[i*ANALYSIS_TPB+j].ipSrcStr<<endl;	
 		if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
-		cout<<"Alarm!! Src address is in private Address range:"<<inet_ntoa(*(struct in_addr*)results[i*ANALYSIS_TPB+j].ipSrc);				
+		cout<<"Alarm!! Src address is in private Address range:"<<results[i*ANALYSIS_TPB+j].ipSrcStr<<endl;				
 		}
 				
 		for(j = 0;j<auxBlocks[i];j++){
