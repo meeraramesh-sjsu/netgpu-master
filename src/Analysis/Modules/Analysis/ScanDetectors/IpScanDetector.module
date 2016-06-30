@@ -120,20 +120,20 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		
 		 if (octet1 == 10)
 		 {
-		 	GPU_results[threadIndex].ipSrcStr = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
-        	GPU_results[threadIndex].maliciousIP=1;
+ 	  	GPU_results[threadIndex].ipSrcStr = to_string(octet1) + "." + to_string(octet2) + "." + to_string(octet3) + "." + to_string(octet4);
+        GPU_results[threadIndex].maliciousIP=1;
         	}
 
     // 172.16.0.0 - 172.31.255.255
   	  if ((octet1 == 172) && (octet2 >= 16) && (octet2 <= 31))
   	  {
-  	  	GPU_results[threadIndex].ipSrcStr = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
+  	  	GPU_results[threadIndex].ipSrcStr = to_string(octet1) + "." + to_string(octet2) + "." + to_string(octet3) + "." + to_string(octet4);
         GPU_results[threadIndex].maliciousIP=1;
 		}
     // 192.168.0.0 - 192.168.255.255
    	 if ((octet1 == 192) && (octet2 == 168))
    	 {
-   	 	GPU_results[threadIndex].ipSrcStr = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
+ 	  GPU_results[threadIndex].ipSrcStr = to_string(octet1) + "." + to_string(octet2) + "." + to_string(octet3) + "." + to_string(octet4);
       GPU_results[threadIndex].maliciousIP=1;
 	}	
 	 //printf("Source IP address is %u.%u.%u.%u\n",octet1,octet2,octet3,octet4);
