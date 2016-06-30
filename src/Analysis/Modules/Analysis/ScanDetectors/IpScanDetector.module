@@ -127,7 +127,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
    	 if ((octet1 == 192) && (octet2 == 168))
       GPU_results[threadIndex].maliciousIP=1;
 		
-	 printf("Source IP address is %u.%u.%u.%u\n",octet1,octet2,octet3,octet4);
+	 //printf("Source IP address is %u.%u.%u.%u\n",octet1,octet2,octet3,octet4);
 		 												
 	__syncthreads();
 
