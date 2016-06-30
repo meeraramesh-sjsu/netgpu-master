@@ -60,6 +60,8 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 //Gets field safely, to get disaligned fields 
 #define GET_FIELD(field) cudaNetworkToHost(cudaSafeGet(&(field))) //TODO: ENDIANISME ELIMINAR EL CUDANETWORKTOHOST
 
+#define GET_FIELDNETWORK(field) cudaSafeGet(&(field)) //TODO: ENDIANISME ELIMINAR EL CUDANETWORKTOHOST
+
 
 //* BARRIERS */
 
