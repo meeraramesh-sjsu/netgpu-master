@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <arpa/inet.h>
 #include <stdbool.h>
+#include <stdio.h>
 using namespace std;
 #include "../hostTimeUtils.h"
 
@@ -76,9 +77,13 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 				for(j=0;j<128;j++)
 		{
 		if(results[i*ANALYSIS_TPB+j].maliciousVer == 1)
-		cout<<"Incorrect version number = "<<results[i*ANALYSIS_TPB+j].maliciousVer<<"Of Packet with source IP"<<results[i*ANALYSIS_TPB+j].ipSrcStr<<endl;	
+		cout<<"Incorrect version number = "<<results[i*ANALYSIS_TPB+j].maliciousVer<<"Of Packet with source IP";
+		puts(results[i*ANALYSIS_TPB+j].ipSrcStr);
+		cout<<endl;	
 		if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
-		cout<<"Alarm!! Src address is in private Address range:"<<results[i*ANALYSIS_TPB+j].ipSrcStr<<endl;				
+		cout<<"Alarm!! Src address is in private Address range:";
+		puts(results[i*ANALYSIS_TPB+j].ipSrcStr);
+		cout<<endl;				
 		}
 				
 		for(j = 0;j<auxBlocks[i];j++){
