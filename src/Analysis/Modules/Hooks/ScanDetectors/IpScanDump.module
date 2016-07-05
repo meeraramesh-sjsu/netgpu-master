@@ -82,7 +82,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		network_byte_order = htonl(some_long);
 		struct in_addr in;
 		in.s_addr = network_byte_order;
-	 cout<<unsigned(results[i*ANALYSIS_TPB+j].version)<<endl;
+	// cout<<unsigned(results[i*ANALYSIS_TPB+j].version)<<endl;
 		if(results[i*ANALYSIS_TPB+j].maliciousVer == 1)
 		{
 		
