@@ -124,7 +124,6 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			}
 		}
 
-	cout<<"Alarm!! There are "<<incorrectVerNumber<<"packets Which have incorrect version Number!"<<endl;
 		
 	}
 
@@ -144,6 +143,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		timeinfo = localtime ( &aux );
 	        os << " Dumped at: "<<asctime(timeinfo)<<endl<<endl;
 	}
+	cout<<"Alarm!! There are "<<incorrectVerNumber<<"packets Which have incorrect version Number!"<<endl;
 	
 }
 	
