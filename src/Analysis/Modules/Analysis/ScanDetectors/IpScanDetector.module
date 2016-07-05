@@ -107,7 +107,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		/* In actual implementatiion REPLACE below line with 
 		elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6
 		Since we have not injected malicous packets using below comparison*/
-		if(elements[threadIdx.x].version!=4 || elements[threadIdx.x].version!=6) //Should be Malicious version
+		if(elements[threadIdx.x].version==7) //Should be Malicious version
 		{
 		GPU_results[threadIndex].maliciousVer = 1;
 		}

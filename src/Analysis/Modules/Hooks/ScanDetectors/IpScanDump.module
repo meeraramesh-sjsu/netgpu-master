@@ -85,6 +85,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	
 		if(results[i*ANALYSIS_TPB+j].maliciousVer == 1)
 		{
+		cout<<results[i*ANALYSIS_TPB+j].maliciousVer<<endl;
 		incorrectVerNumber++;
 		//cout<<inet_ntoa(in);
 		cout<<endl;	
