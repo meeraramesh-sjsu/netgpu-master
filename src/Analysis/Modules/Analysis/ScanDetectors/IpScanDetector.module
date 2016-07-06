@@ -155,8 +155,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	elements[threadIdx.x].flags == 0 || elements[threadIdx.x].unused != 0)
 	{
 	GPU_results[threadIndex].flags = GPU_data[threadIndex].flags;
-	if(elements[threadIdx.x].unused == 0) maliciousFlags = 1;	
-	else maliciousReserved = 1;
+	if(elements[threadIdx.x].unused == 0) GPU_results[threadIndex].maliciousFlags = 1;	
+	else GPU_results[threadIndex].maliciousReserved = 1;
 	} 	
 	}	 												
 	__syncthreads();
