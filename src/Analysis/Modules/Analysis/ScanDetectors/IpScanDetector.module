@@ -58,7 +58,6 @@ __device__ int totalThreads=0;
         DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
         DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
 		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
-		DATA_ELEMENT.flags = IP4_HEADER.flags;\
 		DATA_ELEMENT.version = IP4_HEADER.version;\
 		DATA_ELEMENT.indexTcp=0;\
 		DATA_ELEMENT.indexUdp=0;\
@@ -69,7 +68,8 @@ __device__ int totalThreads=0;
 		if(IS_TCP())\
 		{\
 		DATA_ELEMENT.sport = GET_FIELD(TCP_HEADER.sport);\
-		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\		
+		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\	
+		DATA_ELEMENT.flags = TCP_HEADER.flags;\	
 		}\
 }while(0)
 	
