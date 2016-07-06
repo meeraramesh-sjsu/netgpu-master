@@ -26,6 +26,7 @@ typedef struct{
 	uint32_t counter;
 	uint8_t protocol;
 	uint8_t version;
+	uint8_t flags;
 	float rate;
 	unsigned char * data;
 	uint16_t sport;
@@ -57,6 +58,7 @@ __device__ int totalThreads=0;
         DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
         DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
 		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
+		DATA_ELEMENT.flags = IP4_HEADER.flags;\
 		DATA_ELEMENT.version = IP4_HEADER.version;\
 		DATA_ELEMENT.indexTcp=0;\
 		DATA_ELEMENT.indexUdp=0;\
@@ -90,7 +92,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 		unsigned int octet1,octet2,octet3,octet4;
 		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
-		
+		if(blockIdx.x==0) printf("Flag of the thread with threadId %d in block %d is %" PRIu8 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].flags);
 		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
 		if(elements[threadIdx.x].protocol==6) //TCP packet
 		{
