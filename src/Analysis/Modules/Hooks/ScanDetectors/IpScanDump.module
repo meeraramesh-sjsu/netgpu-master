@@ -18,6 +18,17 @@
 using namespace std;
 #include "../hostTimeUtils.h"
 
+void printFlagBits(int flags)
+{
+if(flags&64) cout<<"Congestion Window Reduced ";
+if(flags&32) cout<<"ECN Echo ";
+if(flags&16) cout<<"ACK ";
+if(flags&8) cout<<"PSH(Push) ";
+if(flags&4) cout<<"RST ";
+if(flags&2) cout<<"SYN ";
+if(flags&1) cout<<"FIN ";
+if(flags&0) cout<<"NONE ";
+}
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE(filename,severe,critical)\
 	dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical)
 
@@ -93,6 +104,18 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
 		{
 		cout<<"Alarm!! Src address is in private Address range: ";
+		cout<<inet_ntoa(in);
+		cout<<endl;				
+		}
+		if(results[i*ANALYSIS_TPB+j].maliciousFlags == 1)
+		{
+		cout<<"Alarm!! Malicious Flag bit combinations found: i.e ";
+		printFlagBits(results[i*ANALYSIS_TPB+j].flags);
+		cout<<" are set "<<endl;
+		}
+		if(results[i*ANALYSIS_TPB+j].maliciousReserved == 1)
+		{
+		cout<<"Alarm!! Reserved bits are set, the packet is from src Address:";
 		cout<<inet_ntoa(in);
 		cout<<endl;				
 		}
