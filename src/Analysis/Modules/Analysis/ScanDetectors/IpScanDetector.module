@@ -70,7 +70,7 @@ __device__ int totalThreads=0;
 		}\
 		if(IS_TCP())\
 		{\
-		DATA_ELEMENT.flags = 0\	
+		DATA_ELEMENT.flags = 0;\	
 		DATA_ELEMENT.sport = GET_FIELD(TCP_HEADER.sport);\
 		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\	
 		DATA_ELEMENT.flags = TCP_HEADER.flags;\	
