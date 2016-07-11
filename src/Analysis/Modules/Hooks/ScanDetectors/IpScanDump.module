@@ -91,12 +91,14 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		uint32_t network_byte_order;
 		uint32_t some_long = results[i*ANALYSIS_TPB+j].ipSrc;
 		network_byte_order = htonl(some_long);
-		struct in_addr in;
+		struct in_addr in,out;
 		in.s_addr = network_byte_order;
+		some_long = results[i*ANALYSIS_TPB+j].ipDst;
+		network_byte_order = htonl(some_long);
+		out.s_addr = network_byte_order;
 	// cout<<unsigned(results[i*ANALYSIS_TPB+j].version)<<endl;
 		if(results[i*ANALYSIS_TPB+j].maliciousVer == 1)
 		{
-		
 		incorrectVerNumber++;
 		//cout<<inet_ntoa(in);
 		cout<<endl;	
@@ -118,6 +120,24 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		cout<<"Alarm!! Reserved bits are set, the packet is from src Address:";
 		cout<<inet_ntoa(in);
 		cout<<endl;				
+		}
+		if(results[i*ANALYSIS_TPB+j].maliciousPort == 1)
+		{
+		if(results[i*ANALYSIS_TPB+j].srcPort==0)
+		cout<<"Alarm!! TCP Packet from src Address "<<inet_ntoa(in)<<"has source Port set to zero!";
+		else
+		cout<<"Alarm!! TCP Packet from src Address"<<inet_ntoa(in)<< has destination Port set to zero!";
+		cout<<endl;
+		}
+		if(results[i*ANALYSIS_TPB+j].maliciousAck == 1)
+		{
+		cout<<"Alarm!! TCP Packet has acknowledgement bit set and ACK number is zero";
+		cout<<"Packet from "<<inet_ntoa(in)<<"should be blocked"<<endl;
+		}
+		if(results[i*ANALYSIS_TPB+j].maliciousDst == 1)
+		{
+		cout<<"Alarm!! TCP Broadcast Packet! with address"<<inet_ntoa(out);
+		cout<<endl;
 		}
 		}
 		for(j = 0;j<auxBlocks[i];j++){

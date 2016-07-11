@@ -32,6 +32,7 @@ typedef struct{
 	unsigned char * data;
 	uint16_t sport;
 	uint16_t dport;
+	uint32_t ack;
 	int indexTcp;
 	int indexUdp;
 	int indexIcmp;
@@ -39,6 +40,8 @@ typedef struct{
 	int maliciousIP;
 	int maliciousFlags;
 	int maliciousReserved;
+	int maliciousPort;
+	int maliciousAck;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
 /*__device__ int indexTcp = 0;
@@ -73,10 +76,12 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.flags = 0;\	
 		DATA_ELEMENT.sport = GET_FIELD(TCP_HEADER.sport);\
 		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\	
+		DATA_ELEMENT.ack = GET_FIELD(TCP_HEADER.ack);\
 		DATA_ELEMENT.flags = TCP_HEADER.flags;\	
 		DATA_ELEMENT.unused = TCP_HEADER.unused;\	
 		DATA_ELEMENT.maliciousReserved = 0;\
 		DATA_ELEMENT.maliciousFlags=0;\
+		DATA_ELEMENT.maliciousPort=0;\
 		}\
 }while(0)
 	
@@ -97,7 +102,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-		unsigned int octet1,octet2,octet3,octet4;
+		unsigned int octet1,octet2,octet3,octet4,dstOctet4;
 		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
 		if(blockIdx.x==0) printf("Flag of the thread with threadId %d in block %d is %" PRIu8 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].flags);
 		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
@@ -158,6 +163,20 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	if(elements[threadIdx.x].unused == 0) GPU_results[threadIndex].maliciousFlags = 1;	
 	else GPU_results[threadIndex].maliciousReserved = 1;
 	} 	
+	if(elements[threadIdx.x].sport == 0 || elements[threadIdx.x].dport == 0) 
+	{
+	GPU_results[threadIndex].sport = elements[threadIdx.x].sport;
+	GPU_results[threadIndex].dport = elements[threadIdx.x].dport;
+	GPU_results[threadIndex].maliciousPort = 1;
+	}
+	if(elements[threadIdx.x].flags & 16 ==1 && elements[threadIdx.x].ack==0)
+	GPU_results[threadIndex].maliciousAck=1;
+	
+	uint32_t destnAddress = elements[threadIdx.x].ipDst;
+	int dstOctet4 = (destnAddress & 0x000000ff);
+	
+	if(dstOctet4==0 || dstOctet4==255)
+	GPU_results[threadIndex].maliciousDst=1;
 	}	 												
 	__syncthreads();
 
