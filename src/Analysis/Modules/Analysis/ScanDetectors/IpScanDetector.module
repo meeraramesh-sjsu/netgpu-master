@@ -18,13 +18,21 @@
 #include <string>
 #include <stdio.h>
 using namespace std;
-
 typedef struct{
-	uint32_t ipSrc;
-	uint32_t ipSrcNetwork;
-	uint32_t ipDst;
-	uint32_t counter;
+	//IP
+	uint8_t headerLength;
+	uint8_t version;
+	uint8_t	 tos;		
+	uint16_t totalLength;
+	uint16_t identification;			
+	uint16_t flagsAndOffset;
+	uint8_t  ttl;		
 	uint8_t protocol;
+	uint16_t checksum;
+	uint32_t ipSrc;
+	uint32_t ipDst;
+	uint32_t ipSrcNetwork;
+	uint32_t counter;
 	uint8_t version;
 	uint8_t flags;
 	uint8_t unused;
@@ -61,17 +69,24 @@ __device__ int totalThreads=0;
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 	do{\
 	 if(IS_ETHERNET() && IS_IP4()){\
-		DATA_ELEMENT.version=0;\
-        DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
-        DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
-		DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
-		DATA_ELEMENT.version = IP4_HEADER.version;\
-		DATA_ELEMENT.indexTcp=0;\
-		DATA_ELEMENT.indexUdp=0;\
-		DATA_ELEMENT.indexIcmp=0;\
-		DATA_ELEMENT.maliciousVer=0;\	
-		DATA_ELEMENT.maliciousIP=0;\
-		}\
+		 DATA_ELEMENT.version=0;\
+		 DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
+		 DATA_ELEMENT.headerLength = GET_FIELD(IP4_HEADER.headerLength);\
+		 DATA_ELEMENT.tos = GET_FIELD(IP4_HEADER.tos);\
+		 DATA_ELEMENT.totalLength = GET_FIELD(IP4_HEADER.totalLength);\
+		 DATA_ELEMENT.identification = GET_FIELD(IP4_HEADER.identification);\
+		 DATA_ELEMENT.flagsAndOffset = GET_FIELD(IP4_HEADER.flagsAndOffset);\
+		 DATA_ELEMENT.ttl = GET_FIELD(IP4_HEADER.ttl);\
+		 DATA_ELEMENT.checksum = GET_FIELD(IP4_HEADER.checksum);\ 	        
+		 DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
+		 DATA_ELEMENT.protocol = GET_FIELD(IP4_HEADER.protocol);\
+		 DATA_ELEMENT.version = IP4_HEADER.version;\
+		 DATA_ELEMENT.indexTcp=0;\
+		 DATA_ELEMENT.indexUdp=0;\
+		 DATA_ELEMENT.indexIcmp=0;\
+		 DATA_ELEMENT.maliciousVer=0;\	
+		 DATA_ELEMENT.maliciousIP=0;\
+		 		}\
 		if(IS_TCP())\
 		{\
 		DATA_ELEMENT.flags = 0;\	
@@ -105,8 +120,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
 		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
-		if(blockIdx.x==0) printf("Flag of the thread with threadId %d in block %d is %" PRIu8 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].flags);
 		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
+		/*Counting the number of TCP, UDP and ICMP Packets */
 		if(elements[threadIdx.x].protocol==6) //TCP packet
 		{
 		atomicAdd(&(GPU_results[0].indexTcp),1);
@@ -122,14 +137,23 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		/*Rules for Detecting Malicious IP Packets */
 		if(IS_IP4() || IS_IP6())
 		{
-		/* In actual implementatiion REPLACE below line with 
-		elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6
-		Since we have not injected malicous packets using below comparison*/
+			if(blockIdx.x==0)
+			printf(PRIu8 PRIu8 PRIu8 PRIu16 PRIu16 PRIu16 PRIu8 PRIu8 PRIu16 PRIu32 PRIu32,\
+			elements[threadIdx.x].headerLength,elements[threadIdx.x].version,\
+			elements[threadIdx.x].tos,elements[threadIdx.x].totalLength,\
+			elements[threadIdx.x].identification,elements[threadIdx.x].flagsAndOffset,\
+			elements[threadIdx.x].ttl,elements[threadIdx.x].protocol,\
+			elements[threadIdx.x].checksum,elements[threadIdx.x].ipSrc,\
+			elements[threadIdx.x].ipDst);
+			printf("\n");
+		/*Checking if the version number in IP Packets is anything other than 4 or 6, 0 is because by default the value is 0*/
 		if(elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6 && elements[threadIdx.x].version!=0) //Should be Malicious version
 		{
 		GPU_results[threadIndex].maliciousVer = 1;
 		}
+		/*Checking if the source or destination IP address is in Private Address range*/
 		GPU_results[threadIndex].ipSrc = GPU_data[threadIndex].ipSrc;
+		GPU_results[threadIndex].ipDst = GPU_data[threadIndex].ipDst;
 		//Checking if the source IP address is in Private Address range
 		uint32_t sourceAddress = elements[threadIdx.x].ipSrc;
 		 octet1 = (sourceAddress & 0xff000000) >> 24;
@@ -156,10 +180,15 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
    	 {
       GPU_results[threadIndex].maliciousIP=1;
 	}
+	
+	/*Computing the checksum and checking if the sum is 0*/
+	
 		 //printf("Source IP address is %u.%u.%u.%u\n",octet1,octet2,octet3,octet4);		
 	}
+	
 	if(IS_TCP())
 	{
+	/*Checking if TCP Flag bit combination is malicious*/
 	if(elements[threadIdx.x].flags == 3 ||
 	elements[threadIdx.x].flags == 11 || elements[threadIdx.x].flags == 7 ||
 	elements[threadIdx.x].flags == 15 || elements[threadIdx.x].flags == 1 ||
@@ -170,6 +199,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	else GPU_results[threadIndex].maliciousReserved = 1;
 	} 	
 	
+	/*Checking if the source or Destination port is 0*/
 	if(elements[threadIdx.x].sport == 0 || elements[threadIdx.x].dport == 0) 
 	{
 	GPU_results[threadIndex].sport = elements[threadIdx.x].sport;
@@ -177,9 +207,11 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	GPU_results[threadIndex].maliciousPort = 1;
 	}
 	
+	/*Checking if the ackowledgement bit is set, than the ACK number should not be zero*/
 	if(elements[threadIdx.x].flags & 16 ==1 && elements[threadIdx.x].ack==0)
 	GPU_results[threadIndex].maliciousAck=1;
 	
+	/*Checking if TCP Packet is broadcast packet*/
 	if(octet4Dst == 0 || octet4Dst == 255)
 	GPU_results[threadIndex].maliciousDst=1;
 	}	 												
