@@ -42,6 +42,7 @@ typedef struct{
 	int maliciousReserved;
 	int maliciousPort;
 	int maliciousAck;
+	int maliciousDst;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
 /*__device__ int indexTcp = 0;
@@ -102,7 +103,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-		unsigned int octet1,octet2,octet3,octet4,dstOctet4;
+		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
 		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
 		if(blockIdx.x==0) printf("Flag of the thread with threadId %d in block %d is %" PRIu8 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].flags);
 		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
@@ -135,18 +136,23 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		 octet2 = (sourceAddress & 0x00ff0000) >> 16;
 		 octet3 = (sourceAddress & 0x0000ff00) >> 8;
 		 octet4 = (sourceAddress & 0x000000ff);
-		 if (octet1 == 10)
+		 uint32_t dstAddress = elements[threadIdx.x].ipDst;
+		 octet1Dst = (dstAddress & 0xff000000) >> 24;
+		 octet2Dst = (dstAddress & 0x00ff0000) >> 16;
+		 octet3Dst = (dstAddress & 0x0000ff00) >> 8;
+		 octet4Dst = (dstAddress & 0x000000ff);
+		 if (octet1 == 10 || octet1Dst==10)
 		 {
         GPU_results[threadIndex].maliciousIP=1;
         }
 		
     // 172.16.0.0 - 172.31.255.255
-  	  if ((octet1 == 172) && (octet2 >= 16) && (octet2 <= 31))
+  	  if ((octet1 == 172 || octet1Dst==172) && (octet2 >= 16 || octet2Dst >=16 ) && (octet2 <= 31 || octet2Dst<=31))
   	  {
        GPU_results[threadIndex].maliciousIP=1;
 		}
     // 192.168.0.0 - 192.168.255.255
-   	 if ((octet1 == 192) && (octet2 == 168))
+   	 if ((octet1 == 192 || octet1Dst == 192) && (octet2 == 168 || octet2Dst == 168))
    	 {
       GPU_results[threadIndex].maliciousIP=1;
 	}
@@ -163,19 +169,18 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	if(elements[threadIdx.x].unused == 0) GPU_results[threadIndex].maliciousFlags = 1;	
 	else GPU_results[threadIndex].maliciousReserved = 1;
 	} 	
+	
 	if(elements[threadIdx.x].sport == 0 || elements[threadIdx.x].dport == 0) 
 	{
 	GPU_results[threadIndex].sport = elements[threadIdx.x].sport;
 	GPU_results[threadIndex].dport = elements[threadIdx.x].dport;
 	GPU_results[threadIndex].maliciousPort = 1;
 	}
+	
 	if(elements[threadIdx.x].flags & 16 ==1 && elements[threadIdx.x].ack==0)
 	GPU_results[threadIndex].maliciousAck=1;
 	
-	uint32_t destnAddress = elements[threadIdx.x].ipDst;
-	int dstOctet4 = (destnAddress & 0x000000ff);
-	
-	if(dstOctet4==0 || dstOctet4==255)
+	if(octet4Dst == 0 || octet4Dst == 255)
 	GPU_results[threadIndex].maliciousDst=1;
 	}	 												
 	__syncthreads();

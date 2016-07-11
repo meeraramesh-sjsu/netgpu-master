@@ -105,8 +105,8 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		}
 		if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
 		{
-		cout<<"Alarm!! Src address is in private Address range: ";
-		cout<<inet_ntoa(in);
+		cout<<"Alarm!! Src address or Destination address is in private Address range: ";
+		cout<<inet_ntoa(in)<<" "<<inet_ntoa(out);
 		cout<<endl;				
 		}
 		if(results[i*ANALYSIS_TPB+j].maliciousFlags == 1)
@@ -123,10 +123,10 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		}
 		if(results[i*ANALYSIS_TPB+j].maliciousPort == 1)
 		{
-		if(results[i*ANALYSIS_TPB+j].srcPort==0)
+		if(results[i*ANALYSIS_TPB+j].sport==0)
 		cout<<"Alarm!! TCP Packet from src Address "<<inet_ntoa(in)<<"has source Port set to zero!";
 		else
-		cout<<"Alarm!! TCP Packet from src Address"<<inet_ntoa(in)<< has destination Port set to zero!";
+		cout<<"Alarm!! TCP Packet from src Address"<<inet_ntoa(in)<< "has destination Port set to zero!";
 		cout<<endl;
 		}
 		if(results[i*ANALYSIS_TPB+j].maliciousAck == 1)
