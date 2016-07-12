@@ -138,14 +138,15 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		{
 			if(threadIndex==0)
 				//PRIu8 PRIu8 PRIu8 PRIu16 PRIu16 PRIu16 PRIu8 PRIu8 PRIu16 PRIu32 PRIu32
-			printf("Printing the IP4 Header: % " PRIu8," % " PRIu8," % " PRIu8," % " PRIu16 ," % " PRIu16," % " PRIu16," % "
-					PRIu8," % " PRIu8," % " PRIu16," % " PRIu32," % " PRIu32,
-			elements[threadIdx.x].headerLength,elements[threadIdx.x].version,\
+			printf("Printing the IP4 Header: % " PRIu8, /*," % " PRIu8," % " PRIu8," % " PRIu16 ," % " PRIu16," % " PRIu16," % "
+					PRIu8," % " PRIu8," % " PRIu16," % " PRIu32," % " PRIu32,*/
+			elements[threadIdx.x].headerLength,
+			/*,elements[threadIdx.x].version,\
 			elements[threadIdx.x].tos,elements[threadIdx.x].totalLength,\
 			elements[threadIdx.x].identification,elements[threadIdx.x].flagsAndOffset,\
 			elements[threadIdx.x].ttl,elements[threadIdx.x].protocol,\
 			elements[threadIdx.x].checksum,elements[threadIdx.x].ipSrc,\
-			elements[threadIdx.x].ipDst);
+			elements[threadIdx.x].ipDst);*/
 			printf("\n");
 		/*Checking if the version number in IP Packets is anything other than 4 or 6, 0 is because by default the value is 0*/
 		if(elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6 && elements[threadIdx.x].version!=0) //Should be Malicious version
