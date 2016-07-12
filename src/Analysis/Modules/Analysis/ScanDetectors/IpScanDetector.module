@@ -138,9 +138,9 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		{
 			if(blockIdx.x==0)
 				//PRIu8 PRIu8 PRIu8 PRIu16 PRIu16 PRIu16 PRIu8 PRIu8 PRIu16 PRIu32 PRIu32
-			printf("Printing the IP Header:%",PRIu8,"%",PRIu8,"%",PRIu8,"%",PRIu16,"%",PRIu16,"%",PRIu16,"%",\
-					PRIu8,"%",PRIu8,\
-					"%",PRIu16, "%",PRIu32,"%",PRIu32,\
+			printf("Printing the IP Header:%" PRIu8,"%" PRIu8,"%" PRIu8,"%" PRIu16 ,"%" PRIu16,"%" PRIu16,"%"
+					PRIu8,"%" PRIu8,
+					"%" PRIu16, "%" PRIu32,"%" PRIu32,
 			elements[threadIdx.x].headerLength,elements[threadIdx.x].version,\
 			elements[threadIdx.x].tos,elements[threadIdx.x].totalLength,\
 			elements[threadIdx.x].identification,elements[threadIdx.x].flagsAndOffset,\
@@ -157,7 +157,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		GPU_results[threadIndex].ipSrc = GPU_data[threadIndex].ipSrc;
 		GPU_results[threadIndex].ipDst = GPU_data[threadIndex].ipDst;
 		//Checking if the source IP address is in Private Address range
-		uint32_t sourceAddress = elements[threadIdx.x].ipSrc;
+		 uint32_t sourceAddress = elements[threadIdx.x].ipSrc;
 		 octet1 = (sourceAddress & 0xff000000) >> 24;
 		 octet2 = (sourceAddress & 0x00ff0000) >> 16;
 		 octet3 = (sourceAddress & 0x0000ff00) >> 8;
