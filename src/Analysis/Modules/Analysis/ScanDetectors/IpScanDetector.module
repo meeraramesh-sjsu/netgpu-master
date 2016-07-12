@@ -141,6 +141,16 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 			printf("Printing the IP4 Header: % " PRIu8, /*," % " PRIu8," % " PRIu8," % " PRIu16 ," % " PRIu16," % " PRIu16," % "
 					PRIu8," % " PRIu8," % " PRIu16," % " PRIu32," % " PRIu32,*/
 			elements[threadIdx.x].headerLength);
+			printf("Version: % " PRIu8,elements[threadIdx.x].version);
+			printf("TOS: %" PRIu8,elements[threadIdx.x].tos);
+			printf("Total Length: %" PRIu16, elements[threadIdx.x].totalLength);
+			printf("Identification: %" PRIu16, elements[threadIdx.x].identification);
+			printf("Flags and Offset: %" PRIu16, elements[threadIdx.x].flagsAndOffset);
+			printf("TTL: %" PRIu8, elements[threadIdx.x].ttl);
+			printf("Protocol: %" PRIu8, elements[threadIdx.x].protocol);
+			printf("Checksum: %" PRIu16, elements[threadIdx.x].checksum);
+			printf("Src Address: %" PRIu16, elements[threadIdx.x].ipSrc);
+			printf("Dest Address: %" PRIu16, elements[threadIdx.x].ipDst);
 			/*,elements[threadIdx.x].version,\
 			elements[threadIdx.x].tos,elements[threadIdx.x].totalLength,\
 			elements[threadIdx.x].identification,elements[threadIdx.x].flagsAndOffset,\
