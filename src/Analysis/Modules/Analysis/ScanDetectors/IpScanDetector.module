@@ -33,7 +33,6 @@ typedef struct{
 	uint32_t ipDst;
 	uint32_t ipSrcNetwork;
 	uint32_t counter;
-	uint8_t version;
 	uint8_t flags;
 	uint8_t unused;
 	float rate;
