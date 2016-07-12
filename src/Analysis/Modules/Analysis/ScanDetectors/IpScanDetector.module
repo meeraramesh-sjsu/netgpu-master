@@ -137,7 +137,10 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		if(IS_IP4() || IS_IP6())
 		{
 			if(blockIdx.x==0)
-			printf(PRIu8 PRIu8 PRIu8 PRIu16 PRIu16 PRIu16 PRIu8 PRIu8 PRIu16 PRIu32 PRIu32,\
+				//PRIu8 PRIu8 PRIu8 PRIu16 PRIu16 PRIu16 PRIu8 PRIu8 PRIu16 PRIu32 PRIu32
+			printf("Printing the IP Header:%",PRIu8,"%",PRIu8,"%",PRIu8,"%",PRIu16,"%",PRIu16,"%",PRIu16,"%",\
+					PRIu8,"%",PRIu8,\
+					"%",PRIu16, "%",PRIu32,"%",PRIu32,\
 			elements[threadIdx.x].headerLength,elements[threadIdx.x].version,\
 			elements[threadIdx.x].tos,elements[threadIdx.x].totalLength,\
 			elements[threadIdx.x].identification,elements[threadIdx.x].flagsAndOffset,\
