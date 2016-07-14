@@ -40,7 +40,7 @@ typedef struct{
 	uint16_t sport;
 	uint16_t dport;
 	uint32_t ack;
-	u_short *addr;
+	//u_short *addr;
 	int indexTcp;
 	int indexUdp;
 	int indexIcmp;
@@ -71,7 +71,7 @@ __device__ int totalThreads=0;
 	do{\
 	 if(IS_ETHERNET() && IS_IP4()){\
 		 DATA_ELEMENT.version=0;\
-		 DATA_ELEMENT.addr = IP4_HEADERPTR;\
+		 /*DATA_ELEMENT.addr = IP4_HEADERPTR;\*/
 		 DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
 		 DATA_ELEMENT.headerLength = IP4_HEADER.headerLength;\
 		 DATA_ELEMENT.tos = IP4_HEADER.tos;\
@@ -119,13 +119,13 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 
 		//Global Thread Index
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
-		if(threadIndex==0)
+		/*if(threadIndex==0)
 		{
 			while (ipLen > 1)  {
 			      cout<< *addr++<< " ";
 			        nleft -= 2;
 			    }
-		}
+		}*/
 		cout<<endl;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
