@@ -88,7 +88,7 @@ __device__ int totalThreads=0;
 		 DATA_ELEMENT.indexIcmp=0;\
 		 DATA_ELEMENT.maliciousVer=0;\	
 		 DATA_ELEMENT.maliciousIP=0;\
-		 DATA_ELEMENT.ipLen = DATA_ELEMENT.headerLength * 4;
+		 //DATA_ELEMENT.ipLen = DATA_ELEMENT.headerLength * 4;
 		 		}\
 		if(IS_TCP())\
 		{\
