@@ -40,6 +40,7 @@ typedef struct{
 	uint16_t sport;
 	uint16_t dport;
 	uint32_t ack;
+	u_short *addr;
 	int indexTcp;
 	int indexUdp;
 	int indexIcmp;
@@ -50,6 +51,7 @@ typedef struct{
 	int maliciousPort;
 	int maliciousAck;
 	int maliciousDst;
+	int ipLen;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
 /*__device__ int indexTcp = 0;
@@ -69,6 +71,7 @@ __device__ int totalThreads=0;
 	do{\
 	 if(IS_ETHERNET() && IS_IP4()){\
 		 DATA_ELEMENT.version=0;\
+		 DATA_ELEMENT.addr = IP4_HEADERPTR;
 		 DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
 		 DATA_ELEMENT.headerLength = IP4_HEADER.headerLength;\
 		 DATA_ELEMENT.tos = IP4_HEADER.tos;\
@@ -85,6 +88,7 @@ __device__ int totalThreads=0;
 		 DATA_ELEMENT.indexIcmp=0;\
 		 DATA_ELEMENT.maliciousVer=0;\	
 		 DATA_ELEMENT.maliciousIP=0;\
+		 DATA_ELEMENT.ipLen = DATA_ELEMENT.headerLength * 4;
 		 		}\
 		if(IS_TCP())\
 		{\
@@ -115,6 +119,14 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 
 		//Global Thread Index
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
+		if(threadIndex==0)
+		{
+			while (ipLen > 1)  {
+			      cout<< *addr++<< " ";
+			        nleft -= 2;
+			    }
+		}
+		cout<<endl;
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
@@ -144,6 +156,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 			elements[threadIdx.x].headerLength);
 			printf("Version: % " PRIu8,elements[threadIdx.x].version);
 			printf("TOS: %" PRIu8,elements[threadIdx.x].tos);
+		//	int verLenTOS =
 			printf("Total Length: %" PRIu16, elements[threadIdx.x].totalLength);
 			printf("Identification: %" PRIu16, elements[threadIdx.x].identification);
 			printf("Flags and Offset: %" PRIu16, elements[threadIdx.x].flagsAndOffset);
