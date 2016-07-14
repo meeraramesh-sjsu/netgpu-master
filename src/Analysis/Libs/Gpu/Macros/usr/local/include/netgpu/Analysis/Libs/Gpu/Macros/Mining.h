@@ -37,7 +37,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 // IP4
  
 #define IP4_HEADER (*((IP4_HEADER_TYPENAME*) GET_HEADER_POINTER(3) ))
-#define IP4_HEADERPTR = (IP4_HEADER_TYPENAME*) GET_HEADER_POINTER(3)
+#define IP4_HEADERPTR (IP4_HEADER_TYPENAME*) GET_HEADER_POINTER(3)
 #define IP4_HEADER_LEVEL(level) GET_HEADER_POINTER(level)
 
 
