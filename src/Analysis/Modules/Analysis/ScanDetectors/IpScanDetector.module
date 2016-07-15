@@ -151,7 +151,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 							+ elements[threadIdx.x].totalLength + elements[threadIdx.x].identification\
 							+ elements[threadIdx.x].flagsAndOffset + elements[threadIdx.x].checksum;
 					printf("\n Result = %d",result);
-					int sum = ~(result>>16 + (result & 0xFFFF));
+					unsigned int sum = ~(result>>16 + (result & 0xFFFF));
 					printf("\n Sum = %d",sum);
 					printf("\n");
 				}
