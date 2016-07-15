@@ -131,12 +131,17 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		//Printing the IP Header by extracting them as 16byte values
 		if(IS_IP4() && threadIndex==0)
 				{
-					printf("%"PRIu16,elements[threadIdx.x].headerVertos);
-					printf("%"PRIu16,elements[threadIdx.x].ttlprotocol);
-					printf("%"PRIu16,elements[threadIdx.x].ip_srcFirstHalf);
-					printf("%"PRIu16,elements[threadIdx.x].ip_srcSecHalf);
-					printf("%"PRIu16,elements[threadIdx.x].ip_dstFirstHalf);
-					printf("%"PRIu16,elements[threadIdx.x].ip_dstSecHalf);
+					printf("% "PRIu16,elements[threadIdx.x].headerVertos);
+					printf("\n");
+					printf("% "PRIu16,elements[threadIdx.x].ttlprotocol);
+					printf("\n");
+					printf("% "PRIu16,elements[threadIdx.x].ip_srcFirstHalf);
+					printf("\n");
+					printf("% "PRIu16,elements[threadIdx.x].ip_srcSecHalf);
+					printf("\n");
+					printf("% "PRIu16,elements[threadIdx.x].ip_dstFirstHalf);
+					printf("\n");
+					printf("% "PRIu16,elements[threadIdx.x].ip_dstSecHalf);
 				printf("\n");
 				}
 		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
