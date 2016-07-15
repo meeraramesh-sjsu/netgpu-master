@@ -76,8 +76,10 @@ struct ip4_header16Byte{
 	uint16_t flagsAndOffset;
 	uint16_t ttlprotocol;
 	uint16_t checksum;
-	uint32_t ip_srcFirstHalf:16,ip_srcSecHalf:16;
-	uint32_t ip_dstFirstHalf:16,ip_dstSecHalf:16;
+	uint16_t ip_srcFirstHalf;
+	uint16_t ip_srcSecHalf;
+	uint16_t ip_dstFirstHalf;
+	uint16_t ip_dstSecHalf;
 };
 /*End*/
 
