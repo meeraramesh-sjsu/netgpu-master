@@ -119,6 +119,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 
 		//Global Thread Index
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
+		printf("*********Printing the IP Header*********");
 		if(IS_IP4() && threadIndex==0)
 		{
 			int nleft = DATA_ELEMENT.headerLength*4;
@@ -127,7 +128,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 			        nleft -= 2;
 			    }
 		}
-		cout<<endl;
+		printf("\n");
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
