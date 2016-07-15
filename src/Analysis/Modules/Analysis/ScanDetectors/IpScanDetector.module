@@ -55,6 +55,7 @@ typedef struct{
 	int maliciousAck;
 	int maliciousDst;
 	int ipLen;
+	int maliciousCheckSum;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
 /*__device__ int indexTcp = 0;
@@ -128,33 +129,6 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 		//Printing the IP Header by extracting them as 16byte values
-		if(IS_IP4() && threadIndex==0)
-				{
-					printf("% "PRIu16,elements[threadIdx.x].headerVertos);
-					printf("\n");
-					printf("% "PRIu16,elements[threadIdx.x].ttlprotocol);
-					printf("\n");
-					printf("% "PRIu16,elements[threadIdx.x].ip_srcFirstHalf);
-					printf("\n");
-					printf("% "PRIu16,elements[threadIdx.x].ip_srcSecHalf);
-					printf("\n");
-					printf("% "PRIu16,elements[threadIdx.x].ip_dstFirstHalf);
-					printf("\n");
-					printf("% "PRIu16,elements[threadIdx.x].ip_dstSecHalf);
-					printf("\n % "PRIu16,elements[threadIdx.x].totalLength);
-					printf("\n % "PRIu16,elements[threadIdx.x].identification);
-					printf("\n % "PRIu16,elements[threadIdx.x].flagsAndOffset);
-					printf("\n % "PRIu16,elements[threadIdx.x].checksum);
-					int result = elements[threadIdx.x].headerVertos + elements[threadIdx.x].ttlprotocol\
-							+ elements[threadIdx.x].ip_srcFirstHalf + elements[threadIdx.x].ip_srcSecHalf\
-							+ elements[threadIdx.x].ip_dstFirstHalf + elements[threadIdx.x].ip_dstSecHalf\
-							+ elements[threadIdx.x].totalLength + elements[threadIdx.x].identification\
-							+ elements[threadIdx.x].flagsAndOffset + elements[threadIdx.x].checksum;
-					printf("\n Result = %d",result);
-					unsigned int sum = ~(result>>16 + (result & 0xFFFF));
-					printf("\n Sum = %d",sum);
-					printf("\n");
-				}
 		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
 		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
 		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
@@ -174,31 +148,6 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		/*Rules for Detecting Malicious IP Packets */
 		if(IS_IP4() || IS_IP6())
 		{
-			/*if(blockIdx.x==0)
-			{
-				//PRIu8 PRIu8 PRIu8 PRIu16 PRIu16 PRIu16 PRIu8 PRIu8 PRIu16 PRIu32 PRIu32
-			printf("Printing the IP4 Header: % " PRIu8, /*," % " PRIu8," % " PRIu8," % " PRIu16 ," % " PRIu16," % " PRIu16," % "
-					PRIu8," % " PRIu8," % " PRIu16," % " PRIu32," % " PRIu32,
-			elements[threadIdx.x].headerLength);
-			printf("Version: % " PRIu8,elements[threadIdx.x].version);
-			printf("TOS: %" PRIu8,elements[threadIdx.x].tos);
-		//	int verLenTOS =
-			printf("Total Length: %" PRIu16, elements[threadIdx.x].totalLength);
-			printf("Identification: %" PRIu16, elements[threadIdx.x].identification);
-			printf("Flags and Offset: %" PRIu16, elements[threadIdx.x].flagsAndOffset);
-			printf("TTL: %" PRIu8, elements[threadIdx.x].ttl);
-			printf("Protocol: %" PRIu8, elements[threadIdx.x].protocol);
-			printf("Checksum: %" PRIu16, elements[threadIdx.x].checksum);
-			printf("Src Address: %" PRIu16, elements[threadIdx.x].ipSrc);
-			printf("Dest Address: %" PRIu16, elements[threadIdx.x].ipDst);
-			}*/
-			/*,elements[threadIdx.x].version,\
-			elements[threadIdx.x].tos,elements[threadIdx.x].totalLength,\
-			elements[threadIdx.x].identification,elements[threadIdx.x].flagsAndOffset,\
-			elements[threadIdx.x].ttl,elements[threadIdx.x].protocol,\
-			elements[threadIdx.x].checksum,elements[threadIdx.x].ipSrc,\
-			elements[threadIdx.x].ipDst);*/
-			printf("\n");
 		/*Checking if the version number in IP Packets is anything other than 4 or 6, 0 is because by default the value is 0*/
 		if(elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6 && elements[threadIdx.x].version!=0) //Should be Malicious version
 		{
@@ -233,6 +182,16 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
    	 {
       GPU_results[threadIndex].maliciousIP=1;
 	}
+   	 if(IS_IP4())
+   	 {
+			int result = elements[threadIdx.x].headerVertos + elements[threadIdx.x].ttlprotocol\
+			+ elements[threadIdx.x].ip_srcFirstHalf + elements[threadIdx.x].ip_srcSecHalf\
+			+ elements[threadIdx.x].ip_dstFirstHalf + elements[threadIdx.x].ip_dstSecHalf\
+			+ elements[threadIdx.x].totalLength + elements[threadIdx.x].identification\
+			+ elements[threadIdx.x].flagsAndOffset + elements[threadIdx.x].checksum;
+			unsigned int sum = ~(result>>16 + (result & 0xFFFF));
+			if(sum!=-1) GPU_results[threadIndex].maliciousCheckSum = 1;
+   	 }
 	
 	/*Computing the checksum and checking if the sum is 0*/
 	

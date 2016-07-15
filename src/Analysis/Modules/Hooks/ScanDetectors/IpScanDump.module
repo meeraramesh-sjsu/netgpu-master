@@ -139,6 +139,11 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		cout<<"Alarm!! TCP Broadcast Packet! with address"<<inet_ntoa(out);
 		cout<<endl;
 		}
+		if(results[i*ANALYSIS_TPB+j].maliciousCheckSum == 1)
+		{
+		cout<<"Alarm!! The IPv4 Packet has an incorrect checksum and should be discarded"<<endl;
+		cout<<"From"<<inet_ntoa(in)<<endl;
+		}
 		}
 		for(j = 0;j<auxBlocks[i];j++){
 		cout<<"Hello inside j loop Hooks"<<auxBlocks[i]<<endl;
