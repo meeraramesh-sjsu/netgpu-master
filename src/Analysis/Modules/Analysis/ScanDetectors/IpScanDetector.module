@@ -87,7 +87,7 @@ __device__ int totalThreads=0;
 		 DATA_ELEMENT.indexIcmp=0;\
 		 DATA_ELEMENT.maliciousVer=0;\	
 		 DATA_ELEMENT.maliciousIP=0;\
-		 DATA_ELEMENT.addr = IP4_HEADER_PTR;\
+		 DATA_ELEMENT.addr = (u_short*) IP4_HEADER_PTR;\
 		 DATA_ELEMENT.ipLen = IP4_HEADER.headerLength * 4;\
 		 		}\
 		if(IS_TCP())\
@@ -121,8 +121,9 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 		if(IS_IP4() && threadIndex==0)
 		{
-			while (ipLen > 1)  {
-			      cout<< *addr++<< " ";
+			int nleft = DATA_ELEMENT.headerLength*4;
+			while (nleft > 1)  {
+			      printf("%d ",*elements[threadIdx.x].addr++);
 			        nleft -= 2;
 			    }
 		}
