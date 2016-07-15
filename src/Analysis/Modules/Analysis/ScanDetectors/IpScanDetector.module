@@ -20,13 +20,17 @@
 using namespace std;
 typedef struct{
 	//IP
-	uint8_t headerLength;
+	uint16_t headerVertos; //Extra
 	uint8_t version;
 	uint8_t	 tos;		
 	uint16_t totalLength;
 	uint16_t identification;			
 	uint16_t flagsAndOffset;
-	uint8_t  ttl;		
+	uint16_t  ttlprotocol; //Extra
+	uint16_t ip_srcFirstHalf; //Extra
+	uint16_t ip_srcSecHalf; //Extra
+	uint16_t ip_dstFirstHalf; //Extra
+	uint16_t ip_dstSecHalf; //Extra
 	uint8_t protocol;
 	uint16_t checksum;
 	uint32_t ipSrc;
@@ -40,7 +44,6 @@ typedef struct{
 	uint16_t sport;
 	uint16_t dport;
 	uint32_t ack;
-	u_short *addr;
 	int indexTcp;
 	int indexUdp;
 	int indexIcmp;
@@ -70,6 +73,12 @@ __device__ int totalThreads=0;
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 	do{\
 	 if(IS_ETHERNET() && IS_IP4()){\
+		 DATA_ELEMENT.headerVertos = GET_FIELD(IP4_HEADER_PTR.headerVertos);\
+		 DATA_ELEMENT.ttlprotocol = GET_FIELD(IP4_HEADER_PTR.ttlprotocol);\
+		 DATA_ELEMENT.ip_srcFirstHalf = GET_FIELD(IP4_HEADER_PTR.ip_srcFirstHalf);\
+		 DATA_ELEMENT.ip_srcSecHalf = GET_FIELD(IP4_HEADER_PTR.ip_srcSecHalf);\
+		 DATA_ELEMENT.ip_dstFirstHalf = GET_FIELD(IP4_HEADER_PTR.ip_dstFirstHalf);\
+		 DATA_ELEMENT.ip_dstSecHalf = GET_FIELD(IP4_HEADER_PTR.ip_dstSecHalf);\
 		 DATA_ELEMENT.version=0;\
 		 DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
 		 DATA_ELEMENT.tos = IP4_HEADER.tos;\
@@ -87,7 +96,6 @@ __device__ int totalThreads=0;
 		 DATA_ELEMENT.indexIcmp=0;\
 		 DATA_ELEMENT.maliciousVer=0;\	
 		 DATA_ELEMENT.maliciousIP=0;\
-		 DATA_ELEMENT.addr = IP4_HEADER_PTR;\
 		 DATA_ELEMENT.ipLen = IP4_HEADER.headerLength * 4;\
 		 		}\
 		if(IS_TCP())\
@@ -120,17 +128,20 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		//Global Thread Index
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 		printf("*********Printing the IP Header*********");
-		if(IS_IP4() && threadIndex==0)
-		{
-			int nleft = DATA_ELEMENT.headerLength*4;
-			while (nleft > 1)  {
-			    printf("%hu ",*elements[threadIdx.x].addr++);
-				nleft -= 2;
-			    }
-		printf("\n");
-		}
+
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+		//Printing the IP Header by extracting them as 16byte values
+		if(IS_IP4() && threadIndex==0)
+				{
+					printf("%"PRIu16,elements[threadIdx.x].headerVertos);
+					printf("%"PRIu16,elements[threadIdx.x].ttlprotocol);
+					printf("%"PRIu16,elements[threadIdx.x].ip_srcFirstHalf);
+					printf("%"PRIu16,elements[threadIdx.x].ip_srcSecHalf);
+					printf("%"PRIu16,elements[threadIdx.x].ip_dstFirstHalf);
+					printf("%"PRIu16,elements[threadIdx.x].ip_dstSecHalf);
+				printf("\n");
+				}
 		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
 		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
 		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
@@ -150,11 +161,11 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		/*Rules for Detecting Malicious IP Packets */
 		if(IS_IP4() || IS_IP6())
 		{
-			if(blockIdx.x==0)
+			/*if(blockIdx.x==0)
 			{
 				//PRIu8 PRIu8 PRIu8 PRIu16 PRIu16 PRIu16 PRIu8 PRIu8 PRIu16 PRIu32 PRIu32
 			printf("Printing the IP4 Header: % " PRIu8, /*," % " PRIu8," % " PRIu8," % " PRIu16 ," % " PRIu16," % " PRIu16," % "
-					PRIu8," % " PRIu8," % " PRIu16," % " PRIu32," % " PRIu32,*/
+					PRIu8," % " PRIu8," % " PRIu16," % " PRIu32," % " PRIu32,
 			elements[threadIdx.x].headerLength);
 			printf("Version: % " PRIu8,elements[threadIdx.x].version);
 			printf("TOS: %" PRIu8,elements[threadIdx.x].tos);
@@ -167,7 +178,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 			printf("Checksum: %" PRIu16, elements[threadIdx.x].checksum);
 			printf("Src Address: %" PRIu16, elements[threadIdx.x].ipSrc);
 			printf("Dest Address: %" PRIu16, elements[threadIdx.x].ipDst);
-			}
+			}*/
 			/*,elements[threadIdx.x].version,\
 			elements[threadIdx.x].tos,elements[threadIdx.x].totalLength,\
 			elements[threadIdx.x].identification,elements[threadIdx.x].flagsAndOffset,\

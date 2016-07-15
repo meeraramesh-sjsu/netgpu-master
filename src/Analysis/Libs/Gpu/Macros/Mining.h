@@ -33,12 +33,12 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 //End of ETHERNET
 	
-
 // IP4
  
 #define IP4_HEADER (*((IP4_HEADER_TYPENAME*) GET_HEADER_POINTER(3) ))
-#define IP4_HEADER_PTR ((u_short*) GET_HEADER_POINTER(3))
-
+/* @author:Meera*/
+#define IP4_HEADER_PTR (*((IP4_HEADER_TYPENAME_16Byte*) GET_HEADER_POINTER(3) ))
+/*End*/
 #define IP4_HEADER_LEVEL(level) GET_HEADER_POINTER(level)
 
 #define IS_IP4_LEVEL(level) \
