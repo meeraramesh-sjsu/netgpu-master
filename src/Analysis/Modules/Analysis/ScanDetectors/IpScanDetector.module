@@ -142,7 +142,17 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 					printf("% "PRIu16,elements[threadIdx.x].ip_dstFirstHalf);
 					printf("\n");
 					printf("% "PRIu16,elements[threadIdx.x].ip_dstSecHalf);
-				printf("\n");
+					printf("\n % "PRIu16,elements[threadIdx.x].totalLength);
+					printf("\n % "PRIu16,elements[threadIdx.x].identification);
+					printf("\n % "PRIu16,elements[threadIdx.x].flagsAndOffset);
+					printf("\n % "PRIu16,elements[threadIdx.x].checksum);
+					int result = elements[threadIdx.x].headerVertos + elements[threadIdx.x].ttlprotocol\
+							+ elements[threadIdx.x].ip_srcFirstHalf + elements[threadIdx.x].ip_srcSecHalf\
+							+ elements[threadIdx.x].ip_dstFirstHalf + elements[threadIdx.x].ip_dstSecHalf;
+					printf("\n Result = %d",result);
+					int sum = ~(result>>16 + (result & 0xFFFF));
+					printf("\n Sum = %d",sum);
+					printf("\n");
 				}
 		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
 		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
