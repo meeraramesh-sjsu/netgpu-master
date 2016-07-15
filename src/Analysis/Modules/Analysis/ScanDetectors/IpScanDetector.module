@@ -124,7 +124,6 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 
 		//Global Thread Index
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
-		printf("*********Printing the IP Header*********");
 
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
@@ -148,7 +147,9 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 					printf("\n % "PRIu16,elements[threadIdx.x].checksum);
 					int result = elements[threadIdx.x].headerVertos + elements[threadIdx.x].ttlprotocol\
 							+ elements[threadIdx.x].ip_srcFirstHalf + elements[threadIdx.x].ip_srcSecHalf\
-							+ elements[threadIdx.x].ip_dstFirstHalf + elements[threadIdx.x].ip_dstSecHalf;
+							+ elements[threadIdx.x].ip_dstFirstHalf + elements[threadIdx.x].ip_dstSecHalf\
+							+ elements[threadIdx.x].totalLength + elements[threadIdx.x].identification\
+							+ elements[threadIdx.x].flagsAndOffset + elements[threadIdx.x].checksum;
 					printf("\n Result = %d",result);
 					int sum = ~(result>>16 + (result & 0xFFFF));
 					printf("\n Sum = %d",sum);
