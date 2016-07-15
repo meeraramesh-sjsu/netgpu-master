@@ -124,7 +124,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		{
 			int nleft = DATA_ELEMENT.headerLength*4;
 			while (nleft > 1)  {
-			    printf("%u ",*elements[threadIdx.x].addr++);
+			    printf("%hu ",*elements[threadIdx.x].addr++);
 				nleft -= 2;
 			    }
 		printf("\n");

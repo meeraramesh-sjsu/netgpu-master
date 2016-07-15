@@ -41,7 +41,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 #define IP4_HEADER_LEVEL(level) GET_HEADER_POINTER(level)
 
-
 #define IS_IP4_LEVEL(level) \
 	( IS_HEADER_TYPE_IP4(&(PACKET->headers), level) )
 
