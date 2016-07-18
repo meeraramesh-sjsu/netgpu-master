@@ -288,7 +288,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	//Printing the TCP payload
 	if(threadIndex == 0)
 	{
-		int len_rem = elements[threadIdx.x].size_payload;
+		int len = elements[threadIdx.x].size_payload;
+		int len_rem = len;
 		int line_width = 16;			/* number of bytes per line */
 		int line_len;
 		int offset = 0;					/* zero-based offset counter */
