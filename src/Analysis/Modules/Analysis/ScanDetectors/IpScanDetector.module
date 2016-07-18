@@ -113,8 +113,7 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.unused = TCP_HEADER.unused;\	
 		DATA_ELEMENT.offset = TCP_HEADER.offset;\
 		DATA_ELEMENT.size_tcp = TCP_HEADER.offset * 4;\
-		DATA_ELEMENT.payload = GET_HEADER_POINTERCHAR + 14 + DATA_ELEMENT.size_ip\
-								+ DATA_ELEMENT.size_tcp;\
+		DATA_ELEMENT.payload = GET_HEADER_POINTERCHAR;\ // + 14 + DATA_ELEMENT.size_ip\ + DATA_ELEMENT.size_tcp;
 		DATA_ELEMENT.size_payload = DATA_ELEMENT.totalLength - \
 		( DATA_ELEMENT.size_ip +  DATA_ELEMENT.size_tcp);\
 		DATA_ELEMENT.maliciousReserved = 0;\
@@ -165,8 +164,8 @@ __device__ void print_hex_ascii_line(const u_char /*uint8_t*/ *payload, int len,
 	/* ascii (if printable) */
 	ch = payload;
 	for(i = 0; i < len; i++) {
-		if ((*ch)>0x1F && (*ch)<0x7F)
-			printf("%c",(char) *ch);
+		if ((int)(*ch)>0x1F && (int)(*ch)<0x7F)
+			printf("%c",*ch);
 		else
 			printf(".");
 		ch++;
