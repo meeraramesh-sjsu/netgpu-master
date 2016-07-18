@@ -60,7 +60,7 @@ typedef struct{
 	int size_ip; //= elements[threadIdx.x].headerLength*4;
 	int size_tcp; //= elements[threadIdx.x].offset*4;
 	int size_payload;
-	u_char * payload;
+	const u_char * payload;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
 /*__device__ int indexTcp = 0;
