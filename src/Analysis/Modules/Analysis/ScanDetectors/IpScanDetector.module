@@ -114,14 +114,15 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.offset = TCP_HEADER.offset;\
 		DATA_ELEMENT.size_tcp = TCP_HEADER.offset * 4;\
 		DATA_ELEMENT.payload = GET_HEADER_POINTERCHAR;\
-		DATA_ELEMENT.size_payload = DATA_ELEMENT.totalLength - \
-		( DATA_ELEMENT.size_ip +  DATA_ELEMENT.size_tcp);\
+		DATA_ELEMENT.size_payload = DATA_ELEMENT.totalLength + 14;\
 		DATA_ELEMENT.maliciousReserved = 0;\
 		DATA_ELEMENT.maliciousFlags=0;\
 		DATA_ELEMENT.maliciousPort=0;\
 		}\
 }while(0)
 	// + 14 + DATA_ELEMENT.size_ip\ + DATA_ELEMENT.size_tcp;
+	// - \
+	( DATA_ELEMENT.size_ip +  DATA_ELEMENT.size_tcp);\
 /***** IPSCAN DETECTOR ANALYSIS *****/
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
 	COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,counter,threshold);\
