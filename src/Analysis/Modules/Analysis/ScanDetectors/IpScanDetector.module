@@ -21,6 +21,7 @@ using namespace std;
 typedef struct{
 	//IP
 	uint16_t headerVertos; //Extra
+	uint8_t headerLength;
 	uint8_t version;
 	uint8_t	 tos;		
 	uint16_t totalLength;
@@ -39,8 +40,8 @@ typedef struct{
 	uint32_t counter;
 	uint8_t flags;
 	uint8_t unused;
+	uint8_t offset;
 	float rate;
-	unsigned char * data;
 	uint16_t sport;
 	uint16_t dport;
 	uint32_t ack;
@@ -56,6 +57,10 @@ typedef struct{
 	int maliciousDst;
 	int ipLen;
 	int maliciousCheckSum;
+	int size_ip; //= elements[threadIdx.x].headerLength*4;
+	int size_tcp; //= elements[threadIdx.x].offset*4;
+	int size_payload;
+	u_char * payload;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
 /*__device__ int indexTcp = 0;
@@ -81,6 +86,8 @@ __device__ int totalThreads=0;
 		 DATA_ELEMENT.ip_dstFirstHalf = GET_FIELD(IP4_HEADER_PTR.ip_dstFirstHalf);\
 		 DATA_ELEMENT.ip_dstSecHalf = GET_FIELD(IP4_HEADER_PTR.ip_dstSecHalf);\
 		 DATA_ELEMENT.version=0;\
+		 DATA_ELEMENT.headerLength = IP4_HEADER.headerLength;\
+		 DATA_ELEMENT.size_ip = IP4_HEADER.headerLength * 4;\
 		 DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
 		 DATA_ELEMENT.tos = IP4_HEADER.tos;\
 		 DATA_ELEMENT.totalLength = GET_FIELD(IP4_HEADER.totalLength);\
@@ -104,6 +111,12 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.ack = GET_FIELD(TCP_HEADER.ack);\
 		DATA_ELEMENT.flags = TCP_HEADER.flags;\	
 		DATA_ELEMENT.unused = TCP_HEADER.unused;\	
+		DATA_ELEMENT.offset = TCP_HEADER.offset;\
+		DATA_ELEMENT.size_tcp = TCP_HEADER.offset * 4;\
+		DATA_ELEMENT.payload = GET_HEADER_POINTERCHAR + 14 + DATA_ELEMENT.size_ip\
+								+ DATA_ELEMENT.size_tcp;\
+		DATA_ELEMENT.size_payload = DATA_ELEMENT.totalLength - \
+		( DATA_ELEMENT.size_ip +  DATA_ELEMENT.size_tcp);\
 		DATA_ELEMENT.maliciousReserved = 0;\
 		DATA_ELEMENT.maliciousFlags=0;\
 		DATA_ELEMENT.maliciousPort=0;\
@@ -116,6 +129,51 @@ __device__ int totalThreads=0;
 	__syncthreads()
 
 #define SHARED_BUFFER_SIZE MAX_BUFFER_PACKETS/ANALYSIS_TPB
+
+__device__ void print_hex_ascii_line(const u_char *payload, int len, int offset)
+{
+
+	int i;
+	int gap;
+	const u_char *ch;
+
+	/* offset */
+	printf("%05d   ", offset);
+
+	/* hex */
+	ch = payload;
+	for(i = 0; i < len; i++) {
+		printf("%02x ", *ch);
+		ch++;
+		/* print extra space after 8th byte for visual aid */
+		if (i == 7)
+			printf(" ");
+	}
+	/* print space to handle line less than 8 bytes */
+	if (len < 8)
+		printf(" ");
+
+	/* fill hex gap with spaces if not full line */
+	if (len < 16) {
+		gap = 16 - len;
+		for (i = 0; i < gap; i++) {
+			printf("   ");
+		}
+	}
+	printf("   ");
+
+	/* ascii (if printable) */
+	ch = payload;
+	for(i = 0; i < len; i++) {
+		if ((*ch)>0x1F && (*ch)<0x7F)
+			printf("%c", *ch);
+		else
+			printf(".");
+		ch++;
+	}
+
+	printf("\n");
+}
 
 template<typename T,typename R> 
 __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold){
@@ -226,7 +284,48 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	/*Checking if TCP Packet is broadcast packet*/
 	if(octet4Dst == 0 || octet4Dst == 255)
 	GPU_results[threadIndex].maliciousDst=1;
-	}	 												
+
+	//Printing the TCP payload
+	if(threadIndex == 0)
+	{
+		int len_rem = elements[threadIdx.x].size_payload;
+		int line_width = 16;			/* number of bytes per line */
+		int line_len;
+		int offset = 0;					/* zero-based offset counter */
+		const u_char *ch = elements[threadIdx.x].payload;
+
+		if (len <= 0)
+			;
+
+		/* data fits on one line */
+		else if (len <= line_width) {
+			print_hex_ascii_line(ch, len, offset);
+		}
+
+		else
+		{/* data spans multiple lines */
+		for ( ;; ) {
+			/* compute current line length */
+			line_len = line_width % len_rem;
+			/* print line */
+			print_hex_ascii_line(ch, line_len, offset);
+			/* compute total remaining */
+			len_rem = len_rem - line_len;
+			/* shift pointer to remaining bytes to print */
+			ch = ch + line_len;
+			/* add offset */
+			offset = offset + line_width;
+			/* check if we have line width chars or less */
+			if (len_rem <= line_width) {
+				/* print last line and get out */
+				print_hex_ascii_line(ch, len_rem, offset);
+				break;
+			}
+		}
+	}
+	}
+	}
+
 	__syncthreads();
 
   // atomicAdd(&totalThreads,1);

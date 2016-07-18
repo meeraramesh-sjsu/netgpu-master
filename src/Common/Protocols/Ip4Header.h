@@ -66,6 +66,8 @@ struct ip4_header{
 	uint32_t ip_src;
 	uint32_t ip_dst;
 };
+#define IP_HL(ip)               (((ip)->headerLength) & 0x0f)
+
 /*
  * @author: Meera Ramesh
  */
