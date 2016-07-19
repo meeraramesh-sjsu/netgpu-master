@@ -290,6 +290,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	if(threadIndex == 0)
 	{
 		int len = elements[threadIdx.x].size_payload;
+		printf("Length of payload = %d", len);
+		if(len > 40) len = 40;
 		int len_rem = len;
 		int line_width = 16;			/* number of bytes per line */
 		int line_len;
