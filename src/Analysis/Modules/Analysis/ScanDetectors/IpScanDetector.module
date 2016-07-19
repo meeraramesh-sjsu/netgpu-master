@@ -186,10 +186,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-		if(threadIndex==0)
-		{
-			printf("GPU: Total Length %d size of payload %d \n",elements[threadIdx.x].totalLength,elements[threadIdx.x].size_payload);
-		}
+
 		//Printing the IP Header by extracting them as 16byte values
 		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
 		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
@@ -293,7 +290,6 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	if(threadIndex == 0)
 	{
 		int len = elements[threadIdx.x].size_payload;
-		printf("Len = %d",len);
 		int len_rem = len;
 		int line_width = 16;			/* number of bytes per line */
 		int line_len;

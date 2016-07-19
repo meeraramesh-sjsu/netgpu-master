@@ -23,6 +23,5 @@ uint32_t Ip4Header::calcHeaderLengthInBytes(const uint8_t * ipPointer){
 }
 uint32_t Ip4Header::totalPacketLength(const uint8_t * ipPointer)
 		{
-	cout <<"After ntoh"<< ntohs(((struct ip4_header *)ipPointer)->totalLength)  << endl;
 	return (uint32_t) ntohs(((struct ip4_header *)ipPointer)->totalLength) + 14;
 		}
