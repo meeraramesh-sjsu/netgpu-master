@@ -113,8 +113,10 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.unused = TCP_HEADER.unused;\	
 		DATA_ELEMENT.offset = TCP_HEADER.offset;\
 		DATA_ELEMENT.size_tcp = TCP_HEADER.offset * 4;\
-		DATA_ELEMENT.payload = GET_HEADER_POINTERCHAR;\
-		DATA_ELEMENT.size_payload = GET_FIELD(IP4_HEADER.totalLength) + 14;\
+		DATA_ELEMENT.payload = GET_HEADER_POINTERCHAR + 14 + DATA_ELEMENT.size_ip\
+				 + DATA_ELEMENT.size_tcp;
+		DATA_ELEMENT.size_payload = GET_FIELD(IP4_HEADER.totalLength) - \
+				(DATA_ELEMENT.size_ip +  DATA_ELEMENT.size_tcp);
 		DATA_ELEMENT.maliciousReserved = 0;\
 		DATA_ELEMENT.maliciousFlags=0;\
 		DATA_ELEMENT.maliciousPort=0;\
