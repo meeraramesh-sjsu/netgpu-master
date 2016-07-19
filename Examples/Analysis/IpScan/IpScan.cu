@@ -86,7 +86,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, a
         /* HOST CODE: Implement HOOKS code here. Use predefined hooks or define new ones. */
 	
 	//Dump to stderr
-	$IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_STDERR(1,1);	
+	//$IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_STDERR(1,1);	
 
 //	printf("Dumping to file");
 //	printf("TCP = %d, UDP = %d, ICMP = %d",(*results).indexTcp,(*results).indexUdp,(*results).indexIcmp );
@@ -94,7 +94,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, a
 	$IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE("IPSCAN.alarms",7,10);	
 	
 	//Dump to DB
-	 $IPSCAN_DETECTOR$DB_DUMPER$DUMP_ALARMS();
+	// $IPSCAN_DETECTOR$DB_DUMPER$DUMP_ALARMS();
 
 
 

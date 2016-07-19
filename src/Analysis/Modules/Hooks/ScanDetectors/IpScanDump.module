@@ -103,12 +103,12 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		//cout<<inet_ntoa(in);
 		cout<<endl;	
 		}
-		if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
+		/*if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
 		{
 		cout<<"Alarm!! Src address or Destination address is in private Address range: ";
 		cout<<inet_ntoa(in)<<" "<<inet_ntoa(out);
 		cout<<endl;				
-		}
+		}*/
 		if(results[i*ANALYSIS_TPB+j].maliciousFlags == 1)
 		{
 		cout<<"Alarm!! Malicious Flag bit combinations found: i.e ";
