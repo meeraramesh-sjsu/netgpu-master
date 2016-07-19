@@ -93,7 +93,7 @@ __device__ int totalThreads=0;
 		 DATA_ELEMENT.totalLength = GET_FIELD(IP4_HEADER.totalLength);\
 		 DATA_ELEMENT.identification = GET_FIELD(IP4_HEADER.identification);\
 		 DATA_ELEMENT.flagsAndOffset = GET_FIELD(IP4_HEADER.flagsAndOffset);\
-		DATA_ELEMENT.checksum = GET_FIELD(IP4_HEADER.checksum);\
+		 DATA_ELEMENT.checksum = GET_FIELD(IP4_HEADER.checksum);\
 		 DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
 		 DATA_ELEMENT.protocol = IP4_HEADER.protocol;\
 		 DATA_ELEMENT.version = IP4_HEADER.version;\
@@ -113,10 +113,8 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.unused = TCP_HEADER.unused;\	
 		DATA_ELEMENT.offset = TCP_HEADER.offset;\
 		DATA_ELEMENT.size_tcp = TCP_HEADER.offset * 4;\
-		DATA_ELEMENT.payload = GET_HEADER_POINTERCHAR + 14 + DATA_ELEMENT.size_ip\
-				 + DATA_ELEMENT.size_tcp;
-		DATA_ELEMENT.size_payload = GET_FIELD(IP4_HEADER.totalLength) - \
-				(DATA_ELEMENT.size_ip +  DATA_ELEMENT.size_tcp);
+		DATA_ELEMENT.payload = (const u_char*) GET_HEADER_POINTERCHAR + 14 + DATA_ELEMENT.size_ip + DATA_ELEMENT.size_tcp;\
+		DATA_ELEMENT.size_payload = GET_FIELD(IP4_HEADER.totalLength) - (DATA_ELEMENT.size_ip + DATA_ELEMENT.size_tcp);\
 		DATA_ELEMENT.maliciousReserved = 0;\
 		DATA_ELEMENT.maliciousFlags=0;\
 		DATA_ELEMENT.maliciousPort=0;\
