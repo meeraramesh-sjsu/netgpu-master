@@ -21,3 +21,7 @@ uint8_t Ip4Header::getProtocol(void){
 uint32_t Ip4Header::calcHeaderLengthInBytes(const uint8_t * ipPointer){
 	return (uint32_t)((struct ip4_header *)ipPointer)->headerLength*4;
 }
+uint32_t Ip4Header::totalPacketLength(const uint8_t * ipPointer)
+		{
+	return (uint32_t) ntohs(((struct ip4_header *)ipPointer)->totalLength) + 14;
+		}

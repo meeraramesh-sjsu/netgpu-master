@@ -38,6 +38,10 @@ void Dissector::dissectEthernet(const uint8_t* packetPointer,unsigned int* total
 			break;
 
 	}	
+	*totalHeaderLength = Ip4Header::totalPacketLength(packetPointer);
+		cout<<"********************************************************";
+		cout<<"Note:Total Header Length"<<*totalHeaderLength<<endl;
+		cout<<"********************************************************";
 }
 
 /*end of L2 dissectors*/
@@ -84,9 +88,7 @@ void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeade
 				break;
 
 	}
-}
-
-
+	}
 
 /*end of L3 dissectors*/
 
