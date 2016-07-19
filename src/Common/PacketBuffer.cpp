@@ -91,7 +91,7 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 
 	//Copy Rest of Packet in Buffer	(Analyzed headers)
 	buffer[lastPacketIndex].packet = new uint8_t[totalLength];
-	memcpy(&(buffer[lastPacketIndex].packet), packetPointer,totalLength);
+	memcpy((buffer[lastPacketIndex].packet), packetPointer,totalLength);
 
 	//Insert capt into Vector & increment counter
 	lastPacketIndex++;

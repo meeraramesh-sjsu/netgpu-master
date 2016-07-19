@@ -35,7 +35,6 @@ typedef struct{
 	int offset[7];		
 }headers_t;
 
-
 typedef struct{
 	timeval timestamp;
 	headers_t headers;
