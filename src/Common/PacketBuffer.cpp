@@ -75,12 +75,12 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 	DEBUG2("Trying to push packet");
 	if(totalLength > 94) totalLength = 94;
 	//Check Size of packet
-	if(totalLength+TIMESTAMP_OFFSET>MAX_BUFFER_PACKET_SIZE){
+/*	if(totalLength+TIMESTAMP_OFFSET>MAX_BUFFER_PACKET_SIZE){
 
 		lostPackets++;
 		DEBUG2("Packet discarted: >LIMIT:%d",MAX_BUFFER_PACKET_SIZE);
 		return 0;
-	}
+	}*/
 
 	
 	//Copy timestamp 
@@ -90,7 +90,7 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 	memcpy(&buffer[lastPacketIndex].headers,&headers,sizeof(headers_t));
 
 	//Copy Rest of Packet in Buffer	(Analyzed headers)
-
+	buffer[lastPacketIndex].packet = new uint8_t[totalLength];
 	memcpy(&(buffer[lastPacketIndex].packet), packetPointer,totalLength);
 
 	//Insert capt into Vector & increment counter
