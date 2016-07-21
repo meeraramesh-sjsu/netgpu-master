@@ -49,14 +49,14 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #define RESULT_ELEMENT GPU_results[POS]  
 
 /* GETS HEADERS POINTER at level*/
-//#define GET_HEADER_POINTER(level) \
-	//(((uint8_t*)&(PACKET->packet))+PACKET->headers.offset[level])
 #define GET_HEADER_POINTER(level) \
-		(((PACKET->packet))+PACKET->headers.offset[level])
+	(((uint8_t*)&(PACKET->packet))+PACKET->headers.offset[level])
+/*#define GET_HEADER_POINTER(level) \
+		(((PACKET->packet))+PACKET->headers.offset[level])*/
 
-//#define GET_HEADER_POINTERCHAR ((const u_char*) /*(uint8_t* )*/ &(PACKET->packet))
+#define GET_HEADER_POINTERCHAR ((const u_char*) /*(uint8_t* )*/ &(PACKET->packet))
 
-#define GET_HEADER_POINTERCHAR ((const u_char*) /*(uint8_t* )*/ (PACKET->packet))
+//#define GET_HEADER_POINTERCHAR ((const u_char*) /*(uint8_t* )*/ (PACKET->packet))
 
 #define GET_HEADER_TCP_POINTER(level)\
 	PACKET->headers.offset[level]

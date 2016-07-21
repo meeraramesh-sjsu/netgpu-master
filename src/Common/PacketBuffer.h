@@ -38,8 +38,8 @@ typedef struct{
 typedef struct{
 	timeval timestamp;
 	headers_t headers;
-	//uint8_t packet[MAX_BUFFER_PACKET_SIZE];
-	uint8_t *packet;
+	uint8_t packet[MAX_BUFFER_PACKET_SIZE];
+	//uint8_t *packet;
 }packet_t;
 
 using namespace std;
