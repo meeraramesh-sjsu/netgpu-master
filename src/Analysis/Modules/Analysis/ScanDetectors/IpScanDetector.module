@@ -339,12 +339,14 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	}
 	}
 	bool found = false;
+	if(size_payload > 0)
+	{
 	for(int k=0;k<elements[threadIdx.x].size_payload - elements[threadIdx.x].signatureLength && !found;k++)
    	{
 	found = true;
    	for(int j=0;j<elements[threadIdx.x].signatureLength && found;j++)
    	{
-   	printf("%c  %c  \n",elements[threadIdx.x].payload[k+j],elements[threadIdx.x].signature[j]);
+   //	printf("%c  %c  \n",elements[threadIdx.x].payload[k+j],elements[threadIdx.x].signature[j]);
    	if((char)elements[threadIdx.x].payload[k+j] != (char)elements[threadIdx.x].signature[j]) found = false;
    	}
    	if(found)
@@ -352,7 +354,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
    		GPU_results[threadIndex].signatureFound = 1;
    	}
    	}
-
+	}
 	}
 
 	__syncthreads();
