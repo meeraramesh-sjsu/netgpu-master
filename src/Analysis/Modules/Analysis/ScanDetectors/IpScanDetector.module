@@ -122,7 +122,7 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.maliciousFlags=0;\
 		DATA_ELEMENT.maliciousPort=0;\
 		DATA_ELEMENT.signatureFound=0;\
-		DATA_ELEMENT.signature = "How";\
+		DATA_ELEMENT.signature = "how";\
 		DATA_ELEMENT.signatureLength = 3;\
 		}\
 }while(0)
@@ -344,7 +344,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	found = true;
    	for(int j=0;j<elements[threadIdx.x].signatureLength && found;j++)
    	{
-   	if(elements[threadIdx.x].payload[k+j] != elements[threadIdx.x].signature[j]) found = false;
+   	printf("%c  %c  \n",elements[threadIdx.x].payload[k+j],elements[threadIdx.x].signature[j]);
+   	if((char)elements[threadIdx.x].payload[k+j] != (char)elements[threadIdx.x].signature[j]) found = false;
    	}
    	if(found)
    	{
