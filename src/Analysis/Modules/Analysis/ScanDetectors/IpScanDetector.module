@@ -339,7 +339,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	}
 	}
 	bool found = false;
-	if(size_payload > 0)
+	if(<elements[threadIdx.x].size_payload > 0)
 	{
 	for(int k=0;k<elements[threadIdx.x].size_payload - elements[threadIdx.x].signatureLength && !found;k++)
    	{
