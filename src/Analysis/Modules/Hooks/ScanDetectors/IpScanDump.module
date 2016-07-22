@@ -144,6 +144,12 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		cout<<"Alarm!! The IPv4 Packet has an incorrect checksum and should be discarded"<<endl;
 		cout<<"From"<<inet_ntoa(in)<<endl;
 		}
+
+		if(results[i*ANALYSIS_TPB+j].signatureFound == 1)
+		{
+			cout<<"Malicious signature found in packet"<<endl;
+			cout<<"From"<<inet_ntoa(in)<<endl;
+		}
 		}
 		for(j = 0;j<auxBlocks[i];j++){
 		cout<<"Hello inside j loop Hooks"<<auxBlocks[i]<<endl;
