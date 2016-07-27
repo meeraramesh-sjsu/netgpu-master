@@ -357,8 +357,11 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 					int val1 = (input[i] - 48) > 9 ? (input[i] - 55) * 16 : (input[i] - 48) * 16;
 					int val2 = (input[i + 1] - 48) > 9 ? (input[i + 1] - 55) : (input[i + 1] - 48);
 					int val = val1 + val2;
+					if(threadIndex==0)
+					{
 					printf("%d ",val);
 					printf("%d\n",tempo[i]);
+					}
 					if (*tempo == '\0' || !(*tempo == val)) {
 						found = false;
 						if (*tempo != '\0') tempo++;
