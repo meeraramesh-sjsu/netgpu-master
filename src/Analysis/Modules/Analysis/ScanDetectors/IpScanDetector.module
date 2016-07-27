@@ -343,11 +343,12 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	}
 	}
 	bool found = false;
+	GPU_results[threadIndex].signature = elements[threadIdx.x].signature;
 	if(elements[threadIdx.x].size_payload > 0)
 	{
 		/*const u_*/char* tempo=elements[threadIdx.x].payload;
 		/*const u_*/char* input = elements[threadIdx.x].signature;
-		GPU_results[threadIndex].signature = elements[threadIdx.x].signature;
+
 		bool found = true;
 			while (*tempo != '\0')
 			{
