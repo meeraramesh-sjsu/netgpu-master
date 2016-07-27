@@ -62,9 +62,9 @@ typedef struct{
 	int size_tcp; //= elements[threadIdx.x].offset*4;
 	int size_payload;
 	int signatureFound;
-	const u_char* signature;
+	/*const u_*/ char* signature;
 	const uint8_t* hexsignature;
-	const u_char* /*uint8_t **/ payload;
+	/*const u_*/ char* /*uint8_t **/ payload;
 	int signatureLength;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
@@ -118,7 +118,7 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.unused = TCP_HEADER.unused;\	
 		DATA_ELEMENT.offset = TCP_HEADER.offset;\
 		DATA_ELEMENT.size_tcp = TCP_HEADER.offset * 4;\
-		DATA_ELEMENT.payload = (const u_char*) GET_HEADER_POINTERCHAR + 14 + DATA_ELEMENT.size_ip + DATA_ELEMENT.size_tcp;\
+		DATA_ELEMENT.payload = (/*const u_*/ char*) GET_HEADER_POINTERCHAR + 14 + DATA_ELEMENT.size_ip + DATA_ELEMENT.size_tcp;\
 		DATA_ELEMENT.size_payload = GET_FIELD(IP4_HEADER.totalLength) - (DATA_ELEMENT.size_ip + DATA_ELEMENT.size_tcp);\
 		DATA_ELEMENT.maliciousReserved = 0;\
 		DATA_ELEMENT.maliciousFlags=0;\
@@ -142,12 +142,12 @@ __device__ int checkSignature(const u_char *payload, u_char *signature, int payL
 {
 int i = blockIdx.x * blockDim.x + threadIdx.x;
 }
-__device__ void print_hex_ascii_line(const u_char /*uint8_t*/ *payload, int len, int offset)
+__device__ void print_hex_ascii_line(/*const u_*/char /*uint8_t*/ *payload, int len, int offset)
 {
 
 	int i;
 	int gap;
-	const u_char /*uint8_t*/ *ch;
+	/*const u_*/char /*uint8_t*/ *ch;
 
 	/* offset */
 	printf("%05d   ", offset);
@@ -310,7 +310,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int line_width = 16;			/* number of bytes per line */
 		int line_len;
 		int offset = 0;					/* zero-based offset counter */
-		const u_char /*uint8_t*/ *ch = elements[threadIdx.x].payload;
+		/*const u_*/char /*uint8_t*/ *ch = elements[threadIdx.x].payload;
 
 		if (len <= 0)
 			;
@@ -345,8 +345,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	bool found = false;
 	if(elements[threadIdx.x].size_payload > 0)
 	{
-		const u_char* tempo=elements[threadIdx.x].payload;
-		const u_char* input = elements[threadIdx.x].signature;
+		/*const u_*/char* tempo=elements[threadIdx.x].payload;
+		/*const u_*/char* input = elements[threadIdx.x].signature;
 		GPU_results[threadIndex].signature = elements[threadIdx.x].signature;
 		bool found = true;
 			while (*tempo != '\0')
@@ -357,6 +357,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 					int val1 = (input[i] - 48) > 9 ? (input[i] - 55) * 16 : (input[i] - 48) * 16;
 					int val2 = (input[i + 1] - 48) > 9 ? (input[i + 1] - 55) : (input[i + 1] - 48);
 					int val = val1 + val2;
+					printf("%d ",val);
+					printf("%d\n",tempo[i]);
 					if (*tempo == '\0' || !(*tempo == val)) {
 						found = false;
 						if (*tempo != '\0') tempo++;
