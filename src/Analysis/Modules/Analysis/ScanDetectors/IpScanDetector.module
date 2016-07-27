@@ -360,7 +360,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 					if(threadIndex==0)
 					{
 					printf("%d ",val);
-					printf("%c\n",tempo[i]);
+					printf("%d\n",*tempo);
 					}
 					if (*tempo == '\0' || !(*tempo == val)) {
 						found = false;
@@ -372,6 +372,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 				}
 				if (found) break;
 			}
+			if(threadIndex==0) printf("%d",found);
 			GPU_results[threadIndex].signatureFound = found;
 	/*for(int k=0;k<elements[threadIdx.x].size_payload - elements[threadIdx.x].signatureLength && !found;k++)
    	{
