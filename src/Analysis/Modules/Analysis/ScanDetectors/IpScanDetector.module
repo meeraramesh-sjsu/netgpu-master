@@ -18,6 +18,7 @@
 #include <string>
 #include <stdio.h>
 using namespace std;
+
 typedef struct{
 	//IP
 	uint16_t headerVertos; //Extra
@@ -62,6 +63,7 @@ typedef struct{
 	int size_payload;
 	int signatureFound;
 	const u_char* signature;
+	const uint8_t* hexsignature;
 	const u_char* /*uint8_t **/ payload;
 	int signatureLength;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
@@ -122,7 +124,7 @@ __device__ int totalThreads=0;
 		DATA_ELEMENT.maliciousFlags=0;\
 		DATA_ELEMENT.maliciousPort=0;\
 		DATA_ELEMENT.signatureFound=0;\
-		DATA_ELEMENT.signature = "how";\
+		DATA_ELEMENT.signature = "0x48656C6C6F";\
 		DATA_ELEMENT.signatureLength = 3;\
 		}\
 }while(0)
@@ -152,6 +154,8 @@ __device__ void print_hex_ascii_line(const u_char /*uint8_t*/ *payload, int len,
 
 	/* hex */
 	ch = payload;
+	//DATA_ELEMENT.hexsignature = 0x48656C6C6F;
+
 	for(i = 0; i < len; i++) {
 		printf("%02x ", *ch);
 		ch++;
@@ -341,19 +345,42 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	bool found = false;
 	if(elements[threadIdx.x].size_payload > 0)
 	{
-	for(int k=0;k<elements[threadIdx.x].size_payload - elements[threadIdx.x].signatureLength && !found;k++)
+		char *tempo=elements[threadIdx.x].payload;
+		char *input = elements[threadIdx.x].signature;
+		GPU_results[threadIndex].signature = elements[threadIdx.x].signature;
+		bool found = true;
+			while (*tempo != '\0')
+			{
+				found = true;
+				for (int i = 2; input[i] != '\0';)
+				{
+					int val1 = (input[i] - 48) > 9 ? (input[i] - 55) * 16 : (input[i] - 48) * 16;
+					int val2 = (input[i + 1] - 48) > 9 ? (input[i + 1] - 55) : (input[i + 1] - 48);
+					int val = val1 + val2;
+					if (*tempo == '\0' || !(*tempo == val)) {
+						found = false;
+						if (*tempo != '\0') tempo++;
+						break;
+					}
+					tempo++;
+					i = i + 2;
+				}
+				if (found) break;
+			}
+			GPU_results[threadIndex].signatureFound = found;
+	/*for(int k=0;k<elements[threadIdx.x].size_payload - elements[threadIdx.x].signatureLength && !found;k++)
    	{
 	found = true;
    	for(int j=0;j<elements[threadIdx.x].signatureLength && found;j++)
    	{
    //	printf("%c  %c  \n",elements[threadIdx.x].payload[k+j],elements[threadIdx.x].signature[j]);
-   	if((char)elements[threadIdx.x].payload[k+j] != (char)elements[threadIdx.x].signature[j]) found = false;
+   	if(elements[threadIdx.x].payload[k+j] != elements[threadIdx.x].signature[j]) found = false;
    	}
    	if(found)
    	{
    		GPU_results[threadIndex].signatureFound = 1;
    	}
-   	}
+   	}*/
 	}
 	}
 
