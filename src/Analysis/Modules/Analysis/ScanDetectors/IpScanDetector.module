@@ -360,7 +360,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 					if(threadIndex==0)
 					{
 					printf("%d ",val);
-					printf("%d\n",tempo[i]);
+					printf("%c\n",tempo[i]);
 					}
 					if (*tempo == '\0' || !(*tempo == val)) {
 						found = false;
