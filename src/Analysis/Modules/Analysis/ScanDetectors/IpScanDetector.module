@@ -345,8 +345,8 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 	bool found = false;
 	if(elements[threadIdx.x].size_payload > 0)
 	{
-		char *tempo=elements[threadIdx.x].payload;
-		char *input = elements[threadIdx.x].signature;
+		const u_char* tempo=elements[threadIdx.x].payload;
+		const u_char* input = elements[threadIdx.x].signature;
 		GPU_results[threadIndex].signature = elements[threadIdx.x].signature;
 		bool found = true;
 			while (*tempo != '\0')
