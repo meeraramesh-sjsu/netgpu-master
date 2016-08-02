@@ -54,8 +54,6 @@ __device__ int totalThreads=0;
 	do{\
 		DATA_ELEMENT.packet = (/*const u_*/ char*) GET_HEADER_POINTERCHAR;\
 		DATA_ELEMENT.size_packet = GET_FIELD(IP4_HEADER.totalLength) + 14;\
-	 if(IS_ETHERNET() && IS_IP4()){\
-	 }\
 		if(IS_TCP())\
 		{\
 		DATA_ELEMENT.maliciousReserved = 0;\
