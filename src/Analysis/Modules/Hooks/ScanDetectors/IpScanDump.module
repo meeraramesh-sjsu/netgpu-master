@@ -41,7 +41,7 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 
 	 //cout<<"TCP = "<<(*results).indexTcp<<"UDP= "<< (*results).indexUdp<<"ICMP ="<< (*results).indexIcmp; 			
   	cout<<endl<<"*********************CPU SECTION***********************************"<<endl;
-  	cout<<"TCP = "<<results[0].indexTcp<<"UDP= "<< results[0].indexUdp<<"ICMP = "<< results[0].indexIcmp<<endl;
+  	//cout<<"TCP = "<<results[0].indexTcp<<"UDP= "<< results[0].indexUdp<<"ICMP = "<< results[0].indexIcmp<<endl;
 	bool alreadyExists;
 	ofstream file;
 	fstream fin;
@@ -86,10 +86,10 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	int incorrectVerNumber = 0;
 	for(i = 0,hasResults = false;i<state.windowState.totalNumberOfBlocks;i++){
 		//cout<<"Hello inside i loop Hooks"<<state.windowState.totalNumberOfBlocks<<endl;
-				for(j=0;j<128;j++)
+		/*		for(j=0;j<128;j++)
 		{
 		uint32_t network_byte_order;
-		uint32_t some_long = results[i*ANALYSIS_TPB+j].ipSrc;
+	//	uint32_t some_long = results[i*ANALYSIS_TPB+j].ipSrc;
 		network_byte_order = htonl(some_long);
 		struct in_addr in,out;
 		in.s_addr = network_byte_order;
@@ -103,12 +103,12 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		//cout<<inet_ntoa(in);
 		cout<<endl;	
 		}
-		/*if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
+		if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
 		{
 		cout<<"Alarm!! Src address or Destination address is in private Address range: ";
 		cout<<inet_ntoa(in)<<" "<<inet_ntoa(out);
 		cout<<endl;				
-		}*/
+		}
 		if(results[i*ANALYSIS_TPB+j].maliciousFlags == 1)
 		{
 		cout<<"Alarm!! Malicious Flag bit combinations found: i.e ";
@@ -150,7 +150,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<"From "<<inet_ntoa(in);//<<"Malicious signature is";
 			//cout<<results[i*ANALYSIS_TPB+j].signature<<endl;
 		}
-		}
+		} */
 		for(j = 0;j<auxBlocks[i];j++){
 		cout<<"Hello inside j loop Hooks"<<auxBlocks[i]<<endl;
 			//cout<<"Results = "<< results[i*ANALYSIS_TPB+j].rate << " " << results[i*ANALYSIS_TPB+j].counter<<" ";
@@ -158,7 +158,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			//cout<<"Results = "<<results[i*ANALYSIS_TPB+j].malicious<<endl;
 			
 			//Check if result is valid (has not been post filtered) 
-			if(results[i*ANALYSIS_TPB+j].rate != 0.0){
+		/*	if(results[i*ANALYSIS_TPB+j].rate != 0.0){
 					//IP source
 				pointer = (uint8_t*)&results[i*ANALYSIS_TPB+j].ipSrc;
 				os<<STR(ANALYSIS_NAME)"> ";				
@@ -175,7 +175,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 					os <<"ALARM"<<endl;	
 				
 				hasResults = true;	
-			}
+			}*/
 		}
 
 		
