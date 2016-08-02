@@ -77,7 +77,7 @@ __device__ void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T*
 //Only Global Thread Index should modify
 
 	/* CUDA CODE: Implement post Analysis Operations/Filtering here. Use predefined Operations/Filtering tools or Implement code here IF NECESSARY */
-	$IPSCAN_DETECTOR$MULTI_THRESHOLDS$EXCLUDE(RESULT_ELEMENT.ipSrc==IP4(82,70,103,152)); //Exclude 82.70.103.152 from results
+	//$IPSCAN_DETECTOR$MULTI_THRESHOLDS$EXCLUDE(RESULT_ELEMENT.ipSrc==IP4(82,70,103,152)); //Exclude 82.70.103.152 from results
 }
 
 template<typename R>
@@ -105,7 +105,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, a
 	$PROGRAM_LAUNCHER$ADD_TEXT_ARG("Test1 ipscan");
 	$PROGRAM_LAUNCHER$ADD_TEXT_ARG("Test2 ipscan");
 	$PROGRAM_LAUNCHER$ADD_TEXT_ARG("Test3 ipscan 1");
-	$PROGRAM_LAUNCHER$ADD_ARG_AS_IP(ipSrc);
+	//$PROGRAM_LAUNCHER$ADD_ARG_AS_IP(ipSrc);
 	$PROGRAM_LAUNCHER$EXECUTE("./prova.sh");
 #endif
 }
