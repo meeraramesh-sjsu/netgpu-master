@@ -39,7 +39,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 /* Packet inside buffer */
 #if HAS_WINDOW == 1
-	#define PACKET (&GPU_buffer[RELATIVE_MINING_POS])
+	#define PACKET (&GPU_buffer[PACKETPOS])
 #else
 	#define PACKET (&GPU_buffer[PACKETPOS])
 #endif

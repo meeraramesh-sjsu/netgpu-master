@@ -21,34 +21,6 @@ using namespace std;
 
 typedef struct{
 	//IP
-	uint16_t headerVertos; //Extra
-	uint8_t headerLength;
-	uint8_t version;
-	uint8_t	 tos;		
-	uint16_t totalLength;
-	uint16_t identification;			
-	uint16_t flagsAndOffset;
-	uint16_t  ttlprotocol; //Extra
-	uint16_t ip_srcFirstHalf; //Extra
-	uint16_t ip_srcSecHalf; //Extra
-	uint16_t ip_dstFirstHalf; //Extra
-	uint16_t ip_dstSecHalf; //Extra
-	uint8_t protocol;
-	uint16_t checksum;
-	uint32_t ipSrc;
-	uint32_t ipDst;
-	uint32_t ipSrcNetwork;
-	uint32_t counter;
-	uint8_t flags;
-	uint8_t unused;
-	uint8_t offset;
-	float rate;
-	uint16_t sport;
-	uint16_t dport;
-	uint32_t ack;
-	int indexTcp;
-	int indexUdp;
-	int indexIcmp;
 	int maliciousVer;
 	int maliciousIP;
 	int maliciousFlags;
@@ -56,15 +28,12 @@ typedef struct{
 	int maliciousPort;
 	int maliciousAck;
 	int maliciousDst;
-	int ipLen;
 	int maliciousCheckSum;
-	int size_ip; //= elements[threadIdx.x].headerLength*4;
-	int size_tcp; //= elements[threadIdx.x].offset*4;
-	int size_payload;
+	int size_packet;
 	int signatureFound;
 	/*const u_*/ char* signature;
 	const uint8_t* hexsignature;
-	/*const u_*/ char* /*uint8_t **/ payload;
+	/*const u_*/ char* /*uint8_t **/ packet;
 	int signatureLength;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
@@ -89,14 +58,6 @@ __device__ int totalThreads=0;
 	 }\
 		if(IS_TCP())\
 		{\
-		DATA_ELEMENT.flags = 0;\
-		DATA_ELEMENT.sport = GET_FIELD(TCP_HEADER.sport);\
-		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\
-		DATA_ELEMENT.ack = GET_FIELD(TCP_HEADER.ack);\
-		DATA_ELEMENT.flags = TCP_HEADER.flags;\
-		DATA_ELEMENT.unused = TCP_HEADER.unused;\
-		DATA_ELEMENT.offset = TCP_HEADER.offset;\
-		DATA_ELEMENT.size_tcp = TCP_HEADER.offset * 4;\
 		DATA_ELEMENT.maliciousReserved = 0;\
 		DATA_ELEMENT.maliciousFlags=0;\
 		DATA_ELEMENT.maliciousPort=0;\
@@ -169,202 +130,214 @@ template<typename T,typename R>
 __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold){
 
 /* Erases duplicates and counts elements inside block */
-	__shared__ T elements[ANALYSIS_TPB];
+	__shared__ char elements[96];
 
 		//Global Thread Index
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
 		//Mine to Shared to save memory accesses
-		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-
+		elements[threadIdx.x] = (cudaSafeGet(&GPU_data[threadIndex])).packet[threadIdx.x];
+		if(blockIdx.x==0)
+		{
+			if(threadIdx.x==0) printf("%02x",elements[threadIdx.x]);
+			else if(threadIdx.x==1) printf("%02x",elements[threadIdx.x]);
+			else if(threadIdx.x==2) printf("%02x",elements[threadIdx.x]);
+			else if(threadIdx.x==3) printf("%02x",elements[threadIdx.x]);
+			else if(threadIdx.x==4) printf("%02x",elements[threadIdx.x]);
+			else if(threadIdx.x==5) printf("%02x",elements[threadIdx.x]);
+			else if(threadIdx.x==6) printf("%02x",elements[threadIdx.x]);
+			else if(threadIdx.x==7) printf("%02x",elements[threadIdx.x]);
+			else if(threadIdx.x==8) printf("%02x",elements[threadIdx.x]);
+			else if(threadIdx.x==9) printf("%02x",elements[threadIdx.x]);
+		}
 		//Printing the IP Header by extracting them as 16byte values
-		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
-		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
-		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
-		/*Counting the number of TCP, UDP and ICMP Packets */
-		if(elements[threadIdx.x].protocol==6) //TCP packet
-		{
-		atomicAdd(&(GPU_results[0].indexTcp),1);
-		}		
-		if(elements[threadIdx.x].protocol==0x0011)  //UDP packet
-		{
-		atomicAdd(&(GPU_results[0].indexUdp),1);
-		}
-		if(elements[threadIdx.x].protocol==1) //ICMP packet
-		{
-		atomicAdd(&(GPU_results[0].indexIcmp),1);
-		}
-		/*Rules for Detecting Malicious IP Packets */
-		if(IS_IP4() || IS_IP6())
-		{
-		/*Checking if the version number in IP Packets is anything other than 4 or 6, 0 is because by default the value is 0*/
-		if(elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6 && elements[threadIdx.x].version!=0) //Should be Malicious version
-		{
-		GPU_results[threadIndex].maliciousVer = 1;
-		}
-		/*Checking if the source or destination IP address is in Private Address range*/
-		GPU_results[threadIndex].ipSrc = GPU_data[threadIndex].ipSrc;
-		GPU_results[threadIndex].ipDst = GPU_data[threadIndex].ipDst;
-		//Checking if the source IP address is in Private Address range
-		 uint32_t sourceAddress = elements[threadIdx.x].ipSrc;
-		 octet1 = (sourceAddress & 0xff000000) >> 24;
-		 octet2 = (sourceAddress & 0x00ff0000) >> 16;
-		 octet3 = (sourceAddress & 0x0000ff00) >> 8;
-		 octet4 = (sourceAddress & 0x000000ff);
-		 uint32_t dstAddress = elements[threadIdx.x].ipDst;
-		 octet1Dst = (dstAddress & 0xff000000) >> 24;
-		 octet2Dst = (dstAddress & 0x00ff0000) >> 16;
-		 octet3Dst = (dstAddress & 0x0000ff00) >> 8;
-		 octet4Dst = (dstAddress & 0x000000ff);
-		 if (octet1 == 10 || octet1Dst==10)
-		 {
-        GPU_results[threadIndex].maliciousIP=1;
-        }
-		
-    // 172.16.0.0 - 172.31.255.255
-  	  if ((octet1 == 172 || octet1Dst==172) && (octet2 >= 16 || octet2Dst >=16 ) && (octet2 <= 31 || octet2Dst<=31))
-  	  {
-       GPU_results[threadIndex].maliciousIP=1;
-		}
-    // 192.168.0.0 - 192.168.255.255
-   	 if ((octet1 == 192 || octet1Dst == 192) && (octet2 == 168 || octet2Dst == 168))
-   	 {
-      GPU_results[threadIndex].maliciousIP=1;
-	}
-   	 if(IS_IP4())
-   	 {
-			int result = elements[threadIdx.x].headerVertos + elements[threadIdx.x].ttlprotocol\
-			+ elements[threadIdx.x].ip_srcFirstHalf + elements[threadIdx.x].ip_srcSecHalf\
-			+ elements[threadIdx.x].ip_dstFirstHalf + elements[threadIdx.x].ip_dstSecHalf\
-			+ elements[threadIdx.x].totalLength + elements[threadIdx.x].identification\
-			+ elements[threadIdx.x].flagsAndOffset + elements[threadIdx.x].checksum;
-			unsigned int sum = ~(result>>16 + (result & 0xFFFF));
-			if(sum!=-1) GPU_results[threadIndex].maliciousCheckSum = 1;
-   	 }
-
-		 //printf("Source IP address is %u.%u.%u.%u\n",octet1,octet2,octet3,octet4);		
-
-	}
-	
-	if(IS_TCP())
-	{
-	/*Checking if TCP Flag bit combination is malicious*/
-	if(elements[threadIdx.x].flags == 3 ||
-	elements[threadIdx.x].flags == 11 || elements[threadIdx.x].flags == 7 ||
-	elements[threadIdx.x].flags == 15 || elements[threadIdx.x].flags == 1 ||
-	elements[threadIdx.x].flags == 0 || elements[threadIdx.x].unused != 0)
-	{
-	GPU_results[threadIndex].flags = GPU_data[threadIndex].flags;
-	if(elements[threadIdx.x].unused == 0) GPU_results[threadIndex].maliciousFlags = 1;	
-	else GPU_results[threadIndex].maliciousReserved = 1;
-	} 	
-	
-	/*Checking if the source or Destination port is 0*/
-	if(elements[threadIdx.x].sport == 0 || elements[threadIdx.x].dport == 0) 
-	{
-	GPU_results[threadIndex].sport = elements[threadIdx.x].sport;
-	GPU_results[threadIndex].dport = elements[threadIdx.x].dport;
-	GPU_results[threadIndex].maliciousPort = 1;
-	}
-	
-	/*Checking if the ackowledgement bit is set, than the ACK number should not be zero*/
-	if(elements[threadIdx.x].flags & 16 ==1 && elements[threadIdx.x].ack==0)
-	GPU_results[threadIndex].maliciousAck=1;
-	
-	/*Checking if TCP Packet is broadcast packet*/
-	if(octet4Dst == 0 || octet4Dst == 255)
-	GPU_results[threadIndex].maliciousDst=1;
-
-
-	//Printing the TCP payload
-	if(threadIndex == 0)
-	{
-		int len = elements[threadIdx.x].size_payload;
-		//printf("Length of payload = %d", len);
-		if(len > 40) len = 40;
-		int len_rem = len;
-		int line_width = 16;			/* number of bytes per line */
-		int line_len;
-		int offset = 0;					/* zero-based offset counter */
-		/*const u_*/char /*uint8_t*/ *ch = elements[threadIdx.x].payload;
-
-		if (len <= 0)
-			;
-
-		/* data fits on one line */
-		else if (len <= line_width) {
-			print_hex_ascii_line(ch, len, offset);
-		}
-
-		else
-		{/* data spans multiple lines */
-		for ( ;; ) {
-			/* compute current line length */
-			line_len = line_width % len_rem;
-			/* print line */
-			print_hex_ascii_line(ch, line_len, offset);
-			/* compute total remaining */
-			len_rem = len_rem - line_len;
-			/* shift pointer to remaining bytes to print */
-			ch = ch + line_len;
-			/* add offset */
-			offset = offset + line_width;
-			/* check if we have line width chars or less */
-			if (len_rem <= line_width) {
-				/* print last line and get out */
-				print_hex_ascii_line(ch, len_rem, offset);
-				break;
-			}
-		}
-	}
-	}
-	bool found = false;
-	GPU_results[threadIndex].signature = elements[threadIdx.x].signature;
-	if(elements[threadIdx.x].size_payload > 0)
-	{
-		/*const u_*/char* tempo=elements[threadIdx.x].payload;
-		/*const u_*/char* input = elements[threadIdx.x].signature;
-
-		bool found = true;
-			while (*tempo != '\0')
-			{
-				found = true;
-				for (int i = 2; input[i] != '\0';)
-				{
-					int val1 = (input[i] - 48) > 9 ? (input[i] - 55) * 16 : (input[i] - 48) * 16;
-					int val2 = (input[i + 1] - 48) > 9 ? (input[i + 1] - 55) : (input[i + 1] - 48);
-					int val = val1 + val2;
-					if(threadIndex==0)
-					{
-					printf("%d ",val);
-					printf("%d\n",*tempo);
-					}
-					if (*tempo == '\0' || !(*tempo == val)) {
-						found = false;
-						if (*tempo != '\0') tempo++;
-						break;
-					}
-					tempo++;
-					i = i + 2;
-				}
-				if (found) break;
-			}
-			if(threadIndex==0) printf("%d",found);
-			GPU_results[threadIndex].signatureFound = found;
-	/*for(int k=0;k<elements[threadIdx.x].size_payload - elements[threadIdx.x].signatureLength && !found;k++)
-   	{
-	found = true;
-   	for(int j=0;j<elements[threadIdx.x].signatureLength && found;j++)
-   	{
-   //	printf("%c  %c  \n",elements[threadIdx.x].payload[k+j],elements[threadIdx.x].signature[j]);
-   	if(elements[threadIdx.x].payload[k+j] != elements[threadIdx.x].signature[j]) found = false;
-   	}
-   	if(found)
-   	{
-   		GPU_results[threadIndex].signatureFound = 1;
-   	}
-   	}*/
-	}
+//		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
+//		//if(blockIdx.x==0) printf("Source Ip address of the thread with threadId %d in block %d is %" PRIu32 "\n", threadIdx.x,blockIdx.x,elements[threadIdx.x].ipSrc);
+//		//if(blockIdx.x==0) printf("version number of the thread with threadId %d in block %d is %d \n", threadIdx.x,blockIdx.x,elements[threadIdx.x].version);
+//		/*Counting the number of TCP, UDP and ICMP Packets */
+//		if(elements[threadIdx.x].protocol==6) //TCP packet
+//		{
+//		atomicAdd(&(GPU_results[0].indexTcp),1);
+//		}
+//		if(elements[threadIdx.x].protocol==0x0011)  //UDP packet
+//		{
+//		atomicAdd(&(GPU_results[0].indexUdp),1);
+//		}
+//		if(elements[threadIdx.x].protocol==1) //ICMP packet
+//		{
+//		atomicAdd(&(GPU_results[0].indexIcmp),1);
+//		}
+//		/*Rules for Detecting Malicious IP Packets */
+//		if(IS_IP4() || IS_IP6())
+//		{
+//		/*Checking if the version number in IP Packets is anything other than 4 or 6, 0 is because by default the value is 0*/
+//		if(elements[threadIdx.x].version!=4 && elements[threadIdx.x].version!=6 && elements[threadIdx.x].version!=0) //Should be Malicious version
+//		{
+//		GPU_results[threadIndex].maliciousVer = 1;
+//		}
+//		/*Checking if the source or destination IP address is in Private Address range*/
+//		GPU_results[threadIndex].ipSrc = GPU_data[threadIndex].ipSrc;
+//		GPU_results[threadIndex].ipDst = GPU_data[threadIndex].ipDst;
+//		//Checking if the source IP address is in Private Address range
+//		 uint32_t sourceAddress = elements[threadIdx.x].ipSrc;
+//		 octet1 = (sourceAddress & 0xff000000) >> 24;
+//		 octet2 = (sourceAddress & 0x00ff0000) >> 16;
+//		 octet3 = (sourceAddress & 0x0000ff00) >> 8;
+//		 octet4 = (sourceAddress & 0x000000ff);
+//		 uint32_t dstAddress = elements[threadIdx.x].ipDst;
+//		 octet1Dst = (dstAddress & 0xff000000) >> 24;
+//		 octet2Dst = (dstAddress & 0x00ff0000) >> 16;
+//		 octet3Dst = (dstAddress & 0x0000ff00) >> 8;
+//		 octet4Dst = (dstAddress & 0x000000ff);
+//		 if (octet1 == 10 || octet1Dst==10)
+//		 {
+//        GPU_results[threadIndex].maliciousIP=1;
+//        }
+//
+//    // 172.16.0.0 - 172.31.255.255
+//  	  if ((octet1 == 172 || octet1Dst==172) && (octet2 >= 16 || octet2Dst >=16 ) && (octet2 <= 31 || octet2Dst<=31))
+//  	  {
+//       GPU_results[threadIndex].maliciousIP=1;
+//		}
+//    // 192.168.0.0 - 192.168.255.255
+//   	 if ((octet1 == 192 || octet1Dst == 192) && (octet2 == 168 || octet2Dst == 168))
+//   	 {
+//      GPU_results[threadIndex].maliciousIP=1;
+//	}
+//   	 if(IS_IP4())
+//   	 {
+//			int result = elements[threadIdx.x].headerVertos + elements[threadIdx.x].ttlprotocol\
+//			+ elements[threadIdx.x].ip_srcFirstHalf + elements[threadIdx.x].ip_srcSecHalf\
+//			+ elements[threadIdx.x].ip_dstFirstHalf + elements[threadIdx.x].ip_dstSecHalf\
+//			+ elements[threadIdx.x].totalLength + elements[threadIdx.x].identification\
+//			+ elements[threadIdx.x].flagsAndOffset + elements[threadIdx.x].checksum;
+//			unsigned int sum = ~(result>>16 + (result & 0xFFFF));
+//			if(sum!=-1) GPU_results[threadIndex].maliciousCheckSum = 1;
+//   	 }
+//
+//		 //printf("Source IP address is %u.%u.%u.%u\n",octet1,octet2,octet3,octet4);
+//
+//	}
+//
+//	if(IS_TCP())
+//	{
+//	/*Checking if TCP Flag bit combination is malicious*/
+//	if(elements[threadIdx.x].flags == 3 ||
+//	elements[threadIdx.x].flags == 11 || elements[threadIdx.x].flags == 7 ||
+//	elements[threadIdx.x].flags == 15 || elements[threadIdx.x].flags == 1 ||
+//	elements[threadIdx.x].flags == 0 || elements[threadIdx.x].unused != 0)
+//	{
+//	GPU_results[threadIndex].flags = GPU_data[threadIndex].flags;
+//	if(elements[threadIdx.x].unused == 0) GPU_results[threadIndex].maliciousFlags = 1;
+//	else GPU_results[threadIndex].maliciousReserved = 1;
+//	}
+//
+//	/*Checking if the source or Destination port is 0*/
+//	if(elements[threadIdx.x].sport == 0 || elements[threadIdx.x].dport == 0)
+//	{
+//	GPU_results[threadIndex].sport = elements[threadIdx.x].sport;
+//	GPU_results[threadIndex].dport = elements[threadIdx.x].dport;
+//	GPU_results[threadIndex].maliciousPort = 1;
+//	}
+//
+//	/*Checking if the ackowledgement bit is set, than the ACK number should not be zero*/
+//	if(elements[threadIdx.x].flags & 16 ==1 && elements[threadIdx.x].ack==0)
+//	GPU_results[threadIndex].maliciousAck=1;
+//
+//	/*Checking if TCP Packet is broadcast packet*/
+//	if(octet4Dst == 0 || octet4Dst == 255)
+//	GPU_results[threadIndex].maliciousDst=1;
+//
+//
+//	//Printing the TCP payload
+//	if(threadIndex == 0)
+//	{
+//		int len = elements[threadIdx.x].size_payload;
+//		//printf("Length of payload = %d", len);
+//		if(len > 40) len = 40;
+//		int len_rem = len;
+//		int line_width = 16;			/* number of bytes per line */
+//		int line_len;
+//		int offset = 0;					/* zero-based offset counter */
+//		/*const u_*/char /*uint8_t*/ *ch = elements[threadIdx.x].payload;
+//
+//		if (len <= 0)
+//			;
+//
+//		/* data fits on one line */
+//		else if (len <= line_width) {
+//			print_hex_ascii_line(ch, len, offset);
+//		}
+//
+//		else
+//		{/* data spans multiple lines */
+//		for ( ;; ) {
+//			/* compute current line length */
+//			line_len = line_width % len_rem;
+//			/* print line */
+//			print_hex_ascii_line(ch, line_len, offset);
+//			/* compute total remaining */
+//			len_rem = len_rem - line_len;
+//			/* shift pointer to remaining bytes to print */
+//			ch = ch + line_len;
+//			/* add offset */
+//			offset = offset + line_width;
+//			/* check if we have line width chars or less */
+//			if (len_rem <= line_width) {
+//				/* print last line and get out */
+//				print_hex_ascii_line(ch, len_rem, offset);
+//				break;
+//			}
+//		}
+//	}
+//	}
+//	bool found = false;
+//	GPU_results[threadIndex].signature = elements[threadIdx.x].signature;
+//	if(elements[threadIdx.x].size_payload > 0)
+//	{
+//		/*const u_*/char* tempo=elements[threadIdx.x].payload;
+//		/*const u_*/char* input = elements[threadIdx.x].signature;
+//
+//		bool found = true;
+//			while (*tempo != '\0')
+//			{
+//				found = true;
+//				for (int i = 2; input[i] != '\0';)
+//				{
+//					int val1 = (input[i] - 48) > 9 ? (input[i] - 55) * 16 : (input[i] - 48) * 16;
+//					int val2 = (input[i + 1] - 48) > 9 ? (input[i + 1] - 55) : (input[i + 1] - 48);
+//					int val = val1 + val2;
+//					if(threadIndex==0)
+//					{
+//					printf("%d ",val);
+//					printf("%d\n",*tempo);
+//					}
+//					if (*tempo == '\0' || !(*tempo == val)) {
+//						found = false;
+//						if (*tempo != '\0') tempo++;
+//						break;
+//					}
+//					tempo++;
+//					i = i + 2;
+//				}
+//				if (found) break;
+//			}
+//			if(threadIndex==0) printf("%d",found);
+//			GPU_results[threadIndex].signatureFound = found;
+//	/*for(int k=0;k<elements[threadIdx.x].size_payload - elements[threadIdx.x].signatureLength && !found;k++)
+//   	{
+//	found = true;
+//   	for(int j=0;j<elements[threadIdx.x].signatureLength && found;j++)
+//   	{
+//   //	printf("%c  %c  \n",elements[threadIdx.x].payload[k+j],elements[threadIdx.x].signature[j]);
+//   	if(elements[threadIdx.x].payload[k+j] != elements[threadIdx.x].signature[j]) found = false;
+//   	}
+//   	if(found)
+//   	{
+//   		GPU_results[threadIndex].signatureFound = 1;
+//   	}
+//   	}*/
+//	}
 	}
 
 	__syncthreads();
