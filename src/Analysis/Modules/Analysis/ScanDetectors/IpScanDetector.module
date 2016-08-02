@@ -83,43 +83,20 @@ __device__ int totalThreads=0;
 
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 	do{\
+		DATA_ELEMENT.packet = (/*const u_*/ char*) GET_HEADER_POINTERCHAR;\
+		DATA_ELEMENT.size_packet = GET_FIELD(IP4_HEADER.totalLength) + 14;\
 	 if(IS_ETHERNET() && IS_IP4()){\
-		 DATA_ELEMENT.headerVertos = GET_FIELD(IP4_HEADER_PTR.headerVertos);\
-		 DATA_ELEMENT.ttlprotocol = GET_FIELD(IP4_HEADER_PTR.ttlprotocol);\
-		 DATA_ELEMENT.ip_srcFirstHalf = GET_FIELD(IP4_HEADER_PTR.ip_srcFirstHalf);\
-		 DATA_ELEMENT.ip_srcSecHalf = GET_FIELD(IP4_HEADER_PTR.ip_srcSecHalf);\
-		 DATA_ELEMENT.ip_dstFirstHalf = GET_FIELD(IP4_HEADER_PTR.ip_dstFirstHalf);\
-		 DATA_ELEMENT.ip_dstSecHalf = GET_FIELD(IP4_HEADER_PTR.ip_dstSecHalf);\
-		 DATA_ELEMENT.version=0;\
-		 DATA_ELEMENT.headerLength = IP4_HEADER.headerLength;\
-		 DATA_ELEMENT.size_ip = IP4_HEADER.headerLength * 4;\
-		 DATA_ELEMENT.ipSrc = GET_FIELD(IP4_HEADER.ip_src);\
-		 DATA_ELEMENT.tos = IP4_HEADER.tos;\
-		 DATA_ELEMENT.totalLength = GET_FIELD(IP4_HEADER.totalLength);\
-		 DATA_ELEMENT.identification = GET_FIELD(IP4_HEADER.identification);\
-		 DATA_ELEMENT.flagsAndOffset = GET_FIELD(IP4_HEADER.flagsAndOffset);\
-		 DATA_ELEMENT.checksum = GET_FIELD(IP4_HEADER.checksum);\
-		 DATA_ELEMENT.ipDst = GET_FIELD(IP4_HEADER.ip_dst);\
-		 DATA_ELEMENT.protocol = IP4_HEADER.protocol;\
-		 DATA_ELEMENT.version = IP4_HEADER.version;\
-		 DATA_ELEMENT.indexTcp=0;\
-		 DATA_ELEMENT.indexUdp=0;\
-		 DATA_ELEMENT.indexIcmp=0;\
-		 DATA_ELEMENT.maliciousVer=0;\	
-		 DATA_ELEMENT.maliciousIP=0;\
-		  		}\
+	 }\
 		if(IS_TCP())\
 		{\
-		DATA_ELEMENT.flags = 0;\	
+		DATA_ELEMENT.flags = 0;\
 		DATA_ELEMENT.sport = GET_FIELD(TCP_HEADER.sport);\
-		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\	
+		DATA_ELEMENT.dport = GET_FIELD(TCP_HEADER.dport);\
 		DATA_ELEMENT.ack = GET_FIELD(TCP_HEADER.ack);\
-		DATA_ELEMENT.flags = TCP_HEADER.flags;\	
-		DATA_ELEMENT.unused = TCP_HEADER.unused;\	
+		DATA_ELEMENT.flags = TCP_HEADER.flags;\
+		DATA_ELEMENT.unused = TCP_HEADER.unused;\
 		DATA_ELEMENT.offset = TCP_HEADER.offset;\
 		DATA_ELEMENT.size_tcp = TCP_HEADER.offset * 4;\
-		DATA_ELEMENT.payload = (/*const u_*/ char*) GET_HEADER_POINTERCHAR + 14 + DATA_ELEMENT.size_ip + DATA_ELEMENT.size_tcp;\
-		DATA_ELEMENT.size_payload = GET_FIELD(IP4_HEADER.totalLength) - (DATA_ELEMENT.size_ip + DATA_ELEMENT.size_tcp);\
 		DATA_ELEMENT.maliciousReserved = 0;\
 		DATA_ELEMENT.maliciousFlags=0;\
 		DATA_ELEMENT.maliciousPort=0;\
@@ -144,7 +121,6 @@ int i = blockIdx.x * blockDim.x + threadIdx.x;
 }
 __device__ void print_hex_ascii_line(/*const u_*/char /*uint8_t*/ *payload, int len, int offset)
 {
-
 	int i;
 	int gap;
 	/*const u_*/char /*uint8_t*/ *ch;

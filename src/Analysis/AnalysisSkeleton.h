@@ -603,7 +603,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//auxBlocks = (int64_t*)malloc(sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB);	
         	cudaAssert(cudaHostAlloc((void**)&auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB,0));
 
-
 		/*** GPU memory allocation***/
 		BMMS::mallocBMMS((void**)&GPU_data,ARRAY_SIZE(T));
 		BMMS::mallocBMMS((void**)&GPU_results,ARRAY_SIZE(R));
@@ -621,11 +620,12 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert(cudaThreadSynchronize());
 		
 		/*** KERNEL DIMS ***/
-		dim3 block(ANALYSIS_TPB);		 			//Threads Per Block (1D)
-		dim3 grid(MAX_BUFFER_PACKETS/ANALYSIS_TPB);		 	//Grid size (1D)
+		//dim3 block(ANALYSIS_TPB);		 			//Threads Per Block (1D)
+		//dim3 grid(MAX_BUFFER_PACKETS/ANALYSIS_TPB);		 	//Grid size (1D)
 		//dim3  block(10);
 		//dim3 grid(1);
-		
+		dim3 block(96);
+		dim3 grid(138);
 		//Set state number of blocks and last Packet position
 		state.windowState.totalNumberOfBlocks = MAX_BUFFER_PACKETS/ANALYSIS_TPB;
 		state.windowState.hasReachedWindowLimit = true;
@@ -741,7 +741,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		#define ITERATOR__ 15
 		#include "UserExtraKernelCall.def"
 
-
 		/*** END OF EXTRA KERNEL CALLS ***/
 
 		/*** Copy results & auxBlocks arrays ***/
@@ -749,7 +748,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,MAX_BUFFER_PACKETS/ANALYSIS_TPB*sizeof(int64_t),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
-	
 		/*** FREE GPU DYNAMIC MEMORY ***/
 		BMMS::freeBMMS(GPU_data);
 		BMMS::freeBMMS(GPU_results);

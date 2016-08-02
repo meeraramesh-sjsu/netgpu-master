@@ -28,6 +28,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #define ARRAY_SIZE(type) \
 	(sizeof(type)*MAX_BUFFER_PACKETS) 
 
+#define PACKETPOS blockIdx.x;
 #if HAS_WINDOW == 1
 	//Window special case
 	#define POS threadIdx.x + (state.blockIterator*blockDim.x) 
@@ -40,13 +41,13 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #if HAS_WINDOW == 1
 	#define PACKET (&GPU_buffer[RELATIVE_MINING_POS])
 #else
-	#define PACKET (&GPU_buffer[POS])
+	#define PACKET (&GPU_buffer[PACKETPOS])
 #endif
 
 /*GPU_data element */
-#define DATA_ELEMENT GPU_data[POS]  
+#define DATA_ELEMENT GPU_data[PACKETPOS]
 /*GPU_results element */
-#define RESULT_ELEMENT GPU_results[POS]  
+#define RESULT_ELEMENT GPU_results[PACKETPOS]
 
 /* GETS HEADERS POINTER at level*/
 #define GET_HEADER_POINTER(level) \
@@ -66,7 +67,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #define GET_FIELD(field) cudaNetworkToHost(cudaSafeGet(&(field))) //TODO: ENDIANISME ELIMINAR EL CUDANETWORKTOHOST
 
 #define GET_FIELDNETWORK(field) cudaSafeGet(&(field)) //TODO: ENDIANISME ELIMINAR EL CUDANETWORKTOHOST
-
 
 //* BARRIERS */
 
