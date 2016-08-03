@@ -96,7 +96,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	}
 		if(IS_IP4()) //Checking if it is a IPv4 Packet
 		{
-			int VerBlock = (elements[14].packet & 0x000000F0) >> 4;
+			int verBlock = (elements[14].packet & 0x000000F0) >> 4;
 
 			if(threadIdx.x==0)
 			{
