@@ -76,7 +76,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	{
 		if(threadIdx.x ==0)
 			{
-			printf("%02x %02x %02x",elements[16].packet,elements[17].packet,elements[18].packet);
+			printf("%02x %02x %02x",elements[16].packet,elements[17].packet,elements[18].packet & 0xFFFFFF00);
 			int temp1 = (elements[16].packet) << 8;
 			int temp2 = elements[17].packet;
 			packetLen = temp1 + temp2 + 14;
