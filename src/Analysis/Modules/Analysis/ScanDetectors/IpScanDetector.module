@@ -54,7 +54,7 @@ typedef struct {
 			DATA_ELEMENT.signature = "0x48656C6C6F";\
 			DATA_ELEMENT.signatureLength = 3;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
-			DATA_ELEMENT.ipSrc = -1;
+			DATA_ELEMENT.ipSrc = -1;\
 		}while(0)
 
 /***** IPSCAN DETECTOR ANALYSIS *****/
