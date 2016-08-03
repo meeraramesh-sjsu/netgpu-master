@@ -100,8 +100,8 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 			if(threadIdx.x==0)
 			{
-				int ipSrc = (elements[26].packet << 24) + (elements[27].packet << 16)\
-						+ (elements[28].packet << 8) + elements[29].packet;
+				int ipSrc = ((elements[26].packet & 0x000000FF) << 24) + ((elements[27].packet & 0x000000FF) << 16)\
+						+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29] & 0x000000FF).packet;
 			printf("IPv4 version %d Source Ip Address %d",verBlock,ipSrc);
 			GPU_results[threadIndex].ipSrc = ipSrc;
 			if(verBlock !=4 || verBlock !=6) GPU_results[threadIndex].maliciousVer=1;
