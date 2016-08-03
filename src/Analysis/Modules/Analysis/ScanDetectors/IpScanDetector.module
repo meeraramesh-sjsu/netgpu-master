@@ -34,6 +34,7 @@ typedef struct {
 	const uint8_t* hexsignature;
 	char packet;
 	int signatureLength;
+	uint32_t ipSrc;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
 #endif  //libAnalysisIpScan
@@ -53,7 +54,7 @@ typedef struct {
 			DATA_ELEMENT.signature = "0x48656C6C6F";\
 			DATA_ELEMENT.signatureLength = 3;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
-		}while(0)
+			}while(0)
 
 /***** IPSCAN DETECTOR ANALYSIS *****/
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
@@ -76,7 +77,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	{
 		if(threadIdx.x ==0)
 			{
-			printf("%02x %02x %02x",elements[16].packet,elements[17].packet,elements[18].packet & 0xFFFFFF00);
+			printf("%02x %02x %02x",elements[16].packet,elements[17].packet,elements[18].packet & 0x00FFFFFF);
 			int temp1 = (elements[16].packet) << 8;
 			int temp2 = elements[17].packet;
 			packetLen = temp1 + temp2 + 14;
@@ -92,8 +93,20 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			}
 		printf("\n");
 		//if(threadIdx.x ==0) printf("%d Packet Len = ",packetLen);
-
 	}
+		if(IS_IP4()) //Checking if it is a IPv4 Packet
+		{
+			int VerBlock = (elements[14].packet & 0x000000F0) >> 4;
+
+			if(threadIdx.x==0)
+			{
+				int ipSrc = (elements[26].packet << 24) + (elements[27].packet << 16)\
+						+ (elements[28].packet << 8) + elements[29].packet;
+			printf("IPv4 version %d Source Ip Address %d",verBlock,ipSrc);
+			GPU_results[threadIndex].ipSrc = ipSrc;
+			if(verBlock !=4 || verBlock !=6) GPU_results[threadIndex].maliciousVer=1;
+			}
+		}
 	__syncthreads();
 
 }
