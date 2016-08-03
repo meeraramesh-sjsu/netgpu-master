@@ -32,7 +32,7 @@ typedef struct {
 	int signatureFound;
 	char* signature;
 	const uint8_t* hexsignature;
-	char* packet;
+	char packet;
 	int signatureLength;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
@@ -46,7 +46,7 @@ typedef struct {
 /*DATA_ELEMENT.packet = (char*) GET_HEADER_POINTERCHAR;\*/
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 		do{\
-			DATA_ELEMENT.packet = (char *)(&GET_HEADER_POINTERCHAR);\
+			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 			DATA_ELEMENT.maliciousReserved = 0;\
 			DATA_ELEMENT.maliciousFlags=0;\
 			DATA_ELEMENT.maliciousPort=0;\
@@ -59,52 +59,6 @@ typedef struct {
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
 		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,counter,threshold);\
 		__syncthreads()
-
-__device__ void print_hex_ascii_line(/*const u_*/char /*uint8_t*/ *payload, int len, int offset)
-{
-	int i;
-	int gap;
-	/*const u_*/char /*uint8_t*/ *ch;
-
-	/* offset */
-	printf("%05d   ", offset);
-
-	/* hex */
-	ch = payload;
-	//DATA_ELEMENT.hexsignature = 0x48656C6C6F;
-
-	for(i = 0; i < len; i++) {
-		printf("%02x ", *ch);
-		ch++;
-		/* print extra space after 8th byte for visual aid */
-		if (i == 7)
-			printf(" ");
-	}
-	/* print space to handle line less than 8 bytes */
-	if (len < 8)
-		printf(" ");
-
-	/* fill hex gap with spaces if not full line */
-	if (len < 16) {
-		gap = 16 - len;
-		for (i = 0; i < gap; i++) {
-			printf("   ");
-		}
-	}
-	printf("   ");
-
-	/* ascii (if printable) */
-	ch = payload;
-	for(i = 0; i < len; i++) {
-		if ((int)(*ch)>0x1F && (int)(*ch)<0x7F)
-			printf("%c",*ch);
-		else
-			printf(".");
-		ch++;
-	}
-
-	printf("\n");
-}
 
 template<typename T,typename R>
 __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold) {
@@ -120,9 +74,8 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	{
 		if(threadIdx.x==0)
 		{
-					char ch = elements[threadIdx.x].packet[threadIdx.x];
-
-									printf("%02x",ch);
+					char ch = elements[threadIdx.x].packet;
+					printf("%02x",ch);
 						//print_hex_ascii_line(ch, len, offset);
 		}
 	}
