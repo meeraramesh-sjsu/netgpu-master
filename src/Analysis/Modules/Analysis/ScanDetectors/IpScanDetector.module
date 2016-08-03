@@ -54,7 +54,8 @@ typedef struct {
 			DATA_ELEMENT.signature = "0x48656C6C6F";\
 			DATA_ELEMENT.signatureLength = 3;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
-			}while(0)
+			DATA_ELEMENT.ipSrc = -1;
+		}while(0)
 
 /***** IPSCAN DETECTOR ANALYSIS *****/
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
@@ -73,40 +74,37 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	//Mine to Shared to save memory accesses
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 
-	if(blockIdx.x==0)
+	if(IS_IP4()) //Checking if it is a IPv4 Packet
 	{
-		if(threadIdx.x ==0)
-			{
-			printf("%02x %02x %02x",elements[16].packet,elements[17].packet,elements[18].packet & 0x00FFFFFF);
-			int temp1 = (elements[16].packet) << 8;
-			int temp2 = elements[17].packet;
-			packetLen = temp1 + temp2 + 14;
-			printf("Length of the packet = %d",packetLen);
-			printf("Thread 0 of block 0 printing contents of the packet");
-			for(int i=0;i<(packetLen);i++)
-					{
-					char ch = elements[i].packet;
-					printf("%02x ",ch);
-					if(i%7 == 0) printf("\n");
-									//print_hex_ascii_line(ch, len, offset);
-					}
-			}
-		printf("\n");
-		//if(threadIdx.x ==0) printf("%d Packet Len = ",packetLen);
-	}
-		if(IS_IP4()) //Checking if it is a IPv4 Packet
+		int verBlock = (elements[14].packet & 0x000000F0) >> 4;
+		if(threadIdx.x==0)
 		{
-			int verBlock = (elements[14].packet & 0x000000F0) >> 4;
+			int octet1 = elements[26].packet & 0x000000FF;
+			int octet2 = elements[27].packet & 0x000000FF;
 
-			if(threadIdx.x==0)
+			int ipSrc = (octet1 << 24) + (octet2 << 16)\
+					+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
+
+			if (octet1 == 10 /*|| octet1Dst==10*/)
 			{
-				int ipSrc = ((elements[26].packet & 0x000000FF) << 24) + ((elements[27].packet & 0x000000FF) << 16)\
-						+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29] & 0x000000FF).packet;
+				GPU_results[threadIndex].maliciousIP=1;
+			}
+			// 172.16.0.0 - 172.31.255.255
+			if ((octet1 == 172 /*|| octet1Dst==172*/) && (octet2 >= 16 /*|| octet2Dst >=16*/ ) && (octet2 <= 31/* || octet2Dst<=31*/))
+			{
+				GPU_results[threadIndex].maliciousIP=1;
+			}
+			// 192.168.0.0 - 192.168.255.255
+			if ((octet1 == 192 /*|| octet1Dst == 192*/) && (octet2 == 168/* || octet2Dst == 168*/))
+			{
+				GPU_results[threadIndex].maliciousIP=1;
+			}
+
 			printf("IPv4 version %d Source Ip Address %d",verBlock,ipSrc);
 			GPU_results[threadIndex].ipSrc = ipSrc;
-			if(verBlock !=4 || verBlock !=6) GPU_results[threadIndex].maliciousVer=1;
-			}
+			if(verBlock !=4 && verBlock !=6) GPU_results[threadIndex].maliciousVer=1;
 		}
+	}
 	__syncthreads();
 
 }

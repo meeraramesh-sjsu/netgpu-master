@@ -111,13 +111,18 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		cout<<inet_ntoa(in);
 		cout<<endl;	
 		}
-	/*	if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
+		if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
 		{
+			uint32_t network_byte_order;
+				uint32_t some_long = results[i*ANALYSIS_TPB+j].ipSrc;
+				network_byte_order = htonl(some_long);
+				struct in_addr in,out;
+				in.s_addr = network_byte_order;
 		cout<<"Alarm!! Src address or Destination address is in private Address range: ";
-		cout<<inet_ntoa(in)<<" "<<inet_ntoa(out);
+		cout<<inet_ntoa(in);//<<" "<<inet_ntoa(out);
 		cout<<endl;				
 		}
-		if(results[i*ANALYSIS_TPB+j].maliciousFlags == 1)
+		/*if(results[i*ANALYSIS_TPB+j].maliciousFlags == 1)
 		{
 		cout<<"Alarm!! Malicious Flag bit combinations found: i.e ";
 		printFlagBits(results[i*ANALYSIS_TPB+j].flags);
