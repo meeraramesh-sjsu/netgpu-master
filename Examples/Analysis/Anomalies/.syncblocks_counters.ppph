@@ -1,6 +1,0 @@
-#ifndef __PPP__
-#define __PPP__
-#endif
-#define __SYNCBLOCKS_COUNTER 0
-
-#define __SYNCBLOCKS_PRECODED_COUNTER 0

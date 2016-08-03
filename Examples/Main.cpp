@@ -28,13 +28,6 @@ using namespace std;
 
 	//Adding analysis to pool
 	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);
-//	Scheduler::addAnalysisToPool(Kernel::launchAnalysis);
-//	Scheduler::addAnalysisToPool(PortScan::launchAnalysis);
-//	Scheduler::addAnalysisToPool(Anomalies::launchAnalysis);
-//	Scheduler::addAnalysisToPool(Rate::launchAnalysis);
-//	Scheduler::addAnalysisToPool(Histogram::launchAnalysis);
-//	Scheduler::addAnalysisToPool(Throughput::launchAnalysis);
-//	Scheduler::addAnalysisToPool(AdvancedExample::launchAnalysis);
 
 	//Adding a single feeder
 	Scheduler::addFeederToPool(feeder);
