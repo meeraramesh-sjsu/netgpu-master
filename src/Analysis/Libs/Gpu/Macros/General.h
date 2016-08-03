@@ -63,7 +63,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #define GET_HEADER_TCP_POINTER(level)\
 	PACKET->headers.offset[level]
 
-
 //Gets field safely, to get disaligned fields 
 #define GET_FIELD(field) cudaNetworkToHost(cudaSafeGet(&(field))) //TODO: ENDIANISME ELIMINAR EL CUDANETWORKTOHOST
 
