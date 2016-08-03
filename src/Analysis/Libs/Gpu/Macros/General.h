@@ -28,7 +28,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #define ARRAY_SIZE(type) \
 	(sizeof(type)*MAX_BUFFER_PACKETS) 
 
-#define PACKETPOS blockIdx.x*blockDim.x;
+#define PACKETPOS (blockIdx.x*blockDim.x)
 
 #if HAS_WINDOW == 1
 	//Window special case
@@ -56,7 +56,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 /*#define GET_HEADER_POINTER(level) \
 		(((PACKET->packet))+PACKET->headers.offset[level])*/
 
-#define GET_PACKET_BYTE (GPU_buffer[PACKETPOS]->packet[threadIdx.x])
+#define GET_PACKET_BYTE char(GPU_buffer[PACKETPOS]->packet[threadIdx.x])
 
 //#define GET_HEADER_POINTERCHAR ((const u_char*) /*(uint8_t* )*/ (PACKET->packet))
 
