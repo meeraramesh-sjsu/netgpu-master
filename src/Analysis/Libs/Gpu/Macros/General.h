@@ -28,7 +28,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #define ARRAY_SIZE(type) \
 	(sizeof(type)*MAX_BUFFER_PACKETS) 
 
-#define PACKETPOS blockIdx.x;
+#define PACKETPOS blockIdx.x*blockDim.x;
 #if HAS_WINDOW == 1
 	//Window special case
 	#define POS threadIdx.x + (state.blockIterator*blockDim.x) 

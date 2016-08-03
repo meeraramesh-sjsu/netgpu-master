@@ -52,16 +52,13 @@ __device__ int totalThreads=0;
 
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 	do{\
-		DATA_ELEMENT.packet = (/*const u_*/ char*) GET_HEADER_POINTERCHAR;\
-		if(IS_TCP())\
-		{\
+		DATA_ELEMENT.packet = (char*) GET_HEADER_POINTERCHAR;\
 		DATA_ELEMENT.maliciousReserved = 0;\
 		DATA_ELEMENT.maliciousFlags=0;\
 		DATA_ELEMENT.maliciousPort=0;\
 		DATA_ELEMENT.signatureFound=0;\
 		DATA_ELEMENT.signature = "0x48656C6C6F";\
 		DATA_ELEMENT.signatureLength = 3;\
-		}\
 }while(0)
 	// + 14 + DATA_ELEMENT.size_ip\ + DATA_ELEMENT.size_tcp;
 	// - \
