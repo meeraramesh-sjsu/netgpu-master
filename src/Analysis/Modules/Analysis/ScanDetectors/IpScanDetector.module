@@ -125,37 +125,15 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 					int line_len;
 					int offset = 0;					/* zero-based offset counter */
 					char ch = elements[threadIdx.x].packet[threadIdx.x];
-			//
+
 					if (len <= 0)
 						;
-			//
+
 			//		/* data fits on one line */
 					else if (len <= line_width) {
 						printf("%02x",ch);
 						//print_hex_ascii_line(ch, len, offset);
 					}
-			//
-					else
-					{/* data spans multiple lines */
-					for ( ;; ) {
-						/* compute current line length */
-						line_len = line_width % len_rem;
-						/* print line */
-						print_hex_ascii_line(ch, line_len, offset);
-						/* compute total remaining */
-						len_rem = len_rem - line_len;
-						/* shift pointer to remaining bytes to print */
-						ch = ch + line_len;
-			//			/* add offset */
-						offset = offset + line_width;
-			//			/* check if we have line width chars or less */
-						if (len_rem <= line_width) {
-			//				/* print last line and get out */
-							print_hex_ascii_line(ch, len_rem, offset);
-							break;
-						}
-					}
-				}
 		}
 	}
 	__syncthreads();
