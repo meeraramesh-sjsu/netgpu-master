@@ -56,7 +56,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 /*#define GET_HEADER_POINTER(level) \
 		(((PACKET->packet))+PACKET->headers.offset[level])*/
 
-#define GET_PACKET_BYTE (char)(PACKET->packet[threadIdx.x])
+#define GET_PACKET_BYTE (char)(*(PACKET->packet[threadIdx.x]))
 
 //#define GET_HEADER_POINTERCHAR ((const u_char*) /*(uint8_t* )*/ (PACKET->packet))
 
