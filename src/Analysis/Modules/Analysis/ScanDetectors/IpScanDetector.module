@@ -129,16 +129,16 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 		if(blockIdx.x==0)
 		{
-			if(threadIdx.x==0) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
-			else if(threadIdx.x==1) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
-			else if(threadIdx.x==2) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
-			else if(threadIdx.x==3) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
-			else if(threadIdx.x==4) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
-			else if(threadIdx.x==5) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
-			else if(threadIdx.x==6) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
-			else if(threadIdx.x==7) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
-			else if(threadIdx.x==8) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
-			else if(threadIdx.x==9) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	if(threadIdx.x==0) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	else if(threadIdx.x==1) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	else if(threadIdx.x==2) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	else if(threadIdx.x==3) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	else if(threadIdx.x==4) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	else if(threadIdx.x==5) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	else if(threadIdx.x==6) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	else if(threadIdx.x==7) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	else if(threadIdx.x==8) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
+		//	else if(threadIdx.x==9) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);
 		}
 		//Printing the IP Header by extracting them as 16byte values
 //		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
