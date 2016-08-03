@@ -12,6 +12,7 @@
 #ifndef libAnalysisIpScan_h 
 #define libAnalysisIpScan_h 
 
+#include "../Thresholds/Thresholds.h"
 #include <inttypes.h>
 #include <string>
 #include <stdio.h>
@@ -42,10 +43,9 @@ typedef struct {
 #define ANALYSIS_INPUT_TYPE COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t)
 
 #ifdef __CUDACC__
-
+/*DATA_ELEMENT.packet = (char*) GET_HEADER_POINTERCHAR;\*/
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 		do{\
-			/*DATA_ELEMENT.packet = (char*) GET_HEADER_POINTERCHAR;\*/
 			DATA_ELEMENT.maliciousReserved = 0;\
 			DATA_ELEMENT.maliciousFlags=0;\
 			DATA_ELEMENT.maliciousPort=0;\
