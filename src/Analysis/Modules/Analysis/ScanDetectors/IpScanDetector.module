@@ -53,7 +53,6 @@ __device__ int totalThreads=0;
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 	do{\
 		DATA_ELEMENT.packet = (/*const u_*/ char*) GET_HEADER_POINTERCHAR;\
-		DATA_ELEMENT.size_packet = GET_FIELD(IP4_HEADER.totalLength) + 14;\
 		if(IS_TCP())\
 		{\
 		DATA_ELEMENT.maliciousReserved = 0;\
@@ -74,10 +73,6 @@ __device__ int totalThreads=0;
 
 #define SHARED_BUFFER_SIZE MAX_BUFFER_PACKETS/ANALYSIS_TPB
 
-__device__ int checkSignature(const u_char *payload, u_char *signature, int payLoadLen, int signLen)
-{
-int i = blockIdx.x * blockDim.x + threadIdx.x;
-}
 __device__ void print_hex_ascii_line(/*const u_*/char /*uint8_t*/ *payload, int len, int offset)
 {
 	int i;
@@ -134,7 +129,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 		int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
 		//Mine to Shared to save memory accesses
-		elements[threadIdx.x] =cudaSafeGet(&GPU_data[threadIndex]);
+		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 		if(blockIdx.x==0)
 		{
 			if(threadIdx.x==0) printf("%02x",elements[threadIdx.x].packet[threadIdx.x]);

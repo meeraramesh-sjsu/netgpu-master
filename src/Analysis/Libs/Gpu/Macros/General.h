@@ -45,9 +45,9 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #endif
 
 /*GPU_data element */
-#define DATA_ELEMENT GPU_data[PACKETPOS]
+#define DATA_ELEMENT GPU_data[POS]
 /*GPU_results element */
-#define RESULT_ELEMENT GPU_results[PACKETPOS]
+#define RESULT_ELEMENT GPU_results[POS]
 
 /* GETS HEADERS POINTER at level*/
 #define GET_HEADER_POINTER(level) \
