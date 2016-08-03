@@ -46,13 +46,13 @@ typedef struct {
 /*DATA_ELEMENT.packet = (char*) GET_HEADER_POINTERCHAR;\*/
 #define $IPSCAN_DETECTOR$AUTO_MINE()\
 		do{\
-			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 			DATA_ELEMENT.maliciousReserved = 0;\
 			DATA_ELEMENT.maliciousFlags=0;\
 			DATA_ELEMENT.maliciousPort=0;\
 			DATA_ELEMENT.signatureFound=0;\
 			DATA_ELEMENT.signature = "0x48656C6C6F";\
 			DATA_ELEMENT.signatureLength = 3;\
+			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 		}while(0)
 
 /***** IPSCAN DETECTOR ANALYSIS *****/
