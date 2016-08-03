@@ -66,10 +66,12 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	/* Erases duplicates and counts elements inside block */
 
 	__shared__ T elements[96];
+	__shared int packetLen;
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
 	//Mine to Shared to save memory accesses
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+
 	if(blockIdx.x==0)
 	{
 		if(threadIdx.x ==0)
@@ -77,16 +79,20 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			printf("%02x %02x ",elements[16].packet,elements[17].packet);
 			int temp1 = (elements[16].packet) << 8;
 			int temp2 = elements[17].packet;
-			printf("%d",temp1 + temp2);
-			}
-		//if(threadIdx.x ==0) printf("%d Packet Len = ",packetLen);
-		/*for(int i=0;i<(packetLen+14);i++)
-		{
+			packetLen = temp1 + temp2 + 14;
+			printf("Length of the packet = %d",packetLen);
+			printf("Thread 0 of block 0 printing contents of the packet");
+			for(int i=0;i<(packetLen);i++)
+					{
 					char ch = elements[i].packet;
 					printf("%02x ",ch);
 					if(i%7 == 0) printf("\n");
-						//print_hex_ascii_line(ch, len, offset);
-		}*/
+									//print_hex_ascii_line(ch, len, offset);
+					}
+			}
+		printf("\n");
+		//if(threadIdx.x ==0) printf("%d Packet Len = ",packetLen);
+
 	}
 	__syncthreads();
 
