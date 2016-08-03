@@ -26,7 +26,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "../Util.h"
 #include "../PacketFeeders/SizeDissector.h"
 
-#define MAX_BUFFER_PACKETS 138 //Max number of packets // Change it to 3840
+#define MAX_BUFFER_PACKETS 3840 //Max number of packets // Change it to 3840
 #define MAX_BUFFER_PACKET_SIZE 94 //Packet max size
 #define TIMESTAMP_OFFSET sizeof(int)
 
