@@ -87,6 +87,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 			if (octet1 == 10 /*|| octet1Dst==10*/)
 			{
+
 				GPU_results[threadIndex].maliciousIP=1;
 			}
 			// 172.16.0.0 - 172.31.255.255
@@ -97,6 +98,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			// 192.168.0.0 - 192.168.255.255
 			if ((octet1 == 192 /*|| octet1Dst == 192*/) && (octet2 == 168/* || octet2Dst == 168*/))
 			{
+				printf("%d 192.",threadIndex);
 				GPU_results[threadIndex].maliciousIP=1;
 			}
 
