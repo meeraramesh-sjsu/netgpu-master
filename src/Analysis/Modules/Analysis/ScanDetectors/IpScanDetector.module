@@ -87,22 +87,23 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 			if (octet1 == 10 /*|| octet1Dst==10*/)
 			{
-
+				printf(" 192. %d \n",threadIndex);
 				GPU_results[threadIndex].maliciousIP=1;
 			}
 			// 172.16.0.0 - 172.31.255.255
 			if ((octet1 == 172 /*|| octet1Dst==172*/) && (octet2 >= 16 /*|| octet2Dst >=16*/ ) && (octet2 <= 31/* || octet2Dst<=31*/))
 			{
+				printf(" 192. %d \n",threadIndex);
 				GPU_results[threadIndex].maliciousIP=1;
 			}
 			// 192.168.0.0 - 192.168.255.255
 			if ((octet1 == 192 /*|| octet1Dst == 192*/) && (octet2 == 168/* || octet2Dst == 168*/))
 			{
-				printf("%d 192.",threadIndex);
+				printf(" 192. %d \n",threadIndex);
 				GPU_results[threadIndex].maliciousIP=1;
 			}
 
-			printf("IPv4 version %d Source Ip Address %d",verBlock,ipSrc);
+			//printf("IPv4 version %d Source Ip Address %d",verBlock,ipSrc);
 			GPU_results[threadIndex].ipSrc = ipSrc;
 			if(verBlock !=4 && verBlock !=6) GPU_results[threadIndex].maliciousVer=1;
 		}
