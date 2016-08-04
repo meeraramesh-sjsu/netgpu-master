@@ -165,7 +165,6 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		} */
 		}
 		for(j = 0;j<auxBlocks[i];j++){
-		cout<<"Hello inside j loop Hooks"<<auxBlocks[i]<<endl;
 			//cout<<"Results = "<< results[i*ANALYSIS_TPB+j].rate << " " << results[i*ANALYSIS_TPB+j].counter<<" ";
 				
 			//cout<<"Results = "<<results[i*ANALYSIS_TPB+j].malicious<<endl;
