@@ -134,7 +134,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	{
 		if(IS_TCP())
 		{
-			GPU_results[threadIndex].flags = elements[threadIdx.x].flags;
+			GPU_results[threadIndex].flags = elements[47].packet;
 			if(elements[33].packet == 255)
 				GPU_results[threadIndex].maliciousDst = 1;
 
@@ -142,18 +142,17 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 					(elements[36].packet == 0 && elements[37].packet == 0))
 				GPU_results[threadIndex].maliciousPort = 1;
 
-			int ackNo = elements[42]<<24 + elements[43]<<16 + elements[44]<<8 + elements[45];
-			if(elements[47].flags & 16 ==1 && (ackNo == 0))
+			int ackNo = elements[42].packet<<24 + elements[43].packet<<16 + elements[44].packet<<8 + elements[45].packet;
+			if(elements[47].packet & 16 ==1 && (ackNo == 0))
 				GPU_results[threadIndex].maliciousAck = 1;
 
-			int reservedVal = elements[46] << 4;
+			int reservedVal = elements[46].packet << 4;
 			if(reservedVal != 0) GPU_results[threadIndex].maliciousReserved = 1;
 
 			if(elements[47].packet == 3 || elements[47].packet == 11
 					|| elements[47].packet == 7 || elements[47].packet == 15 || elements[47].packet == 1 ||
 					elements[47].packet == 0)
 			{
-
 				GPU_results[threadIndex].maliciousFlags = 1;
 			}
 

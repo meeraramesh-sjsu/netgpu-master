@@ -194,6 +194,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 //   	 {
 //      GPU_results[threadIndex].maliciousIP=1;
 //	}
+//
 //   	 if(IS_IP4())
 //   	 {
 //			int result = elements[threadIdx.x].headerVertos + elements[threadIdx.x].ttlprotocol\
