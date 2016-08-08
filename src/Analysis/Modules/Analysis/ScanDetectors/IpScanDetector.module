@@ -163,6 +163,8 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	}
 	__syncthreads();
 
+	if(IS_IP4())
+	{
 	int ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
 									+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
 	int ipDst = ((elements[30].packet & 0x000000FF)  << 24) + ((elements[31].packet & 0x000000FF)  << 16)
@@ -170,7 +172,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 	GPU_results[threadIndex].ipSrc = ipSrc;
 	GPU_results[threadIndex].ipDst = ipDst;
-
+	}
 }
 
 template<typename T,typename R>
