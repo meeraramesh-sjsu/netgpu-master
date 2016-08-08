@@ -35,6 +35,8 @@ typedef struct {
 	char packet;
 	int signatureLength;
 	uint32_t ipSrc;
+	uint32_t ipDst;
+	int flags;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
 #endif  //libAnalysisIpScan
@@ -61,51 +63,100 @@ typedef struct {
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
 		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,counter,threshold);\
 		__syncthreads()
-
+__device__ int lastTwoBytes(char pack)
+{
+	return pack & 0x000000FF;
+}
 template<typename T,typename R>
 __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold) {
 
 	/* Erases duplicates and counts elements inside block */
 
-	__shared__ T elements[96];
+
+	__shared__ T elements[54];
 	__shared__ int packetLen;
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
 	//Mine to Shared to save memory accesses
-	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+	if(threadsIdx.x < 54)
+		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+	__syncthreads();
 
-	if(IS_IP4()) //Checking if it is a IPv4 Packet
+	if(threadIdx.x == 14) // Representative thread for warp 0
 	{
-		int verBlock = (elements[14].packet & 0x000000F0) >> 4;
-		if(threadIdx.x==0)
+		if(IS_IP4()) //Checking if it is a IPv4 Packet
 		{
+			int verBlock = (elements[14].packet & 0x000000F0) >> 4;
+			if(verBlock !=4 && verBlock !=6) GPU_results[threadIndex].maliciousVer=1;
+
+
 			int octet1 = elements[26].packet & 0x000000FF;
 			int octet2 = elements[27].packet & 0x000000FF;
+			int octet1Dst = elements[30].packet & 0x000000FF;
+			int octet2Dst = elements[31].packet & 0x000000FF;
 
 			int ipSrc = (octet1 << 24) + (octet2 << 16)\
 					+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
-
-			if (octet1 == 10 /*|| octet1Dst==10*/)
+			int ipDst = (octet1Dst << 24) + (octet2Dst << 16)\
+								+ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
+			GPU_results[threadIndex].ipSrc = ipSrc;
+			GPU_results[threadIndex].ipDst = ipDst;
+			if (octet1 == 10 || octet1Dst == 10)
 			{
-				printf(" 192. %d \n",threadIndex);
 				GPU_results[threadIndex].maliciousIP=1;
 			}
 			// 172.16.0.0 - 172.31.255.255
-			if ((octet1 == 172 /*|| octet1Dst==172*/) && (octet2 >= 16 /*|| octet2Dst >=16*/ ) && (octet2 <= 31/* || octet2Dst<=31*/))
+			if ((octet1 == 172 || octet1Dst == 172 ) && (octet2 >= 16 || octet2Dst >=16 ) && (octet2 <= 31 || octet2Dst<=31))
 			{
-				printf(" 192. %d \n",threadIndex);
 				GPU_results[threadIndex].maliciousIP=1;
 			}
 			// 192.168.0.0 - 192.168.255.255
-			if ((octet1 == 192 /*|| octet1Dst == 192*/) && (octet2 == 168/* || octet2Dst == 168*/))
+			if ((octet1 == 192  || octet1Dst == 192) && (octet2 == 168 || octet2Dst == 168))
 			{
-				printf(" 192. %d \n",threadIndex);
 				GPU_results[threadIndex].maliciousIP=1;
 			}
+			int checksum = ((elements[14].packet & 0x000000FF)<<8 + (elements[15].packet & 0x000000FF)) +
+					((elements[16].packet & 0x000000FF)<<8 + (elements[17].packet& 0x000000FF)) +
+					((elements[18].packet & 0x000000FF)<<8  + (elements[19].packet & 0x000000FF )) +
+					((elements[20].packet & 0x000000FF)<<8 + (elements[21].packet & 0x000000FF)) +
+					((elements[22].packet & 0x000000FF)<<8  + (elements[23].packet & 0x000000FF)) +
+					((elements[24].packet & 0x000000FF)<<8 + (elements[25].packet & 0x000000FF)) +
+					(lastTwoBytes(elements[26].packet)<<8 + lastTwoBytes(elements[27].packet)) +
+					(lastTwoBytes(elements[28].packet)<<8 + lastTwoBytes(elements[29].packet)) +
+					(lastTwoBytes(elements[30].packet)<<8 + lastTwoBytes(elements[31].packet)) +
+					(lastTwoBytes(elements[32].packet)<<8 + lastTwoBytes(elements[33].packet));
+			unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
+			if(sum!=-1) GPU_results[threadIndex].maliciousCheckSum = 1;
 
-			//printf("IPv4 version %d Source Ip Address %d",verBlock,ipSrc);
-			GPU_results[threadIndex].ipSrc = ipSrc;
-			if(verBlock !=4 && verBlock !=6) GPU_results[threadIndex].maliciousVer=1;
+		}
+	}
+	else if(threadIdx.x == 33)
+	{
+		if(IS_TCP())
+		{
+			GPU_results[threadIndex].flags = elements[threadIdx.x].flags;
+			if(elements[33].packet == 255)
+				GPU_results[threadIndex].maliciousDst = 1;
+
+			if((elements[34].packet == 0 && elements[35].packet == 0) ||
+					(elements[36].packet == 0 && elements[37].packet == 0))
+				GPU_results[threadIndex].maliciousPort = 1;
+
+			int ackNo = elements[42]<<24 + elements[43]<<16 + elements[44]<<8 + elements[45];
+			if(elements[47].flags & 16 ==1 && (ackNo == 0))
+				GPU_results[threadIndex].maliciousAck = 1;
+
+			int reservedVal = elements[46] << 4;
+			if(reservedVal != 0) GPU_results[threadIndex].maliciousReserved = 1;
+
+			if(elements[47].packet == 3 || elements[47].packet == 11
+					|| elements[47].packet == 7 || elements[47].packet == 15 || elements[47].packet == 1 ||
+					elements[47].packet == 0)
+			{
+
+				GPU_results[threadIndex].maliciousFlags = 1;
+			}
+
 		}
 	}
 	__syncthreads();
