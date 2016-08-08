@@ -37,6 +37,7 @@ typedef struct {
 	uint32_t ipSrc;
 	uint32_t ipDst;
 	int flags;
+	int sport;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
 #endif  //libAnalysisIpScan
@@ -78,7 +79,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
 	//Mine to Shared to save memory accesses
-	if(threadsIdx.x < 54)
+	if(threadIdx.x < 54)
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	__syncthreads();
 
@@ -135,6 +136,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		if(IS_TCP())
 		{
 			GPU_results[threadIndex].flags = elements[47].packet;
+			GPU_results[threadIndex].sport = lastTwoBytes(elements[34].packet) << 8 + elements[35].packet;
 			if(elements[33].packet == 255)
 				GPU_results[threadIndex].maliciousDst = 1;
 
