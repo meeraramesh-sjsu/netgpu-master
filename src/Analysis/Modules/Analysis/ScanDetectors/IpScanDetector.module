@@ -95,14 +95,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			int octet1Dst = elements[30].packet & 0x000000FF;
 			int octet2Dst = elements[31].packet & 0x000000FF;
 
-			int ipSrc = (octet1 << 24) + (octet2 << 16)\
-							+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
-					int ipDst = (octet1Dst << 24) + (octet2Dst << 16)\
-										+ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
-
-					GPU_results[threadIndex].ipSrc = ipSrc;
-					GPU_results[threadIndex].ipDst = ipDst;
-					if (octet1 == 10 || octet1Dst == 10)
+			if (octet1 == 10 || octet1Dst == 10)
 			{
 				GPU_results[threadIndex].maliciousIP=1;
 			}
@@ -117,7 +110,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 				GPU_results[threadIndex].maliciousIP=1;
 			}
 			int checksum = ((elements[14].packet & 0x000000FF)<<8 + (elements[15].packet & 0x000000FF)) +
-					((elements[16].packet & 0x000000FF)<<8 + (elements[17].packet& 0x000000FF)) +
+					((elements[16].packet & 0x000000FF)<<8 + (elements[17].packet & 0x000000FF)) +
 					((elements[18].packet & 0x000000FF)<<8  + (elements[19].packet & 0x000000FF )) +
 					((elements[20].packet & 0x000000FF)<<8 + (elements[21].packet & 0x000000FF)) +
 					((elements[22].packet & 0x000000FF)<<8  + (elements[23].packet & 0x000000FF)) +
@@ -126,6 +119,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 					(lastTwoBytes(elements[28].packet)<<8 + lastTwoBytes(elements[29].packet)) +
 					(lastTwoBytes(elements[30].packet)<<8 + lastTwoBytes(elements[31].packet)) +
 					(lastTwoBytes(elements[32].packet)<<8 + lastTwoBytes(elements[33].packet));
+
 			unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
 			if(sum!=-1) GPU_results[threadIndex].maliciousCheckSum = 1;
 
