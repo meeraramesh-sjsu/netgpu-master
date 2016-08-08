@@ -93,12 +93,9 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			some_long = results[i].ipSrc;
 			network_byte_order = htonl(some_long);
 			in.s_addr = network_byte_order;
-			cout<<"Source IP = " << inet_ntoa(in)<<" ";
-
 			some_long = results[i].ipDst;
 			network_byte_order1 = htonl(some_long);
 			out.s_addr = network_byte_order1;
-			cout<<"Destination IP = " << inet_ntoa(out)<<" ";
 		}
 		//cout<<"Hello inside i loop Hooks"<<state.windowState.totalNumberOfBlocks<<endl;
 		for(j=0;j<128;j++)
@@ -116,16 +113,6 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			{
 				cout<<"Alarm!! Src address or Destination address is in private Address range:";
 				cout<<"Source IP = " << inet_ntoa(in)<<" ";
-				cout<<"Destination IP = " << inet_ntoa(out)<<" ";
-				cout<<endl;
-				some_long = results[i].ipSrc;
-				network_byte_order = htonl(some_long);
-				in.s_addr = network_byte_order;
-				cout<<"Source IP = " << inet_ntoa(in)<<" ";
-
-				some_long = results[i].ipDst;
-				network_byte_order1 = htonl(some_long);
-				out.s_addr = network_byte_order1;
 				cout<<"Destination IP = " << inet_ntoa(out)<<" ";
 				cout<<endl;
 			}
