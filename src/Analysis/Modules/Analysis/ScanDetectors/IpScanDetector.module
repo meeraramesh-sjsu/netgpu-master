@@ -152,7 +152,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			{
 				GPU_results[threadIndex].maliciousFlags = 1;
 			}
-
 		}
 	}
 	__syncthreads();
@@ -163,7 +162,8 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 									+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
 	int ipDst = ((elements[30].packet & 0x000000FF)  << 24) + ((elements[31].packet & 0x000000FF)  << 16)
 												+ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
-
+	printf("%d \n",ipSrc);
+	printf("%d \n",ipDst);
 	GPU_results[threadIndex].ipSrc = ipSrc;
 	GPU_results[threadIndex].ipDst = ipDst;
 	}
