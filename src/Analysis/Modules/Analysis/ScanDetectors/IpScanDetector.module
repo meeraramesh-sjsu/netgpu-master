@@ -175,8 +175,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(threadIdx.x >= 54)
 			elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 		__syncthreads();
-
-	if(threadIdx.x >=54)
+		/*if(threadIdx.x >=54)
 	{
 		GPU_results[threadIndex].signature = elements[threadIdx.x].signature;
 		char *input = elements[threadIdx.x].signature;
@@ -199,7 +198,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			}
 			if(input[k]=='\0') GPU_results[threadIndex].signatureFound = 1;
 		}
-	}
+	}*/
 }
 
 template<typename T,typename R>
