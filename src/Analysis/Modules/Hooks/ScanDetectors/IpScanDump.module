@@ -70,11 +70,9 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 
 template<typename R>
 void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, int severeLimit, int criticalLimit){
-
 	int i,j;
 	bool hasResults;
 	uint8_t* pointer;
-
 	//time vars	
 	time_t aux;
 	struct tm * timeinfo;
@@ -149,11 +147,11 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 				cout<<"Alarm!! The IPv4 Packet has an incorrect checksum and should be discarded"<<endl;
 				cout<<"From"<<inet_ntoa(in)<<endl;
 			}
-		/*	if(results[i*ANALYSIS_TPB+j].signatureFound == 1)
+			if(results[i*ANALYSIS_TPB+j].signatureFound == 1)
 			{
 			cout<<"Malicious signature found in packet ";
 			cout<<"From "<<inet_ntoa(in)<<"Malicious signature is";
-			} */
+			}
 		}
 
 
