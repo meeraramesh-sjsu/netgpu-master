@@ -155,7 +155,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		{
 			cout<<"Malicious signature found in packet ";
 			cout<<"From "<<inet_ntoa(in)<<"Malicious signature is";
-			cout<<results[i*ANALYSIS_TPB+j].signature<<endl;
+			//cout<<results[i*ANALYSIS_TPB+j].signature<<endl;
 		}
 		}
 
