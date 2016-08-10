@@ -76,10 +76,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	__shared__ T elements[96];
 	__shared__ int packetLen;
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
-	if(threadIdx.x == 0)
-	{
-		printf("Block Index = %d",blockIdx.x);
-	}
 	//Mine to Shared to save memory accesses
 	if(threadIdx.x < 54)
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);

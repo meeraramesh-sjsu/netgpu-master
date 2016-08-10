@@ -86,7 +86,6 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		struct in_addr in,out;
 		if(results[i].ipPacket)
 		{
-			cout<<"blockIdx ="<<i;
 			some_long = results[i].ipSrc;
 			network_byte_order = htonl(some_long);
 			in.s_addr = network_byte_order;
