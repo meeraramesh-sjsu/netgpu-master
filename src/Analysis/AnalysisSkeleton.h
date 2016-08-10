@@ -577,8 +577,6 @@ template<typename T,typename R>
 	#endif
 
 }
-
-
 /**** Launch wrapper ****/
 //default Launch Wrapper for Analysis not using Windows 
 
@@ -589,7 +587,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 	T *GPU_data;
 	R *GPU_results, *results;
 	int64_t *auxBlocks;
-
 
 	if(packetBuffer != NULL){
 	

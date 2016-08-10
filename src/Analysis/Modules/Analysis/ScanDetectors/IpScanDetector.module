@@ -73,8 +73,6 @@ template<typename T,typename R>
 __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold) {
 
 	/* Erases duplicates and counts elements inside block */
-
-
 	__shared__ T elements[96];
 	__shared__ int packetLen;
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
