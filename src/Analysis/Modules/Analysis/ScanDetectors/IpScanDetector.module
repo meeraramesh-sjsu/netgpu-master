@@ -85,10 +85,9 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	{
 		if(IS_IP4()) //Checking if it is a IPv4 Packet
 		{
-			printf("%d blockID \n ",blockIdx.x);
-			GPU_results[threadIndex].ipPacket = 1;
+			GPU_results[blockIdx.x].ipPacket = 1;
 			int verBlock = (elements[14].packet & 0x000000F0) >> 4;
-			if(verBlock !=4 && verBlock !=6) GPU_results[threadIndex].maliciousVer=1;
+			if(verBlock !=4 && verBlock !=6) GPU_results[blockIdx.x].maliciousVer=1;
 
 			int octet1 = elements[26].packet & 0x000000FF;
 			int octet2 = elements[27].packet & 0x000000FF;
@@ -97,17 +96,17 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 			if (octet1 == 10 || octet1Dst == 10)
 			{
-				GPU_results[threadIndex].maliciousIP=1;
+				GPU_results[blockIdx.x].maliciousIP=1;
 			}
 			// 172.16.0.0 - 172.31.255.255
 			if ((octet1 == 172 || octet1Dst == 172 ) && (octet2 >= 16 || octet2Dst >=16 ) && (octet2 <= 31 || octet2Dst<=31))
 			{
-				GPU_results[threadIndex].maliciousIP=1;
+				GPU_results[blockIdx.x].maliciousIP=1;
 			}
 			// 192.168.0.0 - 192.168.255.255
 			if ((octet1 == 192  || octet1Dst == 192) && (octet2 == 168 || octet2Dst == 168))
 			{
-				GPU_results[threadIndex].maliciousIP=1;
+				GPU_results[blockIdx.x].maliciousIP=1;
 			}
 			int checksum = ((elements[14].packet & 0x000000FF)<<8 + (elements[15].packet & 0x000000FF)) +
 					((elements[16].packet & 0x000000FF)<<8 + (elements[17].packet & 0x000000FF)) +
@@ -121,49 +120,47 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 					(lastTwoBytes(elements[32].packet)<<8 + lastTwoBytes(elements[33].packet));
 
 			unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
-			if(sum!=-1) GPU_results[threadIndex].maliciousCheckSum = 1;
+			if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
 		}
 	}
 	else if(threadIdx.x == 33)
 	{
 		if(IS_TCP())
 		{
-			printf("%d blockID \n ",blockIdx.x);
-			GPU_results[threadIndex].flags = lastTwoBytes(elements[47].packet);
-			GPU_results[threadIndex].sport = lastTwoBytes(elements[34].packet) << 8 + lastTwoBytes(elements[35].packet);
+			GPU_results[blockIdx.x].flags = lastTwoBytes(elements[47].packet);
+			GPU_results[blockIdx.x].sport = lastTwoBytes(elements[34].packet) << 8 + lastTwoBytes(elements[35].packet);
 			if(lastTwoBytes(elements[33].packet) == 255)
-				GPU_results[threadIndex].maliciousDst = 1;
+				GPU_results[blockIdx.x].maliciousDst = 1;
 
 			if((lastTwoBytes(elements[34].packet) == 0 && lastTwoBytes(elements[35].packet) == 0) ||
 					(lastTwoBytes(elements[36].packet) == 0 && lastTwoBytes(elements[37].packet) == 0))
-				GPU_results[threadIndex].maliciousPort = 1;
+				GPU_results[blockIdx.x].maliciousPort = 1;
 
 			int ackNo = lastTwoBytes(elements[42].packet)<<24 + lastTwoBytes(elements[43].packet)<<16 + lastTwoBytes(elements[44].packet)<<8 + lastTwoBytes(elements[45].packet);
 			if(lastTwoBytes(elements[47].packet & 16) ==1 && (ackNo == 0))
-				GPU_results[threadIndex].maliciousAck = 1;
+				GPU_results[blockIdx.x].maliciousAck = 1;
 
 			int reservedVal = lastTwoBytes(elements[46].packet) >> 4;
-			if(reservedVal != 0) GPU_results[threadIndex].maliciousReserved = 1;
+			if(reservedVal != 0) GPU_results[blockIdx.x].maliciousReserved = 1;
 
 			int flagVal  = lastTwoBytes(elements[47].packet);
 
 			if(flagVal == 3 || flagVal == 11 || flagVal == 7 || flagVal == 15 || flagVal == 1 || flagVal == 0)
-				GPU_results[threadIndex].maliciousFlags = 1;
+				GPU_results[blockIdx.x].maliciousFlags = 1;
 		}
 	}
 	__syncthreads();
 
 	if(IS_IP4())
 	{
-		printf("%d blockID \n ",blockIdx.x);
-	GPU_results[threadIndex].ipPacket = 1;
+	GPU_results[blockIdx.x].ipPacket = 1;
 	uint32_t ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
 									+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
 	uint32_t ipDst = ((elements[30].packet & 0x000000FF)  << 24) + ((elements[31].packet & 0x000000FF)  << 16)
 							+ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
 
-	GPU_results[threadIndex].ipSrc = ipSrc;
-	GPU_results[threadIndex].ipDst = ipDst;
+	GPU_results[blockIdx.x].ipSrc = ipSrc;
+	GPU_results[blockIdx.x].ipDst = ipDst;
 	}
 
 	/*Payload Signature Matching*/
@@ -173,7 +170,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		__syncthreads();
 		if(threadIdx.x >=54)
 	{
-		GPU_results[threadIndex].signature = elements[threadIdx.x].signature;
+		GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
 		char *input = elements[threadIdx.x].signature;
 		int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
 		int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
@@ -192,7 +189,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 					break;
 				else {j++;k=k+2;}
 			}
-			if(input[k]=='\0') GPU_results[threadIndex].signatureFound = 1;
+			if(input[k]=='\0') GPU_results[blockIdx.x].signatureFound = 1;
 		}
 	}
 }
