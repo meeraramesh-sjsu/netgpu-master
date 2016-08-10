@@ -625,7 +625,8 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//dim3  block(10);
 		//dim3 grid(1);
 		dim3 block(96);
-		dim3 grid(237);
+		dim3 grid(288);
+
 		//Set state number of blocks and last Packet position
 		state.windowState.totalNumberOfBlocks = MAX_BUFFER_PACKETS;
 		state.windowState.hasReachedWindowLimit = true;
@@ -745,7 +746,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,MAX_BUFFER_PACKETS*sizeof(R),cudaMemcpyDeviceToHost));
-		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,MAX_BUFFER_PACKETS*sizeof(int64_t),cudaMemcpyDeviceToHost));
+		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,2*sizeof(int64_t)*MAX_BUFFER_PACKETS,cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/
