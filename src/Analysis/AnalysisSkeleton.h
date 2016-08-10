@@ -607,16 +607,16 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		BMMS::mallocBMMS((void**)&GPU_data,ARRAY_SIZE(T));
 		BMMS::mallocBMMS((void**)&GPU_results,ARRAY_SIZE(R));
 		BMMS::mallocBMMS((void**)&state.GPU_aux,ARRAY_SIZE(T));  //Auxiliary array
-		BMMS::mallocBMMS((void**)&state.GPU_auxBlocks,2*sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB);
+		BMMS::mallocBMMS((void**)&state.GPU_auxBlocks,2*sizeof(int64_t)*MAX_BUFFER_PACKETS);
 		BMMS::mallocBMMS((void**)&state.inputs.GPU_extendedParameters,sizeof(int64_t)*MAX_INPUT_EXTENDED_PARAMETERS);
-		BMMS::mallocBMMS((void**)&state.GPU_codeRequiresWLR,ARRAY_SIZE(uint32_t)/ANALYSIS_TPB); //Op Code Exec Flags
+		BMMS::mallocBMMS((void**)&state.GPU_codeRequiresWLR,ARRAY_SIZE(uint32_t)); //Op Code Exec Flags
 
 		/*** MEMSET 0 GPU arrays ***/
 		cudaAssert(cudaMemset(GPU_data,0,ARRAY_SIZE(T)));	
 		cudaAssert(cudaMemset(GPU_results,0,ARRAY_SIZE(R)));	
 		cudaAssert(cudaMemset(state.GPU_aux,0,ARRAY_SIZE(T)));	
-		cudaAssert(cudaMemset(state.GPU_auxBlocks,0,2*sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB));	
-		cudaAssert(cudaMemset(state.GPU_codeRequiresWLR,0,ARRAY_SIZE(uint32_t)/ANALYSIS_TPB));
+		cudaAssert(cudaMemset(state.GPU_auxBlocks,0,2*sizeof(int64_t)*MAX_BUFFER_PACKETS));
+		cudaAssert(cudaMemset(state.GPU_codeRequiresWLR,0,ARRAY_SIZE(uint32_t)));
 		cudaAssert(cudaThreadSynchronize());
 		
 		/*** KERNEL DIMS ***/
@@ -745,7 +745,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,MAX_BUFFER_PACKETS*sizeof(R),cudaMemcpyDeviceToHost));
-		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,MAX_BUFFER_PACKETS/ANALYSIS_TPB*sizeof(int64_t),cudaMemcpyDeviceToHost));
+		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,MAX_BUFFER_PACKETS*sizeof(int64_t),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/

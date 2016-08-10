@@ -80,7 +80,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	cout<<"*************Crafted Packets***************"<<endl;
 	cout<<setw(10)<<"Source IP address"<<endl;
 	int incorrectVerNumber = 0;
-	for(i = 0,hasResults = false;i<237;i++){
+	for(i = 0,hasResults = false;i<state.windowState.totalNumberOfBlocks();i++){
 		uint32_t network_byte_order, network_byte_order1;
 		uint32_t some_long;
 		struct in_addr in,out;
@@ -94,7 +94,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			out.s_addr = network_byte_order1;
 		}
 		//cout<<"Hello inside i loop Hooks"<<state.windowState.totalNumberOfBlocks<<endl;
-		for(j=0;j<128;j++)
+		for(j=0;j<96;j++)
 		{
 			// cout<<unsigned(results[i*ANALYSIS_TPB+j].version)<<endl;
 			if(results[i*ANALYSIS_TPB+j].maliciousVer == 1)
