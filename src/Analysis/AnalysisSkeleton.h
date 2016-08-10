@@ -627,7 +627,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		dim3 block(96);
 		dim3 grid(237);
 		//Set state number of blocks and last Packet position
-		state.windowState.totalNumberOfBlocks = MAX_BUFFER_PACKETS/ANALYSIS_TPB;
+		state.windowState.totalNumberOfBlocks = MAX_BUFFER_PACKETS;
 		state.windowState.hasReachedWindowLimit = true;
 		state.lastPacket = packetBuffer->getNumOfPackets(); 
 		state.windowState.windowStartTime= packetBuffer->getPacket(0)->timestamp;
