@@ -85,6 +85,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	{
 		if(IS_IP4()) //Checking if it is a IPv4 Packet
 		{
+			printf("%d blockID \n ",blockIdx.x);
 			GPU_results[threadIndex].ipPacket = 1;
 			int verBlock = (elements[14].packet & 0x000000F0) >> 4;
 			if(verBlock !=4 && verBlock !=6) GPU_results[threadIndex].maliciousVer=1;
@@ -128,6 +129,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	{
 		if(IS_TCP())
 		{
+			printf("%d blockID \n ",blockIdx.x);
 			GPU_results[threadIndex].flags = lastTwoBytes(elements[47].packet);
 			GPU_results[threadIndex].sport = lastTwoBytes(elements[34].packet) << 8 + lastTwoBytes(elements[35].packet);
 			if(lastTwoBytes(elements[33].packet) == 255)
@@ -141,7 +143,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			if(lastTwoBytes(elements[47].packet & 16) ==1 && (ackNo == 0))
 				GPU_results[threadIndex].maliciousAck = 1;
 
-			int reservedVal = lastTwoBytes(elements[46].packet) << 4;
+			int reservedVal = lastTwoBytes(elements[46].packet) >> 4;
 			if(reservedVal != 0) GPU_results[threadIndex].maliciousReserved = 1;
 
 			int flagVal  = lastTwoBytes(elements[47].packet);
@@ -154,6 +156,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 	if(IS_IP4())
 	{
+		printf("%d blockID \n ",blockIdx.x);
 	GPU_results[threadIndex].ipPacket = 1;
 	uint32_t ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
 									+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);

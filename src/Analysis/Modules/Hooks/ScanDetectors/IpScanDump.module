@@ -84,7 +84,6 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		uint32_t network_byte_order, network_byte_order1;
 		uint32_t some_long;
 		struct in_addr in,out;
-
 		//cout<<"Hello inside i loop Hooks"<<state.windowState.totalNumberOfBlocks<<endl;
 		for(j=0;j<96;j++)
 		{
