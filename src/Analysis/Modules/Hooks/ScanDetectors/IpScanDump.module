@@ -84,18 +84,19 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		uint32_t network_byte_order, network_byte_order1;
 		uint32_t some_long;
 		struct in_addr in,out;
-		if(results[i*ANALYSIS_TPB+j].ipPacket)
-		{
-			some_long = results[i].ipSrc;
-			network_byte_order = htonl(some_long);
-			in.s_addr = network_byte_order;
-			some_long = results[i].ipDst;
-			network_byte_order1 = htonl(some_long);
-			out.s_addr = network_byte_order1;
-		}
+
 		//cout<<"Hello inside i loop Hooks"<<state.windowState.totalNumberOfBlocks<<endl;
 		for(j=0;j<96;j++)
 		{
+		if(results[i*ANALYSIS_TPB+j].ipPacket)
+		{
+		some_long = results[i*ANALYSIS_TPB+j].ipSrc;
+		network_byte_order = htonl(some_long);
+		in.s_addr = network_byte_order;
+		some_long = results[i*ANALYSIS_TPB+j].ipDst;
+		network_byte_order1 = htonl(some_long);
+		out.s_addr = network_byte_order1;
+		}
 			// cout<<unsigned(results[i*ANALYSIS_TPB+j].version)<<endl;
 			if(results[i*ANALYSIS_TPB+j].maliciousVer)
 			{
