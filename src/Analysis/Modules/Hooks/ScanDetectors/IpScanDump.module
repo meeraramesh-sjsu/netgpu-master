@@ -107,6 +107,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			}
 			if(results[i*ANALYSIS_TPB+j].maliciousIP == 1)
 			{
+				cout<<"Packet with index" << (i*ANALYSIS_TPB+j) ;
 				cout<<"Alarm!! Src address or Destination address is in private Address range:";
 				cout<<"Source IP = " << inet_ntoa(in)<<" ";
 				cout<<"Destination IP = " << inet_ntoa(out)<<" ";
@@ -114,18 +115,21 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			}
 			if(results[i*ANALYSIS_TPB+j].maliciousFlags == 1)
 			{
+				cout<<"Packet with index" << (i*ANALYSIS_TPB+j);
 				cout<<"Alarm!! Malicious Flag bit combinations found: i.e ";
 				printFlagBits(results[i*ANALYSIS_TPB+j].flags);
 				cout<<" are set "<<endl;
 			}
 			if(results[i*ANALYSIS_TPB+j].maliciousReserved == 1)
 			{
+				cout<<"Packet with index" << (i*ANALYSIS_TPB+j);
 				cout<<"Alarm!! Reserved bits are set, the packet is from src Address:";
 				cout<<inet_ntoa(in);
 				cout<<endl;
 			}
 			if(results[i*ANALYSIS_TPB+j].maliciousPort == 1)
 			{
+				cout<<"Packet with index" << (i*ANALYSIS_TPB+j);
 				if(results[i*ANALYSIS_TPB+j].sport==0)
 					cout<<"Alarm!! TCP Packet from src Address "<<inet_ntoa(in)<<"has source Port set to zero!";
 				else
@@ -134,27 +138,29 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			}
 			if(results[i*ANALYSIS_TPB+j].maliciousAck == 1)
 			{
+				cout<<"Packet with index" << (i*ANALYSIS_TPB+j);
 				cout<<"Alarm!! TCP Packet has acknowledgement bit set and ACK number is zero";
 				cout<<"Packet from "<<inet_ntoa(in)<<"should be blocked"<<endl;
 			}
 			if(results[i*ANALYSIS_TPB+j].maliciousDst == 1)
 			{
+				cout<<"Packet with index" << (i*ANALYSIS_TPB+j);
 				cout<<"Alarm!! TCP Broadcast Packet! with address"<<inet_ntoa(out);
 				cout<<endl;
 			}
 			if(results[i*ANALYSIS_TPB+j].maliciousCheckSum == 1)
 			{
+				cout<<"Packet with index" << (i*ANALYSIS_TPB+j);
 				cout<<"Alarm!! The IPv4 Packet has an incorrect checksum and should be discarded"<<endl;
 				cout<<"From"<<inet_ntoa(in)<<endl;
 			}
 			if(results[i*ANALYSIS_TPB+j].signatureFound == 1)
 			{
+			cout<<"Packet with index" << (i*ANALYSIS_TPB+j);
 			cout<<"Malicious signature found in packet ";
-			cout<<"From "<<inet_ntoa(in)<<"Malicious signature is";
+			cout<<"From "<<inet_ntoa(in)<<"Malicious signature is"<<endl;
 			}
 		}
-
-
 	}
 
 	if(hasResults){
