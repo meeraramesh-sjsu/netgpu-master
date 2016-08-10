@@ -122,7 +122,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 			unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
 			if(sum!=-1) GPU_results[threadIndex].maliciousCheckSum = 1;
-
 		}
 	}
 	else if(threadIdx.x == 33)

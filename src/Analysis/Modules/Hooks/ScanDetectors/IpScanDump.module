@@ -85,7 +85,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		uint32_t some_long;
 		struct in_addr in,out;
 		//cout<<"Hello inside i loop Hooks"<<state.windowState.totalNumberOfBlocks<<endl;
-		for(j=0;j<96;j++)
+		/*for(j=0;j<96;j++)
 		{
 		if(results[i*ANALYSIS_TPB+j].ipPacket)
 		{
@@ -160,7 +160,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<"Malicious signature found in packet ";
 			cout<<"From "<<inet_ntoa(in)<<"Malicious signature is"<<endl;
 			}
-		}
+		}*/
 	}
 
 	if(hasResults){
