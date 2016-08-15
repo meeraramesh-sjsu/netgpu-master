@@ -19,7 +19,10 @@ __global__ void shiftOrGPU(const char* T, const char *P, const int n,
 			}
 		}
 		if(found)
+		{
+			cout<<"The pattern was found at thread Id"<<x<<endl;
 			result[x] = true;
+		}
 	}
 }
 
@@ -29,7 +32,7 @@ void preComputeShifts(char* T, int n, int m, int *bmBc,  int *preComp)
 	while(i<=n-m)
 	{
 		i += bmBc[T[i+m]];
-		printf("%d",i);
+		printf("value of i in preCompShift %d \n",i);
 		preComp[i]=i;
 	}
 } 
@@ -75,5 +78,6 @@ int main(void)
 	cudaMemcpy(h_result, d_result, lent*sizeof(bool),cudaMemcpyDeviceToHost);
 	
 	for(int i=0;i<7;i++)
-		cout<<h_result[i]<<" ";
+		;
+	//	cout<<h_result[i]<<" ";
 }
