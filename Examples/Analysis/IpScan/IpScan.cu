@@ -95,9 +95,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, a
 	
 	//Dump to DB
 	// $IPSCAN_DETECTOR$DB_DUMPER$DUMP_ALARMS();
-
-
-
 	//Example how to use PROGRAM_LAUNCHER
 #if 0 
 	printf("In program Launcher");	
@@ -109,6 +106,3 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, a
 	$PROGRAM_LAUNCHER$EXECUTE("./prova.sh");
 #endif
 }
-
-
-
