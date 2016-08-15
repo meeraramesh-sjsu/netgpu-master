@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include <cuda_runtime.h>
-
+using namespace std;
 __global__ void shiftOrGPU(const char* T, const char *P, const int n,
 		const int m, const int *bmBc, const int *preComp, bool *result) 
 {
@@ -23,7 +23,7 @@ __global__ void shiftOrGPU(const char* T, const char *P, const int n,
 	}
 }
 
-void preComputeShifts(char* T, int n, int m, int *bmBc, const int *preComp)
+void preComputeShifts(char* T, int n, int m, int *bmBc,  int *preComp)
 {
 	int i = 0;
 	while(i<=n-m)
@@ -40,7 +40,7 @@ void preBmBc(char *P,int m, int bmBc[])
 	for(i=0; i<255; i++)
 		bmBc[i]=m+1;
 	for(i=0;i<m;i++)
-		bmBC[i]=m-i;
+		bmBc[i]=m-i;
 }
 
 int main(void)
@@ -72,7 +72,7 @@ int main(void)
 	cudaMemcpy(d_preComp, h_preComp, lent*sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemset(d_result, false, lent*sizeof(bool));
 	shiftOrGPU<<<1,8>>>(d_text, d_pattern, lent, lenp, d_bmBc, d_preComp, d_result);
-	cudaMemcpy(h_result, d_result, lent*sizeof(bool),cudaMemcpyDeviceToHost));
+	cudaMemcpy(h_result, d_result, lent*sizeof(bool),cudaMemcpyDeviceToHost);
 	
 	for(int i=0;i<7;i++)
 		cout<<h_result[i]<<" ";
