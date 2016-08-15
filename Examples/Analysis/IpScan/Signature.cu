@@ -20,7 +20,7 @@ __global__ void shiftOrGPU(const char* T, const char *P, const int n,
 		}
 		if(found)
 		{
-			cout<<"The pattern was found at thread Id"<<x<<endl;
+			printf("The pattern was found at thread Id %d",x);
 			result[x] = true;
 		}
 	}
