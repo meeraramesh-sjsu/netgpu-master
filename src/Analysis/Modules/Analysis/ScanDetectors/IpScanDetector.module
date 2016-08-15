@@ -176,12 +176,12 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(threadIdx.x >=54)
 	{
 		GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
+		char *input = elements[threadIdx.x].signature;
+				int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
+				int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
+				int val = val1 + val2;
 		if(elements[threadIdx.x].packet == val && (96 - threadIdx.x > elements[threadIdx.x].signatureLength))
 		{
-			char *input = elements[threadIdx.x].signature;
-			int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
-			int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
-			int val = val1 + val2;
 			int j = 1;
 			int k = 4;
 			int i = threadIdx.x;

@@ -29,6 +29,7 @@ void preComputeShifts(char* T, int n, int m, int *bmBc, const int *preComp)
 	while(i<=n-m)
 	{
 		i += bmBc[T[i+m]];
+		printf("%d",i);
 		preComp[i]=i;
 	}
 } 
@@ -44,7 +45,7 @@ void preBmBc(char *P,int m, int bmBc[])
 
 int main(void)
 {
-	char *h_text = "HEABLO";
+	char *h_text = "ABHELO";
 	char *h_pattern = "AB";
 	int lenp = 3;
 	int lent = 7;
