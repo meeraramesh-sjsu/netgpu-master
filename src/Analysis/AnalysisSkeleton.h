@@ -645,29 +645,22 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
 		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
 
-	/*	float time;
+		float time;
 		cudaEvent_t start, stop;
 
 		cudaAssert( cudaEventCreate(&start) );
 		cudaAssert( cudaEventCreate(&stop) );
-		cudaAssert( cudaEventRecord(start, 0) ); */
-
-		uint kernelTime;
-		 cutCreateTimer(&kernelTime);
-		 cutResetTimer(kernelTime);
-		 cutStartTimer(kernelTime);
+		cudaAssert( cudaEventRecord(start, 0) );
 
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state);
 		cudaAssert(cudaThreadSynchronize());
 
-		cutStopTimer(kernelTime);
-		 printf ("Time for the kernel: %f ms\n", cutGetTimerValue(kernelTime));
-	/*	cudaAssert( cudaEventRecord(stop, 0) );
+		cudaAssert( cudaEventRecord(stop, 0) );
 		cudaAssert( cudaEventSynchronize(stop) );
 		cudaAssert( cudaEventElapsedTime(&time, start, stop) );
 
 		printf("Time to generate:  %3.1f ms \n", time);
-*/
+
 		/*EXTRA KERNEL CALLS */
 
 		/*Predefined Analysis Extra Kernels calls*/

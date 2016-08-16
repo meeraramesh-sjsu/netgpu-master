@@ -60,10 +60,10 @@ int main(void)
 	int bmBc[255];
 	bool * h_result[7];
 	int *h_preComp = (int*) malloc(7 * sizeof(int));
-	
+
 	preBmBc(h_pattern, lenp, bmBc);
 	preComputeShifts(h_text, lent, lenp, bmBc, h_preComp);
-	
+
 	cudaMalloc((void**)&d_text,lent*sizeof(char));
 	cudaMalloc((void**)&d_pattern,lenp*sizeof(char));
 	cudaMalloc((void**)&d_result,lent*sizeof(bool));
@@ -74,9 +74,25 @@ int main(void)
 	cudaMemcpy(d_bmBc,bmBc,255*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(d_preComp, h_preComp, lent*sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemset(d_result, false, lent*sizeof(bool));
-	shiftOrGPU<<<1,8>>>(d_text, d_pattern, lent, lenp, d_bmBc, d_preComp, d_result);
-	cudaMemcpy(h_result, d_result, lent*sizeof(bool),cudaMemcpyDeviceToHost);
 	
+	float time;
+	cudaEvent_t start, stop;
+
+	cudaAssert( cudaEventCreate(&start) );
+	cudaAssert( cudaEventCreate(&stop) );
+	cudaAssert( cudaEventRecord(start, 0) );
+
+	shiftOrGPU<<<1,8>>>(d_text, d_pattern, lent, lenp, d_bmBc, d_preComp, d_result);
+	cudaAssert(cudaThreadSynchronize());
+	
+	cudaAssert( cudaEventRecord(stop, 0) );
+	cudaAssert( cudaEventSynchronize(stop) );
+	cudaAssert( cudaEventElapsedTime(&time, start, stop) );
+
+	printf("Time to generate:  %3.1f ms \n", time);
+
+	cudaMemcpy(h_result, d_result, lent*sizeof(bool),cudaMemcpyDeviceToHost);
+
 	for(int i=0;i<7;i++)
 		;
 	//	cout<<h_result[i]<<" ";
