@@ -636,6 +636,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
 		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
 
+		float time;
+		cudaEvent_t start, stop;
+
 		/*** KERNEL CALLS ***/
 		cudaAssert( cudaEventCreate(&start) );
 		cudaAssert( cudaEventCreate(&stop) );
