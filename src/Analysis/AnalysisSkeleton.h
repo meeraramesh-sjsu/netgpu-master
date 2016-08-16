@@ -647,6 +647,12 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state);
 		cudaAssert(cudaThreadSynchronize());
 
+		cudaAssert( cudaEventRecord(stop, 0) );
+		cudaAssert( cudaEventSynchronize(stop) );
+		cudaAssert( cudaEventElapsedTime(&time, start, stop) );
+
+		printf("Time to generate:  %3.1f ms \n", time);
+
 
 		/*EXTRA KERNEL CALLS */
 
@@ -771,11 +777,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//Launch hook (or preHook if window is set)
 		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks);
 
-		cudaAssert( cudaEventRecord(stop, 0) );
-		cudaAssert( cudaEventSynchronize(stop) );
-		cudaAssert( cudaEventElapsedTime(&time, start, stop) );
-
-		printf("Time to generate:  %3.1f ms \n", time);
 
 		//Frees results
 		cudaAssert(cudaFreeHost(results));
