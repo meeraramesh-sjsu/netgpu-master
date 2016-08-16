@@ -32,8 +32,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "Libs/Gpu/Protocols.h"
 #include "AnalysisState.h"
 
-
-
 //Include ppp syncblocks counters
 #ifdef __CUDACC__
 	#include ".syncblocks_counters.ppph"
@@ -401,9 +399,22 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 	//Debug
 	DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel in a WINDOWED analysis, with default implementation.");
 	DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d, Total number of blocks:%d, Blocks already mined: %d, Has reached window limit: %d, Last packet index: %d",grid.x,state.windowState.totalNumberOfBlocks,state.windowState.blocksPreviouslyMined,state.windowState.hasReachedWindowLimit,state.lastPacket);
+
+	float time;
+	cudaEvent_t start, stop;
+
+	cudaAssert( cudaEventCreate(&start) );
+	cudaAssert( cudaEventCreate(&stop) );
+	cudaAssert( cudaEventRecord(start, 0) );
+
 	COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state);
 	cudaAssert(cudaThreadSynchronize());
 
+	cudaAssert( cudaEventRecord(stop, 0) );
+	cudaAssert( cudaEventSynchronize(stop) );
+	cudaAssert( cudaEventElapsedTime(&time, start, stop) );
+
+	printf("Time to generate:  %3.1f ms \n", time);
 	/*EXTRA KERNEL CALLS */
 	
 	/*Predefined Analysis Extra Kernels calls*/

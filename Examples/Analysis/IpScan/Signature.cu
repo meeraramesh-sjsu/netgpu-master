@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <iostream>
-
 #include <cuda_runtime.h>
+
 using namespace std;
 __global__ void shiftOrGPU(const char* T, const char *P, const int n,
 		const int m, const int *bmBc, const int *preComp, bool *result) 

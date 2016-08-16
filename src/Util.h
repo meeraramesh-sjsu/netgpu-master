@@ -15,6 +15,8 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 #include <errno.h> 
 #include <string.h> 
+#include <driver_types.h>
+#include <cuda_runtime.h>
 
 /* Define debug level 0,1,2 */
 /* less verbose <---> more verbose */
@@ -58,8 +60,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 	do {	\
 		fprintf(stderr,"WARNING: %s -> %s\n",msg,strerror(errno));\
 	} while(0)
-
-
 
 #if DEBUG_LEVEL > 0 
 	#define DEBUG(msg,...) do {	\
