@@ -3,6 +3,17 @@
 #include <cuda_runtime.h>
 
 using namespace std;
+
+
+#define cudaAssert(f) \
+	do {	\
+		cudaError_t err=f;\
+		if(err != cudaSuccess) { \
+			fprintf(stderr,"cudaError at %s:%d: %s\n",__FILE__,__LINE__,cudaGetErrorString(err));\
+			exit(-1);\
+		}\
+	}while(0)
+
 __global__ void shiftOrGPU(const char* T, const char *P, const int n,
 		const int m, const int *bmBc, const int *preComp, bool *result) 
 {
