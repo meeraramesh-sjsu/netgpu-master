@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 #define cudaAssert(f) \
 	do {	\
 		cudaError_t err=f;\

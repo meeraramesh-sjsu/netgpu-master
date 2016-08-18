@@ -79,11 +79,14 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	//Dump alarms
 	cout<<"*************Crafted Packets***************"<<endl;
 	cout<<setw(10)<<"Source IP address"<<endl;
+	int totalcycles = 0;
 	int incorrectVerNumber = 0;
 	for(i = 0;i<state.lastPacket;i++){
 		uint32_t network_byte_order, network_byte_order1;
 		uint32_t some_long;
 		struct in_addr in,out;
+		totalcycles += results[i].timeTaken;
+		cout<<"Total cycles for block"<<i<<" "<<results[i].timeTaken<<endl;
 		if(results[i].ipPacket)
 		{
 			some_long = results[i].ipSrc;
@@ -157,7 +160,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<"From "<<inet_ntoa(in)<<endl;
 		}
 	}
-
+	cout<<"Total number of cycles = "<<totalcycles<<endl;
 	if(hasResults){
 		//Analysis start timestamp (1rst packet)
 		os<<"#"STR(ANALYSIS_NAME)"> ";

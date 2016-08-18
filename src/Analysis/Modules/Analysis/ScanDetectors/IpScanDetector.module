@@ -39,6 +39,7 @@ typedef struct {
 	uint32_t ipDst;
 	int flags;
 	int sport;
+	clock_t timeTaken;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
 #endif  //libAnalysisIpScan
@@ -75,8 +76,13 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	/* Erases duplicates and counts elements inside block */
 	__shared__ T elements[96];
 	__shared__ int packetLen;
+	__shared__ clock_t starttime;
+	__shared__ clock_t stoptime;
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 	//Mine to Shared to save memory accesses
+	if(threadIdx.x ==0)
+		starttime = clock();
+
 	if(threadIdx.x < 54)
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	__syncthreads();
@@ -197,7 +203,13 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			if(input[k]=='\0') GPU_results[blockIdx.x].signatureFound = 1;
 		}
 	}
+	__syncthreads();
 
+	if(threadIdx.x ==0)
+	{
+		stoptime = clock();
+		GPU_results[blockIdx.x].timeTaken = stoptime - starttime;
+	}
 }
 template<typename T,typename R>
 __device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold) {
