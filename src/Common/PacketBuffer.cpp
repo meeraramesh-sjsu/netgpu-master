@@ -15,6 +15,7 @@ PacketBuffer::~PacketBuffer(void){
 	
 //	delete [] buffer;
 	cudaAssert(cudaFreeHost(buffer));
+
 }
 
 void PacketBuffer::clearContent(void){

@@ -12,18 +12,18 @@
 //#include "Analysis/Advanced/Advanced.h"
 
 using namespace std;
- int main(int args,char *argv[]) {
+int main(int args,char *argv[]) {
 
 	//Capture packets from a pcap capture file (argv[1])
 	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
 
 	//Capturing from lo
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
-	
+
 
 	//cout <<"Starting analysis in few minutes...\n";
 
-//	std::cout <<"Starting analysis now      ...\n";
+	//	std::cout <<"Starting analysis now      ...\n";
 
 
 	//Adding analysis to pool
@@ -38,7 +38,13 @@ using namespace std;
 	//std::cout<<" \n Ending ......."<<endl;
 
 	delete feeder;
+	// cudaDeviceReset causes the driver to clean up all state. While
+	// not mandatory in normal operation, it is good practice.  It is also
+	// needed to ensure correct operation when the application is being
+	// profiled. Calling cudaDeviceReset causes all profile data to be
+	// flushed before the application exits
+	cudaAssert(cudaDeviceReset());
 	exit(EXIT_SUCCESS);
-        //sample 
+	//sample
 }
 
