@@ -107,7 +107,7 @@ int main(void)
 	int elapsed_time = 0;
 	    for(int i = 0; i < 8; i++)
 	            elapsed_time += runtime[i];
-	    elapsed_time = elapsed_time / (824 x 10^6);
+	    elapsed_time = elapsed_time / (824 * 10^6);
 	    printf("Kernel Execution Time: %d ms\n", elapsed_time/1000);
 
 	cudaAssert( cudaEventRecord(stop, 0) );
