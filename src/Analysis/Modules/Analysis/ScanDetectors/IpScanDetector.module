@@ -66,6 +66,7 @@ typedef struct{
 	const uint8_t* hexsignature;
 	/*const u_*/ char* /*uint8_t **/ payload;
 	int signatureLength;
+	int timeTaken;
 }COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysis_t);
 
 /*__device__ int indexTcp = 0;
@@ -192,6 +193,11 @@ __device__ void print_hex_ascii_line(/*const u_*/char /*uint8_t*/ *payload, int 
 template<typename T,typename R> 
 __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold){
 
+	clock_t startTime;
+	clock_t stopTime;
+
+		startTime = clock();
+
 /* Erases duplicates and counts elements inside block */
 	__shared__ T elements[ANALYSIS_TPB];
 
@@ -200,6 +206,7 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
 
 		//Mine to Shared to save memory accesses
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+		__syncthreads();
 
 		//Printing the IP Header by extracting them as 16byte values
 		unsigned int octet1,octet2,octet3,octet4,octet1Dst,octet2Dst,octet3Dst,octet4Dst;
@@ -390,10 +397,10 @@ __device__  void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_result
    	}*/
 	}
 	}
-
+	stopTime = clock();
+	GPU_results[threadIndex].timeTaken=int(stopTime-startTime);
 	__syncthreads();
-
-  // atomicAdd(&totalThreads,1);
+ // atomicAdd(&totalThreads,1);
 }
 
 template<typename T,typename R> 
