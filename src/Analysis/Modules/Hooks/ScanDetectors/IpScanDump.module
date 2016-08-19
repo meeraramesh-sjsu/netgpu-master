@@ -93,6 +93,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			if(k<state.lastPacket)
 			{
 				totalCycles += results[i*ANALYSIS_TPB+j].timeTaken;
+				cout<<"k= "<<k<<"totalCycles = " <<results[i*ANALYSIS_TPB+j].timeTaken<<endl;
 				k++;
 			}
 			uint32_t network_byte_order;
@@ -186,7 +187,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 
 
 	}
-	cout<<"Clock Frequency = "<<setw(2)<<totalCycles/824<<endl;
+	cout<<"Clock Frequency = "<<setw(2)<<totalCycles/824.0F<<endl;
 
 	if(hasResults){
 		//Analysis start timestamp (1rst packet)
