@@ -14,8 +14,9 @@ using namespace std;
 	}while(0)
 
 __global__ void shiftOrGPU(const char* T, const char *P, const int n,
-		const int m, const int *bmBc, const int *preComp, bool *result) 
+		const int m, const int *bmBc, const int *preComp, bool *result,  int* runtime_gpu) 
 {
+	clock_t start_time = clock();
 	unsigned int x = blockDim.x * blockIdx.x + threadIdx.x;
 
 	if(x <= n-m && preComp[x]==x) {
@@ -34,6 +35,8 @@ __global__ void shiftOrGPU(const char* T, const char *P, const int n,
 			result[x] = true;
 		}
 	}
+	clock_t stop_time = clock();
+	runtime_gpu[x]=(int)(stop_time - start_time);
 }
 
 void preComputeShifts(char* T, int n, int m, int *bmBc,  int *preComp)
@@ -92,9 +95,21 @@ int main(void)
 	cudaAssert( cudaEventCreate(&stop) );
 	cudaAssert( cudaEventRecord(start, 0) );
 
-	shiftOrGPU<<<1,8>>>(d_text, d_pattern, lent, lenp, d_bmBc, d_preComp, d_result);
+	 int* runtime_gpu;
+		int runtime_size = 1 * 8 * sizeof(int);
+	    int* runtime = (int*)malloc(runtime_size);
+	    memset(runtime, 0, runtime_size);
+	    cudaMalloc((void**)&runtime_gpu, runtime_size);
+
+	shiftOrGPU<<<1,8>>>(d_text, d_pattern, lent, lenp, d_bmBc, d_preComp, d_result,runtime_gpu);
 	cudaAssert(cudaThreadSynchronize());
 	
+	int elapsed_time = 0;
+	    for(int i = 0; i < 8; i++)
+	            elapsed_time += runtime[i];
+	    elapsed_time = elapsed_time / (824 x 10^6);
+	    printf("Kernel Execution Time: %d ms\n", elapsed_time/1000);
+
 	cudaAssert( cudaEventRecord(stop, 0) );
 	cudaAssert( cudaEventSynchronize(stop) );
 	cudaAssert( cudaEventElapsedTime(&time, start, stop) );
