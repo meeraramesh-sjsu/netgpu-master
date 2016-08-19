@@ -559,8 +559,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		GPU_data = NULL;
 	}
 	BMMS::freeBMMS(state.GPU_auxBlocks);	
-
-
 }
 
 
@@ -770,31 +768,20 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/
-		//		BMMS::freeBMMS(GPU_data);
-		//		BMMS::freeBMMS(GPU_results);
-		//		BMMS::freeBMMS(state.GPU_aux);
-		//		BMMS::freeBMMS(state.GPU_auxBlocks);
-		//		BMMS::freeBMMS(state.inputs.GPU_extendedParameters);
-		//		BMMS::freeBMMS(state.GPU_codeRequiresWLR);
-		//
-		//		/*** LAUNCH HOOK (Host function) ***/
-		//
-		//		//Launch hook (or preHook if window is set)
-		//		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks);
-		//
-		//
-		//		//Frees results
-		//		cudaAssert(cudaFreeHost(results));
-		//		//free(results);
-		//
+		BMMS::freeBMMS(GPU_data);
+		BMMS::freeBMMS(GPU_results);
+		BMMS::freeBMMS(state.GPU_aux);
+		BMMS::freeBMMS(state.GPU_auxBlocks);
+		BMMS::freeBMMS(state.inputs.GPU_extendedParameters);
+		BMMS::freeBMMS(state.GPU_codeRequiresWLR);
 
-		// cudaDeviceReset causes the driver to clean up all state. While
-		// not mandatory in normal operation, it is good practice.  It is also
-		// needed to ensure correct operation when the application is being
-		// profiled. Calling cudaDeviceReset causes all profile data to be
-		// flushed before the application exits
-		cudaAssert(cudaDeviceReset());
+		/*** LAUNCH HOOK (Host function) ***/
 
+		//Launch hook (or preHook if window is set)
+		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks);
+		//Frees results
+		cudaAssert(cudaFreeHost(results));
+		//free(results);
 	}
 }
 

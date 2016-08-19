@@ -11,21 +11,21 @@ DatabaseManager* Scheduler::dbManager = new ODBCDatabaseManager();
 void (*Scheduler::analysisFunctions[SCHEDULER_MAX_ANALYSIS_POOL_SIZE])(PacketBuffer* packetBuffer, packet_t* GPU_buffer);
 
 feeders_t Scheduler::feedersPool[SCHEDULER_MAX_FEEDERS_POOL_SIZE];
- 
+
 /* Scheduler initializer */
 void Scheduler::init(void){
-	
+
 	sigset_t set;
 
 	//Memset pools
 	memset(&feedersPool,0,sizeof(feedersPool));		
 	memset(&analysisFunctions,0,sizeof(analysisFunctions));	
-	
+
 	//Ignore SIGTERM signal (to be inherit by feeders threads)
 	sigemptyset(&set);
 	sigaddset(&set,SIGTERM);
 	sigaddset(&set,SIGINT);
-       	sigprocmask(SIG_BLOCK, &set, NULL);
+	sigprocmask(SIG_BLOCK, &set, NULL);
 }
 
 
@@ -41,14 +41,14 @@ void Scheduler::programHandler(void){
 
 	struct sigaction action;
 	sigset_t set;
-	
+
 	sigemptyset(&set);
 	sigaddset(&set,SIGTERM);
-	
+
 	//sigaction
 	memset(&action,0,sizeof(struct sigaction));	
 	action.sa_handler = Scheduler_sigterm_handler;
-   
+
 	if(sigaction(SIGTERM, &action, NULL)<0)
 		ABORT("Error programming signal handler on Scheduler");
 
@@ -56,15 +56,15 @@ void Scheduler::programHandler(void){
 		ABORT("Error programming signal handler on Scheduler");
 
 	//Unblock my SIGTERM
-       	sigprocmask(SIG_UNBLOCK, &set, NULL);
+	sigprocmask(SIG_UNBLOCK, &set, NULL);
 }
 
 packet_t* Scheduler::loadBufferToGPU(PacketBuffer* packetBuffer){
-	
+
 	/* Loads buffer to the GPU */	
 	//cout<<"Loading Buffer To GPU "<<endl;        
 
-        cout<<"\n ---- buffer from CPU to GPU \n" <<endl;
+	cout<<"\n ---- buffer from CPU to GPU \n" <<endl;
 
 	packet_t* GPU_buffer;
 	int size = sizeof(packet_t)*MAX_BUFFER_PACKETS;
@@ -72,28 +72,28 @@ packet_t* Scheduler::loadBufferToGPU(PacketBuffer* packetBuffer){
 	BMMS::mallocBMMS((void**)&GPU_buffer,size);
 	cudaAssert(cudaThreadSynchronize());
 
-        cout<<"\n ---- ******************************************************************" <<endl;
+	cout<<"\n ---- ******************************************************************" <<endl;
 
 	/* Checks if buffer is NULL */
 	if(packetBuffer == NULL)
-        {
-          cout<<"\n ---- packet buffer is NULL \n" <<endl;
-	  return NULL;
-        } 
-	
-	if(GPU_buffer == NULL)
-          ABORT("cudaMalloc failed at Scheduler");
-	if(packetBuffer->getBuffer()==NULL)
-    	  ABORT("PacketBuffer is NULL");
+	{
+		cout<<"\n ---- packet buffer is NULL \n" <<endl;
+		return NULL;
+	}
 
-        cudaAssert(cudaMemcpy(GPU_buffer,packetBuffer->getBuffer(),size,cudaMemcpyHostToDevice));
+	if(GPU_buffer == NULL)
+		ABORT("cudaMalloc failed at Scheduler");
+	if(packetBuffer->getBuffer()==NULL)
+		ABORT("PacketBuffer is NULL");
+
+	cudaAssert(cudaMemcpy(GPU_buffer,packetBuffer->getBuffer(),size,cudaMemcpyHostToDevice));
 	cudaAssert(cudaThreadSynchronize());
 
-/*
+	/*
 // added on June 1st 
 //Modified: June 7th Uncomment the below block if needed to print the packets passing from the CPU
    int index=packetBuffer->getNumOfPackets();
-   
+
    for(int i=0;i<index;i++)
    {
 	packet_t* curpacket=packetBuffer->getPacket(i);
@@ -108,12 +108,12 @@ packet_t* Scheduler::loadBufferToGPU(PacketBuffer* packetBuffer){
 	}
 cout<<endl;
    }
-*/
-  return GPU_buffer;	
+	 */
+	return GPU_buffer;
 }
 
 void Scheduler::unloadBufferFromGPU(packet_t* GPU_buffer){
-/*Modified: June 7th Uncomment the below block if needed to print the packets returned from the GPU
+	/*Modified: June 7th Uncomment the below block if needed to print the packets returned from the GPU
 
 PacketBuffer* pacbuf=new PacketBuffer();
 int size=sizeof(packet_t)*MAX_BUFFER_PACKETS;
@@ -135,7 +135,7 @@ cout<<endl<<"Unloading from GPU called";
 		}
 cout<<endl; 
 }
-*/
+	 */
 	/* Unloads buffer from the GPU */	
 	BMMS::freeBMMS(GPU_buffer);
 }
@@ -162,8 +162,8 @@ void Scheduler::addFeederToPool(PacketFeeder* feeder,int limit){
 
 void Scheduler::addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer)){
 	int i;
-        
-        cout << "\n ---- addAnalysisToPool called \n";
+
+	cout << "\n ---- addAnalysisToPool called \n";
 
 	for(i=0;i<SCHEDULER_MAX_ANALYSIS_POOL_SIZE;i++){
 		if(analysisFunctions[i] == NULL){
@@ -184,12 +184,12 @@ void Scheduler::analyzeBuffer(PacketBuffer* packetBuffer){
 	packet_t* GPU_buffer; 
 
 	DEBUG("Entering analyzeBuffer");
-	
-        cout <<"\n ---- calling loadBufferToGPU \n"; 
+
+	cout <<"\n ---- calling loadBufferToGPU \n";
 
 	//Load buffer from PacketBuffer to GPU
 	GPU_buffer = loadBufferToGPU(packetBuffer);
-	
+
 	DEBUG("Loaded: %d",counter);
 
 
@@ -200,7 +200,7 @@ void Scheduler::analyzeBuffer(PacketBuffer* packetBuffer){
 		}else
 			break;
 	}
-	
+
 	cout<<"Unloading Buffer From GPU called";
 	//UNload buffer from GPU
 	unloadBufferFromGPU(GPU_buffer);
@@ -212,7 +212,7 @@ void Scheduler::analyzeBuffer(PacketBuffer* packetBuffer){
 /* Start routine. Infinite loop that obtains buffer and analyzes it*/
 
 void Scheduler::start(void){
-	
+
 	int i;
 	bool hasFeedersLeft;
 	PacketBuffer* buffer=NULL;
@@ -224,15 +224,15 @@ void Scheduler::start(void){
 	/* Implements infinite loop */
 	for(;;){
 		for(i=0,hasFeedersLeft = false;i<SCHEDULER_MAX_FEEDERS_POOL_SIZE;i++){	 
-			
+
 			//If slot has valid Feeder pointer
-        		if(feedersPool[i].feeder != NULL){
+			if(feedersPool[i].feeder != NULL){
 				//Get buffer
 				buffer = feedersPool[i].feeder->getSniffedPacketBuffer();
-			
+
 				//Analyse it
-                                cout<< " \n ---- calling analyze function \n";
-			        analyzeBuffer(buffer);
+				cout<< " \n ---- calling analyze function \n";
+				analyzeBuffer(buffer);
 
 				//Check if(offline) feeder has no more packets to get
 				if(buffer == NULL || buffer->getFlushFlag())
@@ -240,23 +240,29 @@ void Scheduler::start(void){
 				else
 				{
 					hasFeedersLeft = true;	
-				cout<<"Feeder has more packets to get"<<endl;
-				 cout<<buffer->getNumOfPackets()<<endl;
+					cout<<"Feeder has more packets to get"<<endl;
+					cout<<buffer->getNumOfPackets()<<endl;
 				}}
 		}
 
 		if(hasFeedersLeft == false)
 			break;
 	}
+	// cudaDeviceReset causes the driver to clean up all state. While
+	// not mandatory in normal operation, it is good practice.  It is also
+	// needed to ensure correct operation when the application is being
+	// profiled. Calling cudaDeviceReset causes all profile data to be
+	// flushed before the application exits
+	cudaAssert(cudaDeviceReset());
 
 }
 
 void Scheduler::term(void){
 
 	int i;
-	
+
 	cerr<<"Sending term"<<endl;
-	
+
 	//Force all feeders to flush their buffers and to exit
 
 	for(i=0;i<SCHEDULER_MAX_FEEDERS_POOL_SIZE;i++){	 
@@ -264,5 +270,5 @@ void Scheduler::term(void){
 			feedersPool[i].feeder->flushAndExit();	
 	}
 
-		
+
 }
