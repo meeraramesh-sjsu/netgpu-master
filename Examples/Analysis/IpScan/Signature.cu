@@ -108,7 +108,7 @@ int main(void)
 		// needed to ensure correct operation when the application is being
 		// profiled. Calling cudaDeviceReset causes all profile data to be
 		// flushed before the application exits
-		cudaAssert(cudaDeviceReset());
+	cudaAssert(cudaDeviceReset());
 	for(int i=0;i<7;i++)
 		;
 	//	cout<<h_result[i]<<" ";
