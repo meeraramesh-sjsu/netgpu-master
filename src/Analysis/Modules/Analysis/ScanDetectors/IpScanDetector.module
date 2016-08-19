@@ -39,7 +39,7 @@ typedef struct {
 	uint32_t ipDst;
 	int flags;
 	int sport;
-	clock_t timeTaken;
+	int timeTaken;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
 #endif  //libAnalysisIpScan
@@ -208,7 +208,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(threadIdx.x ==0)
 	{
 		stoptime = clock();
-		GPU_results[blockIdx.x].timeTaken = stoptime - starttime;
+		GPU_results[blockIdx.x].timeTaken = int(stoptime - starttime);
 	}
 }
 template<typename T,typename R>
