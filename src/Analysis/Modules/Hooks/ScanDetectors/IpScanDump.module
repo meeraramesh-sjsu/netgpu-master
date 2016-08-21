@@ -86,6 +86,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		uint32_t some_long;
 		struct in_addr in,out;
 		totalcycles += results[i].timeTaken;
+		cout<<"Packet"<<i<<"Total Cycles = "<<results[i].timeTaken<<endl;
 		if(results[i].ipPacket)
 		{
 			some_long = results[i].ipSrc;
@@ -160,7 +161,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		}
 	}
 	totalcycles = totalcycles / (824);
-	cout<<"Clock Frequency = "<<totalcycles<<"us"<<endl;
+	cout<<"Clock Frequency = "<<setw(2)<<totalcycles<<"us"<<endl;
 	if(hasResults){
 		//Analysis start timestamp (1rst packet)
 		os<<"#"STR(ANALYSIS_NAME)"> ";
