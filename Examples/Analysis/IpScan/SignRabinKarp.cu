@@ -36,11 +36,11 @@ __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int RM,
 		{int x = 0; result = &x;}
 	else
 	{
-		printf("ThreadIndex = %d",threadIdx.x);
 		if (x >= M && N - M >= M)
 		{
 			inputHash = (inputHash + 997 - (input[x - M] * RM) % 997) % 997;
 			inputHash = (inputHash * 256 + input[x]) % 997;
+			printf("InputHash = %d, patHash = %d \n", inputHash,patHash);
 			if (inputHash == patHash && memCmpDev(input, pattern, x - M + 1, N, M) == 0)
 				{
 				int y = x-1;
