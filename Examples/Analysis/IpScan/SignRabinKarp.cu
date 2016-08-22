@@ -5,6 +5,15 @@
 #include<iostream>
 using namespace std;
 
+#define cudaAssert(f) \
+		do {	\
+			cudaError_t err=f;\
+			if(err != cudaSuccess) { \
+				fprintf(stderr,"cudaError at %s:%d: %s\n",__FILE__,__LINE__,cudaGetErrorString(err));\
+				exit(-1);\
+			}\
+		}while(0)
+
 __device__ int memCmpDev(char *input, char *pattern, int offset,int N,int M)
 {
 	if (threadIdx.x == offset)
@@ -22,6 +31,7 @@ __device__ int memCmpDev(char *input, char *pattern, int offset,int N,int M)
 
 __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int RM,int inputHash,int patHash,int* result)
 {
+	printf("Hello Thread here");
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	if (inputHash == patHash && memCmpDev(input, pattern, 0, N, M) == 0) 
 		{printf("Hello Here");int x = 0; result = &x;}
@@ -72,6 +82,7 @@ int main()
 		dim3 block(N, 0, 0);
 		dim3 grid(1, 0, 0);
 		findIfExistsCu <<<grid, block>>> (d_input,N,d_pattern,M,RM,initInputHash,patHash,d_result);
+		cudaAssert(cudaThreadSynchronize());
 		cudaMemcpy(&result, d_result, sizeof(int), cudaMemcpyDeviceToHost);
 	}
 	cout << result;
