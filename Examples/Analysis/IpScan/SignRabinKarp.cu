@@ -74,14 +74,14 @@ int main()
 			patHash = (patHash * 256 + pattern[i]) % 997;
 		}		
 		cout<<"initially Input hash = "<<initInputHash<<"pattern hash = "<<patHash<<endl;
-		cudaMalloc((void **)&d_input, N * sizeof(char));
-		cudaMalloc((void **)&d_pattern, M * sizeof(char));
-		cudaMalloc((void **)&d_result, sizeof(int));
-		cudaMemcpy(d_input, input, N * sizeof(char), cudaMemcpyHostToDevice);
-		cudaMemcpy(d_pattern, pattern, M * sizeof(char), cudaMemcpyHostToDevice);
+		cudaAssert(cudaMalloc((void **)&d_input, N * sizeof(char)));
+		cudaAssert(cudaMalloc((void **)&d_pattern, M * sizeof(char)));
+		cudaAssert(cudaMalloc((void **)&d_result, sizeof(int)));
+		cudaAssert(cudaMemcpy(d_input, input, N * sizeof(char), cudaMemcpyHostToDevice));
+		cudaAssert(cudaMemcpy(d_pattern, pattern, M * sizeof(char), cudaMemcpyHostToDevice));
 		dim3 block(N, 0, 0);
 		dim3 grid(1, 0, 0);
-		findIfExistsCu <<<grid, block>>> (d_input,N,d_pattern,M,RM,initInputHash,patHash,d_result);
+		findIfExistsCu <<<1, 6>>> (d_input,N,d_pattern,M,RM,initInputHash,patHash,d_result);
 		cudaAssert(cudaThreadSynchronize());
 		cudaMemcpy(&result, d_result, sizeof(int), cudaMemcpyDeviceToHost);
 	}
