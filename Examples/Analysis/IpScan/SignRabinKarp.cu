@@ -27,6 +27,7 @@ __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int RM,
 		{int x = 0; result = &x;}
 	else
 	{
+		printf("%d",threadIdx.x);
 		if (x >= M && N - M >= M)
 		{
 			inputHash = (inputHash + 997 - (input[x - M] * RM) % 997) % 997;
@@ -62,6 +63,7 @@ int main()
 			initInputHash = (initInputHash * 256 + input[i]) % 997;
 			patHash = (patHash * 256 + pattern[i]) % 997;
 		}		
+		cout<<"initially Input hash = "<<initInputHash<<"pattern hash = "<<patHash<<endl;
 		cudaMalloc((void **)&d_input, N * sizeof(char));
 		cudaMalloc((void **)&d_pattern, M * sizeof(char));
 		cudaMalloc((void **)&d_result, sizeof(int));
