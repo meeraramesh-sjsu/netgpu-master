@@ -34,7 +34,7 @@ __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int RM,
 			if (inputHash == patHash && memCmpDev(input, pattern, x - M + 1, N, M) == 0)
 				{
 				int y = x-1;
-				cout<<"y = "<<y;
+				printf("y = %d",y);
 				result= &y;}
 		}
 	}
