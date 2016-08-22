@@ -36,6 +36,7 @@ __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int RM,
 		{int x = 0; result = &x;}
 	else
 	{
+		printf("ThreadIndex = %d",threadIdx.x);
 		if (x >= M && N - M >= M)
 		{
 			inputHash = (inputHash + 997 - (input[x - M] * RM) % 997) % 997;
