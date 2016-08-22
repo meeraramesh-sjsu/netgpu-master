@@ -20,17 +20,21 @@ __device__ int memCmpDev(char *input, char *pattern, int offset,int N,int M)
 	}
 }
 
-__global__ void findIfExistsCu(char input[], int  N, char pattern[], int M,int RM,int inputHash,int patHash,int& result)
+__global__ void findIfExistsCu(char input[], int  N, char pattern[], int M,int RM,int inputHash,int patHash,int* result)
 {
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
-	if (threadIdx.x==0 && inputHash == patHash && memCmpDev(input, pattern, 0, N, M) == 0) result = 0;
+	if (threadIdx.x==0 && inputHash == patHash && memCmpDev(input, pattern, 0, N, M) == 0) 
+		{int x = 0; result = &x;}
 	else
 	{
 		if (x >= M && N - M >= M)
 		{
 			inputHash = (inputHash + 997 - (input[x - M] * RM) % 997) % 997;
 			inputHash = (inputHash * 256 + input[x]) % 997;
-			if (inputHash == patHash && memCmpDev(input, pattern, x - M + 1, N, M) == 0) result= x - 1;
+			if (inputHash == patHash && memCmpDev(input, pattern, x - M + 1, N, M) == 0)
+				{
+				int y = x-1;
+				result= &y;}
 		}
 	}
 }
