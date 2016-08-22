@@ -50,10 +50,10 @@ int main()
 	int d_initInputHash;
 	int d_patHash;
 	int d_result;
-	int result;
+	int result=-1;
+	int RM = 1;
 	for (int i = 1; i <= M - 1; i++)
 		RM = (256 * RM) % 997;
-	int result = -1;
 	if (N >= M)
 	{
 		for (int i = 0; i < M; i++)
