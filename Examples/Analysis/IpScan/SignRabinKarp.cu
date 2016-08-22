@@ -24,7 +24,7 @@ __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int RM,
 {
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	if (inputHash == patHash && memCmpDev(input, pattern, 0, N, M) == 0) 
-		{int x = 0; result = &x;}
+		{printf("Hello Here");int x = 0; result = &x;}
 	else
 	{
 		printf("%d",threadIdx.x);
