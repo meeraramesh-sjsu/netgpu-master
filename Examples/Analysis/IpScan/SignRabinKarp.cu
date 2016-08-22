@@ -40,7 +40,7 @@ __global__ void findIfExistsCu(char input[], int  N, char pattern[], int M,int R
 }
 int main()
 {
-	char input[] = "HABEAL";
+	char input[] = "HEABAL";
 	char pattern[] = "AB";
 	int M = 2;
 	int patHash = 0;
