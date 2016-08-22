@@ -31,13 +31,11 @@ __device__ int memCmpDev(char *input, char *pattern, int offset,int N,int M)
 
 __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int RM,int inputHash,int patHash,int* result)
 {
-	printf("Hello Thread here");
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	if (inputHash == patHash && memCmpDev(input, pattern, 0, N, M) == 0) 
-		{printf("Hello Here");int x = 0; result = &x;}
+		{int x = 0; result = &x;}
 	else
 	{
-		printf("%d",threadIdx.x);
 		if (x >= M && N - M >= M)
 		{
 			inputHash = (inputHash + 997 - (input[x - M] * RM) % 997) % 997;
@@ -45,7 +43,7 @@ __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int RM,
 			if (inputHash == patHash && memCmpDev(input, pattern, x - M + 1, N, M) == 0)
 				{
 				int y = x-1;
-				printf("y = %d",y);
+				printf("y = %d \n",y);
 				result= &y;}
 		}
 	}
@@ -85,6 +83,6 @@ int main()
 		cudaAssert(cudaThreadSynchronize());
 		cudaMemcpy(&result, d_result, sizeof(int), cudaMemcpyDeviceToHost);
 	}
-	cout << result;
+	cout << "Result = "<<result;
 	return 0;
 }
