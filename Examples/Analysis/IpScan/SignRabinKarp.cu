@@ -59,6 +59,7 @@ int main()
 	cudaAssert(cudaMalloc((void **)&d_result,(N-M)*sizeof(int)));
 	cudaAssert(cudaMemcpy(d_input, input, N * sizeof(char), cudaMemcpyHostToDevice));
 	cudaAssert(cudaMemcpy(d_pattern, pattern, M * sizeof(char), cudaMemcpyHostToDevice));
+	cudaAssert(cudaMemset(d_result,0,(N - M)*sizeof(int)));
 	dim3 block(N, 0, 0);
 	dim3 grid(1, 0, 0);
 	findIfExistsCu <<<grid, block>>> (d_input,N,d_pattern,M,patHash,d_result);
