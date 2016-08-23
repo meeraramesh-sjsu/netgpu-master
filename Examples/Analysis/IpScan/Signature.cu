@@ -89,12 +89,6 @@ int main(void)
 	cudaMemset(d_result, false, lent*sizeof(bool));
 
 	float time;
-	cudaEvent_t start, stop;
-
-	cudaAssert( cudaEventCreate(&start) );
-	cudaAssert( cudaEventCreate(&stop) );
-	cudaAssert( cudaEventRecord(start, 0) );
-
 	int* runtime_gpu;
 	int runtime_size = 1 * 8 * sizeof(int);
 	int* runtime = (int*)malloc(runtime_size);
@@ -112,12 +106,6 @@ int main(void)
 	elapsed_time = elapsed_time / (824);
 	printf("Kernel Execution Time: %d us\n", elapsed_time);
 
-	cudaAssert( cudaEventRecord(stop, 0) );
-	cudaAssert( cudaEventSynchronize(stop) );
-	cudaAssert( cudaEventElapsedTime(&time, start, stop) );
-
-	printf("Time to generate:  %3.1f ms \n", time);
-
 	cudaMemcpy(h_result, d_result, lent*sizeof(bool),cudaMemcpyDeviceToHost);
 
 	// cudaDeviceReset causes the driver to clean up all state. While
@@ -127,6 +115,5 @@ int main(void)
 	// flushed before the application exits
 	cudaAssert(cudaDeviceReset());
 	for(int i=0;i<7;i++)
-		;
-	//	cout<<h_result[i]<<" ";
+		cout<<h_result[i]<<" ";
 }

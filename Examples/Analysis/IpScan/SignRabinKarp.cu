@@ -26,8 +26,9 @@ __device__ int memCmpDev(char *input, char *pattern, int offset,int N,int M)
 	return !result;
 }
 
-__global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int patHash,int* result)
+__global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int patHash,int* result,int *runtime)
 {
+	int startTime = clock();
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	if(x<=N-M)
 	{
@@ -38,6 +39,8 @@ __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int pat
 		if(hy == patHash && memCmpDev(input,pattern,x,N,M) == 0)
 			result[x]=1;
 	}
+	int stopTime = clock();
+	runtime[x] = int(stopTime - startTime);
 }
 
 int main()
@@ -65,8 +68,24 @@ int main()
 	cudaAssert(cudaMemset(d_result,0,(N - M)*sizeof(int)));
 	dim3 block(N);
 	dim3 grid(1);
-	findIfExistsCu <<<grid,block>>> (d_input,N,d_pattern,M,patHash,d_result);
+	
+	int* runtime_gpu;
+	int runtime_size = 1 * 6 * sizeof(int);
+	int* runtime = (int*)malloc(runtime_size);
+	memset(runtime, 0, runtime_size);
+	cudaMalloc((void**)&runtime_gpu, runtime_size);
+
+	findIfExistsCu <<<grid,block>>> (d_input,N,d_pattern,M,patHash,d_result,runtime_gpu);
+	cudaMemcpy(runtime, runtime_gpu, 8, cudaMemcpyDeviceToHost);
 	cudaAssert(cudaThreadSynchronize());
+
+	int elapsed_time = 0;
+	for(int i = 0; i < 6; i++)
+		elapsed_time += runtime[i];
+	printf("Total cycles: %d \n", elapsed_time);
+	elapsed_time = elapsed_time / (824);
+	printf("Kernel Execution Time: %d us\n", elapsed_time);
+
 	cudaMemcpy(result, d_result, (N-M)*sizeof(int), cudaMemcpyDeviceToHost);
 
 	for(int i=0;i<=N-M;i++)
