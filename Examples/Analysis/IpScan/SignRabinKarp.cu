@@ -53,7 +53,7 @@ int main()
 	{
 		patHash = (patHash * 256 + pattern[i]) % 997;
 	}		
-	malloc((void **)&result,(N-M)*sizeof(int));
+	result = (int *) malloc((N-M)*sizeof(int));
 	cout<<"initially Input hash = "<<initInputHash<<"pattern hash = "<<patHash<<endl;
 	cudaAssert(cudaMalloc((void **)&d_input, N * sizeof(char)));
 	cudaAssert(cudaMalloc((void **)&d_pattern, M * sizeof(char)));
