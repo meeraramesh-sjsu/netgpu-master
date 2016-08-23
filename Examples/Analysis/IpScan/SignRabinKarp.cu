@@ -25,7 +25,7 @@ __device__ int memCmpDev(char *input, char *pattern, int offset,int N,int M)
 		return !result;
 }
 
-__global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int patHash,bool* result)
+__global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int patHash,int* result)
 {
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	if(x<=N-M)
@@ -54,7 +54,6 @@ int main()
 		patHash = (patHash * 256 + pattern[i]) % 997;
 	}		
 	result = (int *) malloc((N-M)*sizeof(int));
-	cout<<"initially Input hash = "<<initInputHash<<"pattern hash = "<<patHash<<endl;
 	cudaAssert(cudaMalloc((void **)&d_input, N * sizeof(char)));
 	cudaAssert(cudaMalloc((void **)&d_pattern, M * sizeof(char)));
 	cudaAssert(cudaMalloc((void **)&d_result,(N-M)*sizeof(int)));
@@ -64,10 +63,9 @@ int main()
 	dim3 grid(1, 0, 0);
 	findIfExistsCu <<<1, 6>>> (d_input,N,d_pattern,M,patHash,d_result);
 	cudaAssert(cudaThreadSynchronize());
-	cudaMemcpy(&result, d_result, sizeof(int), cudaMemcpyDeviceToHost);
-}
-
-for(int i=0;i<=N-M;i++)
-	cout << result[i]<<" ";
-return 0;
+	cudaMemcpy(&result, d_result, (N-M)*sizeof(int), cudaMemcpyDeviceToHost);
+	
+	for(int i=0;i<=N-M;i++)
+		cout << result[i]<<" ";
+	return 0;
 }
