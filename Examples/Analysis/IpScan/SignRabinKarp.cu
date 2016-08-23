@@ -18,6 +18,7 @@ __device__ int memCmpDev(char *input, char *pattern, int offset,int N,int M)
 {
 		bool result = true;
 		int j = 0;
+		printf("In memCmpDev %d \n",offset);
 		for (int i = offset; i < offset + M && result; i++)
 		{
 			if (input[i] != pattern[j++]) result = false;
@@ -33,6 +34,7 @@ __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int pat
 		int hy,i;
 		for(int hy=i=0;i<M;i++)
 			hy = (hy * 256 + input[i+x]) % 997;
+		printf("hy = %d, patHash = %d \n",hy,patHash);
 		if(hy == patHash && memCmpDev(input,pattern,x,N,M) == 0)
 			result[x]=1;
 	}
