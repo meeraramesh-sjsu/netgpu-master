@@ -61,9 +61,9 @@ int main()
 	cudaAssert(cudaMemcpy(d_pattern, pattern, M * sizeof(char), cudaMemcpyHostToDevice));
 	dim3 block(N, 0, 0);
 	dim3 grid(1, 0, 0);
-	findIfExistsCu <<<1, 6>>> (d_input,N,d_pattern,M,patHash,d_result);
+	findIfExistsCu <<<grid, block>>> (d_input,N,d_pattern,M,patHash,d_result);
 	cudaAssert(cudaThreadSynchronize());
-	cudaMemcpy(&result, d_result, (N-M)*sizeof(int), cudaMemcpyDeviceToHost);
+	cudaMemcpy(result, d_result, (N-M)*sizeof(int), cudaMemcpyDeviceToHost);
 	
 	for(int i=0;i<=N-M;i++)
 		cout << result[i]<<" ";
