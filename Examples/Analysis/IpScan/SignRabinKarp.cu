@@ -27,7 +27,7 @@ __device__ int memCmpDev(char *input, char *pattern, int offset,int N,int M)
 }
 
 __global__ void findIfExistsCu(char* input, int  N, char* pattern, int M,int patHash,int* result,int *runtime)
-{
+{ 
 	int startTime = clock();
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	if(x<=N-M)
