@@ -35,7 +35,7 @@ typedef struct {
 	const uint8_t* hexsignature;
 	char packet;
 	int patHash;
-	int signatureLength;
+	int signLen;
 	uint32_t ipSrc;
 	uint32_t ipDst;
 	int flags;
@@ -58,8 +58,7 @@ typedef struct {
 			DATA_ELEMENT.maliciousPort=0;\
 			DATA_ELEMENT.signatureFound=0;\
 			DATA_ELEMENT.signature = "Hello";\
-			DATA_ELEMENT.signatureLength = 5;\
-			DATA_ELEMENT.patHash = 587;\
+			DATA_ELEMENT.signLen = 5;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 			DATA_ELEMENT.ipSrc = -1;\
 		}while(0)
@@ -72,6 +71,18 @@ typedef struct {
 __device__ int lastTwoBytes(char pack)
 {
 	return pack & 0x000000FF;
+}
+
+__device__ int calcHash(char pattern[], int M)
+{
+	int i = threadIdx.x;
+	int len = threadIdx.x + M;
+	int hash = 0;
+	for (; i < len; i++)
+	{
+		hash = (hash * 256 + pattern[i]) % 997;
+	}
+	return hash;
 }
 
 template<typename T,typename R>
@@ -171,7 +182,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 		}
 	}
-	if(IS_IP4() && threadIdx.x == 0)
+	if(IS_IP4() && threadIdx.x == 33)
 	{
 		GPU_results[blockIdx.x].ipPacket = 1;
 		uint32_t ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
@@ -181,6 +192,11 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 		GPU_results[blockIdx.x].ipSrc = ipSrc;
 		GPU_results[blockIdx.x].ipDst = ipDst;
+	}
+	if(threadIdx.x==0)
+	{
+		elements[threadIdx.x].patHash = calcHash(elements[threadIdx.x].signature,elements[threadIdx.x].signLen);
+		printf("%d \n",elements[threadIdx.x].patHash);
 	}
 	__syncthreads();
 
@@ -212,12 +228,13 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 //	}
 	if(threadIdx.x >=54 && threadIdx.x <= 96 - 5)
 		{
-			GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
 			char *signature = elements[threadIdx.x].signature;
+			GPU_results[blockIdx.x].signature = signature;
 			int hy,i;
 			for(int hy=i=0;i<5;i++)
 			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
-			if(hy == elements[threadIdx.x].patHash)
+			printf("ThreadId = %d, hy = %d", threadIdx.x, hy);
+			if(hy == elements[0].patHash)
 			{
 			bool result = true;
 			for(int j=0;j<5;j++)
