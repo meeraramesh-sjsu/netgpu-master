@@ -93,10 +93,9 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	__shared__ int packetLen;
 	__shared__ clock_t starttime;
 	__shared__ clock_t stoptime;
-	__shared__ int patHash;
+
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
-	patHash = cudaSafeGet(&GPU_data[threadIndex].patHash);
 	//Mine to Shared to save memory accesses
 	if(threadIdx.x ==0)
 		starttime = clock();
@@ -232,7 +231,11 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			GPU_results[blockIdx.x].signature = signature;
 			int hy,i;
 			for(int hy=i=0;i<5;i++)
+			{
 			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
+			if(threadIdx.x==54 && blockIdx.x==0)
+				printf("thread54 hy = %d, packet = %c", hy,elements[i+threadIdx.x].packet);
+			}
 			if(hy!=0) printf("ThreadId = %d, hy = %d \n", threadIdx.x, hy);
 			if(hy == elements[0].patHash)
 			{
