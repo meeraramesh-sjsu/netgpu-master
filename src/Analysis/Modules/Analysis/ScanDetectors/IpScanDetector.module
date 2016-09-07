@@ -57,9 +57,9 @@ typedef struct {
 			DATA_ELEMENT.maliciousFlags=0;\
 			DATA_ELEMENT.maliciousPort=0;\
 			DATA_ELEMENT.signatureFound=0;\
-			DATA_ELEMENT.signature = "HELLO";\
+			DATA_ELEMENT.signature = "Hello";\
 			DATA_ELEMENT.signatureLength = 5;\
-			DATA_ELEMENT.patHash = 555;\
+			DATA_ELEMENT.patHash = 587;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 			DATA_ELEMENT.ipSrc = -1;\
 		}while(0)
