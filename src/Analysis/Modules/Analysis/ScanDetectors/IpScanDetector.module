@@ -233,8 +233,8 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			for(int hy=i=0;i<5;i++)
 			{
 			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
-			if(threadIdx.x==54 && blockIdx.x==0)
-				printf("thread54 hy = %d, packet = %c", hy,elements[i+threadIdx.x].packet);
+			if(blockIdx.x==1)
+				printf("threadid = %d, hy = %d, packet = %c \n", threadIdx.x, hy, elements[i+threadIdx.x].packet);
 			}
 			if(hy!=0) printf("ThreadId = %d, hy = %d \n", threadIdx.x, hy);
 			if(hy == elements[0].patHash)
