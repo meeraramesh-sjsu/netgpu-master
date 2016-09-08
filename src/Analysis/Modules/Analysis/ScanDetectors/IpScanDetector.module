@@ -90,7 +90,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 	/* Erases duplicates and counts elements inside block */
 	__shared__ T elements[96];
-	__shared__ int packetLen;
 	__shared__ clock_t starttime;
 	__shared__ clock_t stoptime;
 
@@ -100,10 +99,16 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(threadIdx.x ==0)
 		starttime = clock();
 
-		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	__syncthreads();
 
-	if(threadIdx.x == 14) // Representative thread for warp 0
+	if(blockIdx.x==1 && threadIdx.x==0)
+	{
+		for(int i=0;i<96;i++)
+			printf("%c ",elements[i].packet);
+	}
+
+	if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
 	{
 		if(IS_IP4()) //Checking if it is a IPv4 Packet
 		{
@@ -132,9 +137,10 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			}
 		}
 	}
-	if(threadIdx.x == 33)
+
+	if(threadIdx.x == 33) //Checksum verification
 	{
-		if(IS_IP4()) //Checking if it is a IPv4 Packet
+		if(IS_IP4()) //check if a IPv4 Packet
 		{
 			int checksum = ((elements[14].packet & 0x000000FF)<<8 + (elements[15].packet & 0x000000FF)) +
 					((elements[16].packet & 0x000000FF)<<8 + (elements[17].packet & 0x000000FF)) +
@@ -151,7 +157,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
 		}
 	}
-	if(threadIdx.x == 64)
+	if(threadIdx.x == 64) //check sport or dport is 0; check ackNo is o, with ack bit set; check malicious flag bit combinations
 	{
 		if(IS_TCP())
 		{
@@ -177,60 +183,62 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 		}
 	}
-	if(IS_IP4() && threadIdx.x == 33)
+
+	if(IS_IP4() && threadIdx.x == 33) //save source and destn IP addres to output
 	{
 		GPU_results[blockIdx.x].ipPacket = 1;
 		uint32_t ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
-																																						+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
+																																																				+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
 		uint32_t ipDst = ((elements[30].packet & 0x000000FF)  << 24) + ((elements[31].packet & 0x000000FF)  << 16)
-																																				+ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
+																																																		+ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
 
 		GPU_results[blockIdx.x].ipSrc = ipSrc;
 		GPU_results[blockIdx.x].ipDst = ipDst;
 	}
-	if(threadIdx.x==0)
+	if(threadIdx.x==0) //calculate pattern hash
 	{
 		elements[threadIdx.x].patHash = calcHash(elements[threadIdx.x].signature,elements[threadIdx.x].signLen);
 	}
-	__syncthreads();
 
-	/*Payload Signature Matching*/
+	/*Naive Payload Signature Matching*/
 
-//	if(threadIdx.x >=54)
-//	{
-//		GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
-//		char *input = elements[threadIdx.x].signature;
-//				int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
-//				int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
-//				int val = val1 + val2;
-//		if(elements[threadIdx.x].packet == val && (96 - threadIdx.x > elements[threadIdx.x].signatureLength))
-//		{
-//			int j = 1;
-//			int k = 4;
-//			int i = threadIdx.x;
-//			while (input[k]!='\0' && i+j < 96)
-//			{
-//				val1 = (input[k] - 48) > 9 ? (input[k] - 55) * 16 : (input[k] - 48) * 16;
-//				val2 = (input[k+1] - 48) > 9 ? (input[k+1] - 55) : (input[k+1] - 48);
-//				val = val1 + val2;
-//				if(elements[i+j].packet!=val)
-//					break;
-//				else {j++;k=k+2;}
-//			}
-//			if(input[k]=='\0') GPU_results[blockIdx.x].signatureFound = 1;
-//		}
-//	}
+	//	if(threadIdx.x >=54)
+	//	{
+	//		GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
+	//		char *input = elements[threadIdx.x].signature;
+	//				int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
+	//				int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
+	//				int val = val1 + val2;
+	//		if(elements[threadIdx.x].packet == val && (96 - threadIdx.x > elements[threadIdx.x].signatureLength))
+	//		{
+	//			int j = 1;
+	//			int k = 4;
+	//			int i = threadIdx.x;
+	//			while (input[k]!='\0' && i+j < 96)
+	//			{
+	//				val1 = (input[k] - 48) > 9 ? (input[k] - 55) * 16 : (input[k] - 48) * 16;
+	//				val2 = (input[k+1] - 48) > 9 ? (input[k+1] - 55) : (input[k+1] - 48);
+	//				val = val1 + val2;
+	//				if(elements[i+j].packet!=val)
+	//					break;
+	//				else {j++;k=k+2;}
+	//			}
+	//			if(input[k]=='\0') GPU_results[blockIdx.x].signatureFound = 1;
+	//		}
+	//	}
+
+	/*Rabin Karp signature matching implementation*/
 	if(threadIdx.x >=54 && threadIdx.x <= 96 - 5)
+	{
+		char *signature = elements[threadIdx.x].signature;
+		GPU_results[blockIdx.x].signature = signature;
+		int hy,i;
+		for(int hy=i=0;i<5;i++)
 		{
-			char *signature = elements[threadIdx.x].signature;
-			GPU_results[blockIdx.x].signature = signature;
-			int hy,i;
-			for(int hy=i=0;i<5;i++)
-			{
 			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
-			}
-			if(hy == elements[0].patHash)
-			{
+		}
+		if(hy == elements[0].patHash)
+		{
 			bool result = true;
 			for(int j=0;j<5;j++)
 			{
@@ -238,10 +246,11 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 					result = false;
 			}
 			if(result) GPU_results[blockIdx.x].signatureFound = 1;
-			}
 		}
+	}
 	__syncthreads();
 
+	/*Execution time calc for each block*/
 	if(threadIdx.x ==0)
 	{
 		stoptime = clock();
