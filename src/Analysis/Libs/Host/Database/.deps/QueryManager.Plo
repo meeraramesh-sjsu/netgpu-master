@@ -137,6 +137,8 @@ QueryManager.lo: QueryManager.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
+ /usr/local/cuda/bin/../include/driver_types.h \
+ /usr/local/cuda/bin/../include/cuda_runtime.h \
  ../../../../Scheduler/../Common/PacketBuffer.h \
  /usr/include/c++/4.8/vector /usr/include/c++/4.8/bits/stl_construct.h \
  /usr/include/c++/4.8/ext/alloc_traits.h \
@@ -538,6 +540,10 @@ DatabaseManager.h:
 /usr/include/asm-generic/errno.h:
 
 /usr/include/asm-generic/errno-base.h:
+
+/usr/local/cuda/bin/../include/driver_types.h:
+
+/usr/local/cuda/bin/../include/cuda_runtime.h:
 
 ../../../../Scheduler/../Common/PacketBuffer.h:
 

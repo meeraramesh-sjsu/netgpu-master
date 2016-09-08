@@ -10,9 +10,9 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 */
 
-#ifndef libAnalysisThresholds_h 
-#define libAnalysisThresholds_h 
- 
+#ifndef libAnalysisThresholds_h
+#define libAnalysisThresholds_h
+
 typedef struct{
 	ANALYSIS_INPUT_TYPE user;
 	int32_t counter;
@@ -37,10 +37,10 @@ __device__ __inline__ long cudaTimevaldiff(struct timeval starttime, struct time
 #define KBPS KB
 #define MB 1048576
 #define MBPS MB
-#define GB 1073741824 
+#define GB 1073741824
 #define GBPS GB
 
-#endif 
+#endif
 
 /* Undefine TYPES */
 #undef  ANALYSIS_INPUT_TYPE

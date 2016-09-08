@@ -1,0 +1,48 @@
+
+ ---- addAnalysisToPool called 
+ 
+ ---- calling analyze function 
+
+ ---- calling loadBufferToGPU 
+
+ ---- buffer from CPU to GPU 
+
+
+ ---- ******************************************************************
+00000   48 65 6c 6c 6f 2c 20 68  6f 77 20 61 72 65 20 79    Hello, how are y
+00016   6f 75                                               ou
+72 72
+101 101
+108 108
+108 108
+111 111
+1hooks
+*********************CPU SECTION***********************************
+TCP = 4UDP= 0ICMP = 0
+*************Crafted Packets***************
+Source IP address
+Alarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Malicious signature found in packet From 192.168.2.8Malicious signature isAlarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Malicious signature found in packet From 192.168.2.8Malicious signature isAlarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Malicious signature found in packet From 192.168.2.8Malicious signature isAlarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Malicious signature found in packet From 192.168.2.8Malicious signature isAlarm!! There are 0packets Which have incorrect version Number!
+Time to generate:  7.9 ms 
+Unloading Buffer From GPU calledFeeder has more packets to get
+5
+ 
+ ---- calling analyze function 
+
+ ---- calling loadBufferToGPU 
+
+ ---- buffer from CPU to GPU 
+
+
+ ---- ******************************************************************
+
+ ---- packet buffer is NULL 
+
+Unloading Buffer From GPU called

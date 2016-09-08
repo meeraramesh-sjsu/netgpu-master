@@ -69,5 +69,6 @@ public:
 	uint8_t getHeaderLength(void);	 
 	uint32_t getHeaderLengthInBytes(void);	 
 	static uint32_t calcHeaderLengthInBytes(const uint8_t * tcpPointer);
+
 };
 #endif // TcpHeader_h

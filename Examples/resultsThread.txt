@@ -1,0 +1,48 @@
+
+ ---- addAnalysisToPool called 
+ 
+ ---- calling analyze function 
+
+ ---- calling loadBufferToGPU 
+
+ ---- buffer from CPU to GPU 
+
+
+ ---- ******************************************************************
+Time to generate:  0.9 ms 
+hooks
+*********************CPU SECTION***********************************
+*************Crafted Packets***************
+Source IP address
+Packet with index0Alarm!! Src address or Destination address is in private Address range:Source IP = 192.168.2.8 Destination IP = 192.168.2.1 
+Packet with index0Alarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Packet with index0Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Packet with index0Malicious signature found in packet From 192.168.2.8
+Packet with index1Alarm!! Src address or Destination address is in private Address range:Source IP = 192.168.2.8 Destination IP = 192.168.2.1 
+Packet with index1Alarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Packet with index1Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Packet with index1Malicious signature found in packet From 192.168.2.8
+Packet with index2Alarm!! Src address or Destination address is in private Address range:Source IP = 192.168.2.8 Destination IP = 192.168.2.1 
+Packet with index2Alarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Packet with index2Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Packet with index2Malicious signature found in packet From 192.168.2.8
+Packet with index3Alarm!! Src address or Destination address is in private Address range:Source IP = 192.168.2.8 Destination IP = 192.168.2.1 
+Packet with index3Alarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Packet with index3Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Packet with index3Malicious signature found in packet From 192.168.2.8
+Alarm!! There are 0packets Which have incorrect version Number!
+Unloading Buffer From GPU calledFeeder has more packets to get
+5
+ 
+ ---- calling analyze function 
+
+ ---- calling loadBufferToGPU 
+
+ ---- buffer from CPU to GPU 
+
+
+ ---- ******************************************************************
+
+ ---- packet buffer is NULL 
+
+Unloading Buffer From GPU called

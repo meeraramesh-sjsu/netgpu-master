@@ -21,8 +21,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 #define IS_HEADER_TYPE(headers, level,protocol) (headers)->proto[level] == protocol
 
-
-
 class VirtualHeader { //Abstract base class
 
 private:

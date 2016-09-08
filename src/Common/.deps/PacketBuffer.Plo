@@ -129,6 +129,8 @@ PacketBuffer.lo: PacketBuffer.cpp /usr/include/stdc-predef.h \
  /usr/include/errno.h /usr/include/x86_64-linux-gnu/bits/errno.h \
  /usr/include/linux/errno.h /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
+ /usr/local/cuda/bin/../include/driver_types.h \
+ /usr/local/cuda/bin/../include/cuda_runtime.h \
  ../PacketFeeders/SizeDissector.h /usr/include/arpa/inet.h \
  /usr/include/netinet/in.h /usr/include/x86_64-linux-gnu/sys/socket.h \
  /usr/include/x86_64-linux-gnu/sys/uio.h \
@@ -489,6 +491,10 @@ PacketBuffer.h:
 /usr/include/asm-generic/errno.h:
 
 /usr/include/asm-generic/errno-base.h:
+
+/usr/local/cuda/bin/../include/driver_types.h:
+
+/usr/local/cuda/bin/../include/cuda_runtime.h:
 
 ../PacketFeeders/SizeDissector.h:
 

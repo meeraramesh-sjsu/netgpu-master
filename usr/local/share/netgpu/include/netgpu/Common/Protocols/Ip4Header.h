@@ -27,13 +27,12 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 /*MACROS HEADERS */
 #define IP4_HEADER_TYPENAME struct ip4_header
+#define IP4_HEADER_TYPENAME_16Byte struct ip4_header16Byte
 
 #define INSERT_HEADER_IP4(headers, level, offseT) INSERT_HEADER(headers, level, offseT,HEADER_IP4_HEXVALUE)
 #define IS_HEADER_TYPE_IP4(headers, level) IS_HEADER_TYPE(headers, level,HEADER_IP4_HEXVALUE)
- 
- 
-/*END MACROS */
 
+/*END MACROS */
 
 /*Onboard Protocol types */
 
@@ -67,7 +66,24 @@ struct ip4_header{
 	uint32_t ip_src;
 	uint32_t ip_dst;
 };
+#define IP_HL(ip)               (((ip)->headerLength) & 0x0f)
 
+/*
+ * @author: Meera Ramesh
+ */
+struct ip4_header16Byte{
+    uint16_t headerVertos;
+	uint16_t totalLength;
+	uint16_t identification;
+	uint16_t flagsAndOffset;
+	uint16_t ttlprotocol;
+	uint16_t checksum;
+	uint16_t ip_srcFirstHalf;
+	uint16_t ip_srcSecHalf;
+	uint16_t ip_dstFirstHalf;
+	uint16_t ip_dstSecHalf;
+};
+/*End*/
 
 class Ip4Header : public VirtualHeader {
 
@@ -80,7 +96,7 @@ public:
 	uint8_t getHeaderLength(void);
 	uint32_t getHeaderLengthInBytes(void);
 	uint8_t getProtocol(void);
-	
+	static uint32_t totalPacketLength(const uint8_t * ipPointer);
 	//static method to calculate header length in bytes from a ip4_header struct -> dissector
 	static uint32_t calcHeaderLengthInBytes(const uint8_t * ipPointer);
 

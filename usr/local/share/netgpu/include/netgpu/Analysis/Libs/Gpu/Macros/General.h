@@ -28,6 +28,8 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #define ARRAY_SIZE(type) \
 	(sizeof(type)*MAX_BUFFER_PACKETS) 
 
+#define PACKETPOS (blockIdx.x)
+
 #if HAS_WINDOW == 1
 	//Window special case
 	#define POS threadIdx.x + (state.blockIterator*blockDim.x) 
@@ -38,27 +40,33 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 /* Packet inside buffer */
 #if HAS_WINDOW == 1
-	#define PACKET (&GPU_buffer[RELATIVE_MINING_POS])
+	#define PACKET (&GPU_buffer[PACKETPOS])
 #else
-	#define PACKET (&GPU_buffer[POS])
+	#define PACKET (&GPU_buffer[PACKETPOS])
 #endif
 
 /*GPU_data element */
-#define DATA_ELEMENT GPU_data[POS]  
+#define DATA_ELEMENT GPU_data[POS]
 /*GPU_results element */
-#define RESULT_ELEMENT GPU_results[POS]  
+#define RESULT_ELEMENT GPU_results[POS]
 
 /* GETS HEADERS POINTER at level*/
 #define GET_HEADER_POINTER(level) \
 	(((uint8_t*)&(PACKET->packet))+PACKET->headers.offset[level])
+/*#define GET_HEADER_POINTER(level) \
+		(((PACKET->packet))+PACKET->headers.offset[level])*/
 
-/*#define GET_HEADER_TCP_POINTER(level)\
+#define GET_PACKET_BYTE char((PACKET)->packet[threadIdx.x])
+
+//#define GET_HEADER_POINTERCHAR ((const u_char*) /*(uint8_t* )*/ (PACKET->packet))
+
+#define GET_HEADER_TCP_POINTER(level)\
 	PACKET->headers.offset[level]
-*/
 
 //Gets field safely, to get disaligned fields 
 #define GET_FIELD(field) cudaNetworkToHost(cudaSafeGet(&(field))) //TODO: ENDIANISME ELIMINAR EL CUDANETWORKTOHOST
 
+#define GET_FIELDNETWORK(field) cudaSafeGet(&(field)) //TODO: ENDIANISME ELIMINAR EL CUDANETWORKTOHOST
 
 //* BARRIERS */
 
