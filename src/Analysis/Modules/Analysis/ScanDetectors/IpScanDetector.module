@@ -106,14 +106,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 	if(threadIdx.x >= 54)
 		elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-	if(blockIdx.x==1 && threadIdx.x==0)
-	{
-		for(int i=0;i<96;i++)
-		{
-			printf("%c ",elements[i].packet);
-		}
-		printf("\n");
-	}
+
 	if(threadIdx.x == 14) // Representative thread for warp 0
 	{
 		if(IS_IP4()) //Checking if it is a IPv4 Packet
@@ -202,7 +195,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(threadIdx.x==0)
 	{
 		elements[threadIdx.x].patHash = calcHash(elements[threadIdx.x].signature,elements[threadIdx.x].signLen);
-		printf("%d \n",elements[threadIdx.x].patHash);
 	}
 	__syncthreads();
 
@@ -240,10 +232,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			for(int hy=i=0;i<5;i++)
 			{
 			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
-			if(blockIdx.x==1)
-				printf("threadid = %d, hy = %d, packet = %c \n", threadIdx.x, hy, elements[i+threadIdx.x].packet);
 			}
-			if(hy!=0) printf("ThreadId = %d, hy = %d \n", threadIdx.x, hy);
 			if(hy == elements[0].patHash)
 			{
 			bool result = true;

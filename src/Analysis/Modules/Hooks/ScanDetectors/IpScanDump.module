@@ -29,6 +29,7 @@ void printFlagBits(int flags)
 	if(flags&1) cout<<"FIN ";
 	if(flags&0) cout<<"NONE ";
 }
+
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE(filename,severe,critical)\
 		dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical)
 
@@ -86,7 +87,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		uint32_t some_long;
 		struct in_addr in,out;
 		totalcycles += results[i].timeTaken;
-		cout<<"Packet"<<i<<"Total Cycles = "<<results[i].timeTaken<<endl;
+		cout<<"Packet "<<i<<" Total Cycles = "<<results[i].timeTaken<<endl;
 		if(results[i].ipPacket)
 		{
 			some_long = results[i].ipSrc;
@@ -99,14 +100,14 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		if(results[i].maliciousVer)
 		{
 			incorrectVerNumber++;
-			cout<<"Packet with index" << (i) << "has incorrect version numer";
+			cout<<"Packet with index " << (i) << "has incorrect version numer";
 			cout<<"From source IP Address";
 			cout<<inet_ntoa(in);
 			cout<<endl;
 		}
 		if(results[i].maliciousIP)
 		{
-			cout<<"Packet with index" << (i) ;
+			cout<<"Packet with index " << (i) ;
 			cout<<"Alarm!! Src address or Destination address is in private Address range:";
 			cout<<"Source IP = " << inet_ntoa(in)<<" ";
 			cout<<"Destination IP = " << inet_ntoa(out)<<" ";
@@ -114,21 +115,21 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		}
 		if(results[i].maliciousFlags)
 		{
-			cout<<"Packet with index" << (i);
+			cout<<"Packet with index " << (i);
 			cout<<"Alarm!! Malicious Flag bit combinations found: i.e ";
 			printFlagBits(results[i].flags);
 			cout<<" are set "<<endl;
 		}
 		if(results[i].maliciousReserved)
 		{
-			cout<<"Packet with index" << (i);
+			cout<<"Packet with index " << (i);
 			cout<<"Alarm!! Reserved bits are set, the packet is from src Address:";
 			cout<<inet_ntoa(in);
 			cout<<endl;
 		}
 		if(results[i].maliciousPort)
 		{
-			cout<<"Packet with index" << (i);
+			cout<<"Packet with index " << (i);
 			if(results[i].sport==0)
 				cout<<"Alarm!! TCP Packet from src Address "<<inet_ntoa(in)<<"has source Port set to zero!";
 			else
@@ -137,31 +138,31 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		}
 		if(results[i].maliciousAck)
 		{
-			cout<<"Packet with index" << (i);
+			cout<<"Packet with index " << (i);
 			cout<<"Alarm!! TCP Packet has acknowledgement bit set and ACK number is zero";
 			cout<<"Packet from "<<inet_ntoa(in)<<"should be blocked"<<endl;
 		}
 		if(results[i].maliciousDst)
 		{
-			cout<<"Packet with index" << (i);
+			cout<<"Packet with index " << (i);
 			cout<<"Alarm!! TCP Broadcast Packet! with address"<<inet_ntoa(out);
 			cout<<endl;
 		}
 		if(results[i].maliciousCheckSum)
 		{
-			cout<<"Packet with index" << (i);
+			cout<<"Packet with index " << (i);
 			cout<<"Alarm!! The IPv4 Packet has an incorrect checksum and should be discarded"<<endl;
 			cout<<"From"<<inet_ntoa(in)<<endl;
 		}
 		if(results[i].signatureFound)
 		{
-			cout<<"Packet with index" << (i);
+			cout<<"Packet with index " << (i);
 			cout<<"Malicious signature found in packet ";
 			cout<<"From "<<inet_ntoa(in)<<endl;
 		}
 	}
 	totalcycles = totalcycles / (824);
-	cout<<"Clock Frequency = "<<setw(2)<<totalcycles<<"us"<<endl;
+	cout<<"Clock Frequency = "<<setw(2)<<totalcycles<<" us"<<endl;
 	if(hasResults){
 		//Analysis start timestamp (1rst packet)
 		os<<"#"STR(ANALYSIS_NAME)"> ";
@@ -178,7 +179,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		timeinfo = localtime ( &aux );
 		os << " Dumped at: "<<asctime(timeinfo)<<endl<<endl;
 	}
-	cout<<"Alarm!! There are "<<incorrectVerNumber<<"packets Which have incorrect version Number!"<<endl;
+	cout<<"Alarm!! There are "<<incorrectVerNumber<<" packets Which have incorrect version Number! "<<endl;
 
 }
 
