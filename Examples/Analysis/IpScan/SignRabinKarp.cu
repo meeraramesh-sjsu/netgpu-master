@@ -86,8 +86,12 @@ int main()
 
 	cudaMemcpy(result, d_result, (N-M)*sizeof(int), cudaMemcpyDeviceToHost);
 
+	cout<<"Searching for a single pattern in a single string"<<endl;
+	cout<<"Print at which position the pattern was found"<<endl;
+	cout<<"Input string = "<<input<<endl;
+	cout<<"pattern="<<pattern<<endl;
 	for(int i=0;i<=N-M;i++)
-		cout << result[i]<<" ";
+		cout << "Pos:"<<i<<" Result: "<< result[i]<<" "<<endl;
 	return 0;
 }
 
