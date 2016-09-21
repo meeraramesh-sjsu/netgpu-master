@@ -196,7 +196,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		GPU_results[blockIdx.x].ipSrc = ipSrc;
 		GPU_results[blockIdx.x].ipDst = ipDst;
 	}
-	if(threadIdx.x==0) //calculate pattern hash
+	if(threadIdx.x==0 && blockIdx.x==0) //calculate pattern hash
 	{
 		elements[threadIdx.x].patHash = calcHash(elements[threadIdx.x].signature,elements[threadIdx.x].signLen);
 	}
