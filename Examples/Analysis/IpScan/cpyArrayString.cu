@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <iostream>
+
 #define max_text_length 12;
 __device__ int memCmpDev(char *input, char *pattern, int offset,int M)
 {
@@ -21,8 +23,9 @@ __global__ void findIfExistsCu(char* d_input,int inputLen,char* pattern,int * in
   
 	if(x<=inputLen-M)
 	{
-   for(int hy=j=0;j<M;j++)
-	hy = (hy * 256 + input[j+x]) % 997;
+	int hy,j;
+   	for(hy=j=0;j<M;j++)
+	hy = (hy * 256 + d_input[j+x]) % 997;
 	
 	if(hy == patHash[i] && memCmpDev(d_input,pattern,x,M) == 0)
 	d_result[i]=1;
@@ -49,8 +52,8 @@ int main(){
   char input[] = "absome textcd";
   int inputLen = 13;
   char *d_input;
- int max_text_length, num_str;
- num_str = 3;
+ int max_text_length;
+ int num_str = 3;
  char *tmp[num_str];
  int *patHash;
  int* d_result;
@@ -101,7 +104,7 @@ dim3 grid(1);
  findIfExistsCu<<<grid,block>>>(d_input,inputLen,d_a,d_stridx,num_str,patHash,d_result);
  cudaDeviceSynchronize();
 
-cudaMemcpy(result, d_result, numstr*sizeof(int), cudaMemcpyDeviceToHost);
+cudaMemcpy(result, d_result, num_str*sizeof(int), cudaMemcpyDeviceToHost);
 
 	for(int i=0;i<numstr;i++)
 		cout << result[i]<<" ";
