@@ -48,12 +48,10 @@ void calcPatHash(vector<string> tmp, int *patHash, int numStr)
 
 int main()
 {
-
 string input = "absome textcd";
 int inputLen = input.size();
 char *d_input;
  
- //char *tmp[num_str];
  vector<string> tmp;
  tmp.push_back("some text");
  tmp.push_back("ab");
@@ -63,16 +61,10 @@ char *d_input;
 int *d_patHash;
  int* d_result;
  int* result;
- //int max_text_length = 12;
+
 int num_str = tmp.size();
 
 patHash = (int*) calloc(num_str,sizeof(int));
- /*tmp[0] = (char*) malloc(max_text_length*sizeof(char));
- tmp[1] = (char*) malloc(max_text_length*sizeof(char));
- tmp[2] = (char*) malloc(max_text_length*sizeof(char));*/
- /*tmp[0] = "some text";
- tmp[1] = "ab";
- tmp[2] = "text";*/
  
 result = (int*) calloc(num_str,sizeof(int));
  
@@ -86,13 +78,6 @@ stridx[i]= k;
 stridx[i+1]= stridx[i]+tmp[j++].size();
 k=stridx[i+1];
 }
-
- /*stridx[0] = 0;
- stridx[1] = 9;
- stridx[2] = 9;
- stridx[3] = 11;
- stridx[4] = 11;
- stridx[5] = 15;*/
  
 char *a, *d_a;
 a = (char *)malloc(stridx[2*num_str - 1]*sizeof(char));

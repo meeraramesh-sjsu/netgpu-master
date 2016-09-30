@@ -567,8 +567,8 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 #else //#if HAS_WINDOW == 1
 
 //default Kernel 
-template<typename T,typename R>
-__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state){
+//template<typename T,typename R>
+__global__ void kernelAnalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state){
 	state.blockIterator = blockIdx.x;
 	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state);
 	__syncthreads();	
@@ -650,7 +650,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert( cudaEventCreate(&stop) );
 		cudaAssert( cudaEventRecord(start, 0) );
 
-		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state);
+		kernelAnalysis<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state);
 		cudaAssert(cudaThreadSynchronize());
 
 		cudaAssert( cudaEventRecord(stop, 0) );
