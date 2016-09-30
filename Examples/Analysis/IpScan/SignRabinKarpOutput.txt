@@ -1,0 +1,11 @@
+Total cycles: 2300 
+Kernel Execution Time: 2 us
+Searching for a single pattern in a single string
+Print at which position the pattern was found
+Input string = HEABAL
+pattern=AB
+Pos:0 Result: 0 
+Pos:1 Result: 0 
+Pos:2 Result: 1 
+Pos:3 Result: 0 
+Pos:4 Result: 0 

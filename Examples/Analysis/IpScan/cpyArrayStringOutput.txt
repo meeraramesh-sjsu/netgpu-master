@@ -1,0 +1,4 @@
+Searching for multiple patterns in input sequence
+Pattern: some text was found
+Pattern: ab was found
+Pattern: text was found
