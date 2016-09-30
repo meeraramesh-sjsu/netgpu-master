@@ -14,6 +14,7 @@ using namespace std;
 			}\
 		}while(0)
 
+/* Compare the input string with the pattern, starting from the offset upto the pattern length */
 __device__ int memCmpDev(char *input, char *pattern, int offset,int N,int M)
 {
 	bool result = true;
