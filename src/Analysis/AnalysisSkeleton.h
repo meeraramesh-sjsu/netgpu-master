@@ -15,6 +15,8 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 #include <inttypes.h>
 #include <iostream>
+#include <vector>
+#include <string>
 //#include <cuda.h>
 //#include <cuda_runtime.h>
 #include "/usr/local/cuda/include/cuda.h"
@@ -62,10 +64,10 @@ private:
 /**** Forward declaration prototypes ****/
 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int num_str);
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash);
 
 template<typename T,typename R>
-__device__  void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int num_str);
+__device__  void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash);
 
 template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,filtering)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
@@ -76,7 +78,6 @@ __device__  void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* 
 template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state);
 
-void kernel_wrapper(int *a,int *b);
 template<typename R>
 void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, analysisState_t state, int64_t* auxBlocks); 
 
@@ -185,10 +186,20 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, 
 */
 
 /* END OF EXTRA KERNELS */
+void calcPatHash(vector<string> tmp, int *patHash, int numStr)
+{
+ for(int i=0;i<numStr;i++)
+ {
+ for(int index=0;index<(tmp[i].size());index++)
+ {
+ patHash[i] = (patHash[i] * 256 + tmp[i][index]) % 997;
+ }
+ }
+}
 
 //default Kernel 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state, int num_str){
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash){
 	state.blockIterator = blockIdx.x;
 	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state, num_str);
 	__syncthreads();	
@@ -206,9 +217,9 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 #endif
 
 }
+
 /**** Launch wrapper ****/
 //default Launch Wrapper for Analysis not using Windows 
-
 template<typename T,typename R>
 void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer){
 
@@ -270,7 +281,56 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert( cudaEventCreate(&stop) );
 		cudaAssert( cudaEventRecord(start, 0) );
 		int num_str = 3;
-		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,num_str);
+
+
+		/*Pattern matching starts*/
+		 vector<string> tmp;
+		 tmp.push_back("some text");
+		 tmp.push_back("ab");
+		 tmp.push_back("text");
+
+		 int *patHash;
+		 int *d_patHash;
+
+		 int num_str = tmp.size();
+
+		 patHash = (int*) calloc(num_str,sizeof(int));
+
+		 int stridx[2*num_str];
+		 memset(stridx,0,2*num_str);
+		 int *d_stridx;
+
+		 for(int i=0,j=0,k=0;i<2*num_str;i+=2)
+		 {
+		 stridx[i]= k;
+		 stridx[i+1]= stridx[i]+tmp[j++].size();
+		 k=stridx[i+1];
+		 }
+
+		 char *a, *d_a;
+		 a = (char *)malloc(stridx[2*num_str - 1]*sizeof(char));
+		 //flatten
+		 int subidx = 0;
+		 for(int i=0;i<num_str;i++)
+		 {
+		 for (int j=stridx[2*i]; j<stridx[2*i+1]; j++)
+		 {
+		     a[j] = tmp[i][subidx++];
+		}
+		 subidx = 0;
+		}
+
+		calcPatHash(tmp,patHash,num_str);
+		cudaMalloc((void**)&d_a,stridx[2*num_str - 1]*sizeof(char));
+		cudaMemcpy(d_a, a, stridx[2*num_str - 1]*sizeof(char),cudaMemcpyHostToDevice);
+		cudaMalloc((void**)&d_stridx,num_str*2*sizeof(int));
+		cudaMemcpy(d_stridx, stridx,2*num_str*sizeof(int),cudaMemcpyHostToDevice);
+		cudaMalloc((void **)&d_patHash, num_str * sizeof(int));
+		cudaMemcpy(d_patHash,patHash,num_str * sizeof(int), cudaMemcpyHostToDevice);
+		//char* pattern,int * indexes,int num_strings,int * patHash add to kernel
+	 /*Pattern matching ends*/
+
+		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_a,d_stridx,num_str,d_pathash);
 		cudaAssert(cudaThreadSynchronize());
 
 		cudaAssert( cudaEventRecord(stop, 0) );
