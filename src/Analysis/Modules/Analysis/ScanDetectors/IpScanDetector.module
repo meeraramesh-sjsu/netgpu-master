@@ -18,10 +18,10 @@
 using namespace std;
 
 /*Using constant memory for storing multiple patterns, their correspnding indices and pattern hashes in constant memory*/
-__constant__ char* const_pattern;
-__constant__ int* const_indexes;
-__constant__ int const_num_strings;
-__constant__ int* const_patHash;
+__device__ char* const_pattern;
+__device__ int* const_indexes;
+__device__ int const_num_strings;
+__device__ int* const_patHash;
 
 typedef struct {
 	//IP
