@@ -302,9 +302,9 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 }
 
 template<typename T,typename R>
-__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold) {
+__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *d_result,int *counter,int thresHold) {
 
-	ipscananalysis<ANALYSIS_INPUT_TYPE,ANALYSIS_INPUT_TYPE>(GPU_buffer,GPU_data,GPU_results,state,counter,thresHold);
+	ipscananalysis<ANALYSIS_INPUT_TYPE,ANALYSIS_INPUT_TYPE>(GPU_buffer,GPU_data,GPU_results,state,d_result,counter,thresHold);
 	//while(totalThreads<3840) { };
 }
 
