@@ -5,7 +5,6 @@
  PrePreprocessor orders (ppp.sh):
 
  ###PATTERNS $IPSCAN_DETECTOR$ANALYSIS(
-
  */
 
 //#warning IpScan Analysis
@@ -17,6 +16,12 @@
 #include <string>
 #include <stdio.h>
 using namespace std;
+
+/*Using constant memory for storing multiple patterns, their correspnding indices and pattern hashes in constant memory*/
+__constant__ char* const_pattern;
+__constant__ int* const_indexes;
+__constant__ int const_num_strings;
+__constant__ int* const_patHash;
 
 typedef struct {
 	//IP
@@ -41,6 +46,7 @@ typedef struct {
 	int flags;
 	int sport;
 	int timeTaken;
+	int num_strings;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
 #endif  //libAnalysisIpScan
@@ -61,11 +67,16 @@ typedef struct {
 			DATA_ELEMENT.signLen = 5;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 			DATA_ELEMENT.ipSrc = -1;\
+			const_pattern = pattern;
+			const_indexes = indexes;
+			const_num_strings = num_strings;
+			const_patHash = patHash;	
+		    DATA_ELEMENT.num_strings = num_strings;
 		}while(0)
 
 /***** IPSCAN DETECTOR ANALYSIS *****/
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
-		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,counter,threshold);\
+		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,d_result,counter,threshold);\
 		__syncthreads()
 
 __device__ int lastTwoBytes(char pack)
@@ -85,8 +96,20 @@ __device__ int calcHash(char pattern[], int M)
 	return hash;
 }
 
+template<typename T>
+__device__ int memCmpDev(T input[], char *pattern,int *indexes,int i,int offset,int M)
+{
+	bool result = true;
+	int j = indexes[2*i];
+	for (int i = offset; i < offset + M && result; i++)
+	{
+		if (input[i].packet != pattern[j++]) result = false;
+	}
+	return !result;
+}
+
 template<typename T,typename R>
-__device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold) {
+__device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int* d_result,int *counter,int thresHold) {
 
 	/* Erases duplicates and counts elements inside block */
 	__shared__ T elements[96];
@@ -158,6 +181,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
 		}
 	}
+	
 	if(threadIdx.x == 64) //check sport or dport is 0; check ackNo is o, with ack bit set; check malicious flag bit combinations
 	{
 		if(IS_TCP())
@@ -248,6 +272,24 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			}
 			if(result) GPU_results[blockIdx.x].signatureFound = 1;
 		}
+	}
+	
+	/*Rabin Karp Muli-pattern string matching implementation*/
+	if(threadIdx.x >= 54)
+	{
+	for(int i=0;i<const_num_strings;i++)
+	{
+    int M = const_indexes[2*i+1] - const_indexes[2*i];
+	if(threadIdx.x<=96-M)
+	{
+	int hy,j;
+   	for(hy=j=0;j<M;j++)
+	hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
+	
+	if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,M) == 0) //Complete this
+	d_result[i]=1;
+	}
+	}
 	}
 	__syncthreads();
 

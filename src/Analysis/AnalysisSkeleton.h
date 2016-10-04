@@ -64,7 +64,7 @@ private:
 /**** Forward declaration prototypes ****/
 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash);
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash,int *d_result);
 
 template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash);
@@ -73,13 +73,13 @@ template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,filtering)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
 
 template<typename T,typename R>
-__device__  void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state);
+__device__  void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *d_result);
 
 template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state);
 
 template<typename R>
-void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, analysisState_t state, int64_t* auxBlocks); 
+void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, analysisState_t state, int64_t* auxBlocks,int *d_result,char *pattern,int *stridx);
 
 /**** Module loader ****/
 #include ".dmodule.ppph"
@@ -199,7 +199,7 @@ void calcPatHash(vector<string> tmp, int *patHash, int numStr)
 
 //default Kernel 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash){
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash,int *d_result){
 	state.blockIterator = blockIdx.x;
 	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state,pattern,indexes,num_strings,patHash);
 	__syncthreads();	
@@ -209,7 +209,7 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 	__syncthreads();	
 
 	/* Analysis implementation*/
-	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state);
+	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state, d_result);
 
 	/* If there are SYNCBLOCKS barriers do not put Operations function call here */
 #if __SYNCBLOCKS_COUNTER == 0 && __SYNCBLOCKS_PRECODED_COUNTER == 0
@@ -306,6 +306,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		 }
 
 		 char *a, *d_a;
+		 int *d_result;
 		 a = (char *)malloc(stridx[2*num_str - 1]*sizeof(char));
 		 //flatten
 		 int subidx = 0;
@@ -325,10 +326,13 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaMemcpy(d_stridx, stridx,2*num_str*sizeof(int),cudaMemcpyHostToDevice);
 		cudaMalloc((void **)&d_patHash, num_str * sizeof(int));
 		cudaMemcpy(d_patHash,patHash,num_str * sizeof(int), cudaMemcpyHostToDevice);
+		cudaMalloc((void**)&d_result,num_str * sizeof(int));
+		int *result;
+		result = (int*)malloc(num_str * sizeof(int));
 		//char* pattern,int * indexes,int num_strings,int * patHash add to kernel
 	 /*Pattern matching ends*/
 
-		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_a,d_stridx,num_str,d_patHash);
+		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_a,d_stridx,num_str,d_patHash,d_result);
 		cudaAssert(cudaThreadSynchronize());
 
 		cudaAssert( cudaEventRecord(stop, 0) );
@@ -340,6 +344,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,MAX_BUFFER_PACKETS*sizeof(R),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS,cudaMemcpyDeviceToHost));
+		cudaAssert(cudaMemcpy(result,d_result,num_str*sizeof(int),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/
@@ -353,7 +358,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		/*** LAUNCH HOOK (Host function) ***/
 
 		//Launch hook (or preHook if window is set)
-		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks);
+		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result,a,stridx);
 		//Frees results
 		cudaAssert(cudaFreeHost(results));
 		//free(results);

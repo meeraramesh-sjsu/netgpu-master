@@ -40,7 +40,7 @@ __device__ void COMPOUND_NAME(ANALYSIS_NAME,filtering)(packet_t* GPU_buffer, T* 
 }
 
 template<typename T,typename R>
-__device__ void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state){
+__device__ void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state, int* d_result){
 //	printf("Analysis");
 //static int i = 0;
 //  --added on June 1st 
@@ -81,7 +81,7 @@ __device__ void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T*
 }
 
 template<typename R>
-void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks){
+void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks,int *result,char* pattern,int *index){
 	printf("hooks");
         /* HOST CODE: Implement HOOKS code here. Use predefined hooks or define new ones. */
 	

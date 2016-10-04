@@ -31,14 +31,14 @@ void printFlagBits(int flags)
 }
 
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE(filename,severe,critical)\
-		dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical)
+		dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical,result,pattern,index)
 
+//int *result,char* pattern,int *index
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_STDERR(severe,critical)\
 		dumpIpScanAlarmsToOstream(cerr, packetBuffer,results,state,auxBlocks,severe,critical)
 
-
 template<typename R>
-void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, char* filename,int severeLimit, int criticalLimit){
+void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, char* filename,int severeLimit, int criticalLimit, int *result,char *pattern,int *index){
 
 	//cout<<"TCP = "<<(*results).indexTcp<<"UDP= "<< (*results).indexUdp<<"ICMP ="<< (*results).indexIcmp;
 	cout<<endl<<"*********************CPU SECTION***********************************"<<endl;
@@ -62,7 +62,7 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 		file << "#Alarm Output Format: ANALYSIS_NAME> IP_SOURCE RATE(ips/second) IPS_COUNTER(number of different ips) ALARM_TYPE"<<endl<<endl;
 	}
 
-	dumpIpScanAlarmsToOstream(file, packetBuffer,results,state,auxBlocks,severeLimit,criticalLimit);
+	dumpIpScanAlarmsToOstream(file, packetBuffer,results,state,auxBlocks,severeLimit,criticalLimit,result,pattern,index);
 
 	//TODO: leave it opened till the end
 	file.close();
@@ -70,7 +70,7 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 }
 
 template<typename R>
-void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, int severeLimit, int criticalLimit){
+void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, int severeLimit, int criticalLimit,int *result,char* pattern,int *index){
 	int i,j;
 	bool hasResults;
 	uint8_t* pointer;
@@ -82,11 +82,12 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	cout<<setw(10)<<"Source IP address"<<endl;
 	int totalcycles = 0;
 	int incorrectVerNumber = 0;
+	int noofStr = results[0].num_strings;
 	for(i = 0;i<state.lastPacket;i++){
 		uint32_t network_byte_order, network_byte_order1;
 		uint32_t some_long;
 		struct in_addr in,out;
-		totalcycles += results[i].timeTaken;
+		totalcycles += results[i].timeTaken;	
 		cout<<"Packet "<<i<<" Total Cycles = "<<results[i].timeTaken<<endl;
 		if(results[i].ipPacket)
 		{
@@ -161,8 +162,21 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<"From "<<inet_ntoa(in)<<endl;
 		}
 	}
+	for(int i=0;i<noofStr;i++)
+		{
+			if(result[i])
+			{
+				int start = index[2*i];
+				int end = index[2*i+1];
+				for(int j=start;j<end;j++)
+					cout<<pattern[i];
+				cout<<endl;
+			}
+		}
+	
 	totalcycles = totalcycles / (824);
 	cout<<"Clock Frequency = "<<setw(2)<<totalcycles<<" us"<<endl;
+	
 	if(hasResults){
 		//Analysis start timestamp (1rst packet)
 		os<<"#"STR(ANALYSIS_NAME)"> ";
