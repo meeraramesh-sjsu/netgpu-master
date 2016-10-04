@@ -328,7 +328,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//char* pattern,int * indexes,int num_strings,int * patHash add to kernel
 	 /*Pattern matching ends*/
 
-		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_a,d_stridx,num_str,d_pathash);
+		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_a,d_stridx,num_str,d_patHash);
 		cudaAssert(cudaThreadSynchronize());
 
 		cudaAssert( cudaEventRecord(stop, 0) );
