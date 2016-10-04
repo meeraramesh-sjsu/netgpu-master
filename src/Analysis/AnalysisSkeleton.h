@@ -201,7 +201,7 @@ void calcPatHash(vector<string> tmp, int *patHash, int numStr)
 template<typename T,typename R>
 __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash){
 	state.blockIterator = blockIdx.x;
-	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state, num_str);
+	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state,pattern,indexes,num_strings,patHash);
 	__syncthreads();	
 
 	state.blockIterator = blockIdx.x;
