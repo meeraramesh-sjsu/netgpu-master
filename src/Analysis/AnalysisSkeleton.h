@@ -280,8 +280,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert( cudaEventCreate(&start) );
 		cudaAssert( cudaEventCreate(&stop) );
 		cudaAssert( cudaEventRecord(start, 0) );
-		int num_str = 3;
-
 
 		/*Pattern matching starts*/
 		 vector<string> tmp;
