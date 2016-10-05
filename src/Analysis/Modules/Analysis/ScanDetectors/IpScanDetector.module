@@ -285,7 +285,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	int hy,j;
    	for(hy=j=0;j<M;j++)
    	{
-   	if(blockIdx.x==2 && threadIdx.x==54)printf("%c  %d",packet,hy);
+   	if(blockIdx.x==2 && threadIdx.x==54)printf("%c  %d",elements[j+threadIdx.x].packet,hy);
 	hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
 	}
 	if(blockIdx.x==2 && threadIdx.x==54)printf("threadIdx %d pathash %d hy %d",threadIdx.x,const_patHash[i],hy);
