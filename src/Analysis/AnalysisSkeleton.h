@@ -283,9 +283,10 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		/*Pattern matching starts*/
 		 vector<string> tmp;
-		 tmp.push_back("some text");
-		 tmp.push_back("ab");
-		 tmp.push_back("text");
+		 tmp.push_back("Hello");
+		 tmp.push_back("how");
+		 tmp.push_back("are");
+		 tmp.push_back("you");
 
 		 int *patHash;
 		 int *d_patHash;
