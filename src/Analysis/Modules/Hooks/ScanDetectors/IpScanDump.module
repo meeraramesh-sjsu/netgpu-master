@@ -62,7 +62,7 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 		file << "#Alarm Output Format: ANALYSIS_NAME> IP_SOURCE RATE(ips/second) IPS_COUNTER(number of different ips) ALARM_TYPE"<<endl<<endl;
 	}
 
-	dumpIpScanAlarmsToOstream(file, packetBuffer,results,state,auxBlocks,severeLimit,criticalLimit,result,pattern,index);
+	//dumpIpScanAlarmsToOstream(file, packetBuffer,results,state,auxBlocks,severeLimit,criticalLimit,result,pattern,index);
 
 	//TODO: leave it opened till the end
 	file.close();

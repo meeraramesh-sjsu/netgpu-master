@@ -9,7 +9,6 @@
 template<typename T,typename R>
 __device__ void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,char* pattern,int *indexes,int num_strings,int *patHash)
 {
-printf("%d num of patterns",num_strings);
 /*	printf("Mining");	
  CUDA CODE: Implement MINING code here 
 
