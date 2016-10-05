@@ -67,11 +67,11 @@ typedef struct {
 			DATA_ELEMENT.signLen = 5;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 			DATA_ELEMENT.ipSrc = -1;\
-			const_pattern = pattern;
-			const_indexes = indexes;
-			const_num_strings = num_strings;
-			const_patHash = patHash;	
-		    DATA_ELEMENT.num_strings = num_strings;
+			const_pattern = pattern;\
+			const_indexes =indexes;\
+			const_num_strings = num_strings;\
+			const_patHash = patHash;\	
+		    DATA_ELEMENT.num_strings = num_strings;\
 		}while(0)
 
 /***** IPSCAN DETECTOR ANALYSIS *****/
