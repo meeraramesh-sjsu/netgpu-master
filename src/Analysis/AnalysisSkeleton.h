@@ -328,10 +328,11 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaMalloc((void **)&d_patHash, num_str * sizeof(int));
 		cudaMemcpy(d_patHash,patHash,num_str * sizeof(int), cudaMemcpyHostToDevice);
 		cudaMalloc((void**)&d_result,num_str * sizeof(int));
+		cudaMemset(result,0,num_str*sizeof(int));
 		int *result;
 		result = (int*)malloc(num_str * sizeof(int));
 		//char* pattern,int * indexes,int num_strings,int * patHash add to kernel
-	 /*Pattern matching ends*/
+		/*Pattern matching ends*/
 
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_a,d_stridx,num_str,d_patHash,d_result);
 		cudaAssert(cudaThreadSynchronize());
@@ -358,6 +359,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		/*** LAUNCH HOOK (Host function) ***/
 
+		printf("Printing the multiple pattern result array");
 		//Launch hook (or preHook if window is set)
 		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result,a,stridx);
 		//Frees results
