@@ -282,7 +282,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(threadIdx.x<=96-patLen)
 	{
 	int hy,j;
-   	for(hy=j=0;j<M;j++)
+   	for(hy=j=0;j<patLen;j++)
    	{
    	if(blockIdx.x==2 && threadIdx.x==54) printf("%c  %d",elements[j+threadIdx.x].packet,hy);
 	hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;

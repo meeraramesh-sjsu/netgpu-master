@@ -167,14 +167,14 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	cout<<"no of str"<<noofStr<<endl;
 	for(int i=0;i<noofStr;i++)
 		{
-		cout<<"**************************************************************";
 			if(result[i])
 			{
+				cout<<"************************************************";
 				cout<<"Virus pattern found: ";
 				int start = index[2*i];
 				int end = index[2*i+1];
 				for(int j=start;j<end;j++)
-					cout<<pattern[i];
+					cout<<pattern[j];
 				cout<<endl;
 			}
 		}
