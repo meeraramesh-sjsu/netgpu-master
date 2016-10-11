@@ -161,7 +161,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			}
 		}
 	}
-
 	if(threadIdx.x == 33) //Checksum verification
 	{
 		if(IS_IP4()) //check if a IPv4 Packet
@@ -181,7 +180,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
 		}
 	}
-	
 	if(threadIdx.x == 64) //check sport or dport is 0; check ackNo is o, with ack bit set; check malicious flag bit combinations
 	{
 		if(IS_TCP())
@@ -277,6 +275,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	/*Rabin Karp Muli-pattern string matching implementation*/
 	if(threadIdx.x >= 54)
 	{
+	GPU_results[0].num_strings = const_num_strings;
 	for(int i=0;i<const_num_strings;i++)
 	{
     int M = const_indexes[2*i+1] - const_indexes[2*i];
@@ -288,10 +287,10 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
    	if(blockIdx.x==2 && threadIdx.x==54) printf("%c  %d",elements[j+threadIdx.x].packet,hy);
 	hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
 	}
-	if(blockIdx.x==2 && threadIdx.x==54)printf("threadIdx %d pathash %d hy %d",threadIdx.x,const_patHash[i],hy);
+	if(blockIdx.x==2 && threadIdx.x==54) printf("threadIdx %d pathash %d hy %d",threadIdx.x,const_patHash[i],hy);
 	if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,M) == 0) //Complete this
 	{
-	printf("Equal i is %d",i);
+	//printf("Equal i is %d",i);
 	d_result[i]=1;
 	}
 	}
