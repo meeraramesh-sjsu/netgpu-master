@@ -278,8 +278,8 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	GPU_results[0].num_strings = const_num_strings;
 	for(int i=0;i<const_num_strings;i++)
 	{
-    int M = const_indexes[2*i+1] - const_indexes[2*i];
-	if(threadIdx.x<=96-M)
+    int patLen = const_indexes[2*i+1] - const_indexes[2*i];
+	if(threadIdx.x<=96-patLen)
 	{
 	int hy,j;
    	for(hy=j=0;j<M;j++)
@@ -288,7 +288,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
 	}
 	if(blockIdx.x==2 && threadIdx.x==54) printf("threadIdx %d pathash %d hy %d",threadIdx.x,const_patHash[i],hy);
-	if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,M) == 0) //Complete this
+	if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this
 	{
 	//printf("Equal i is %d",i);
 	d_result[i]=1;

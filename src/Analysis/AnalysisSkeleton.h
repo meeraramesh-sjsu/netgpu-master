@@ -331,6 +331,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaMemset(d_result,0,num_str*sizeof(int));
 		int *result;
 		result = (int*)malloc(num_str * sizeof(int));
+		memset(result,0,num_str*sizeof(int));
 		//char* pattern,int * indexes,int num_strings,int * patHash add to kernel
 		/*Pattern matching ends*/
 
@@ -359,9 +360,11 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		/*** LAUNCH HOOK (Host function) ***/
 
-		printf("Printing the multiple pattern result array");
+		printf("Printing the multiple pattern result array \n");
 		for(int i=0;i<num_str;i++)
-			cout<<result[i]<<" "<<endl;
+			cout<<result[i]<<" ";
+
+		cout<<endl;
 		//Launch hook (or preHook if window is set)
 		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result,a,stridx);
 		//Frees results
