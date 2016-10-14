@@ -33,6 +33,7 @@ typedef struct {
 	int maliciousAck;
 	int maliciousDst;
 	int maliciousCheckSum;
+	int maliciousPayload;
 	int size_packet;
 	int signatureFound;
 	int ipPacket;
@@ -47,6 +48,7 @@ typedef struct {
 	int sport;
 	int timeTaken;
 	int num_strings;
+	int signatureNumber;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
 #endif  //libAnalysisIpScan
@@ -290,12 +292,14 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(blockIdx.x==2 && threadIdx.x==54) printf("threadIdx %d pathash %d hy %d",threadIdx.x,const_patHash[i],hy);
 	if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this
 	{
-	//printf("Equal i is %d",i);
+	GPU_results[blockIdx.x].maliciousPayload = 1;
+	GPU_results[blockIdx.x].signatureNumber = i; 
 	d_result[i]=1;
 	}
 	}
 	}
 	}
+	
 	__syncthreads();
 
 	/*Execution time calc for each block*/
