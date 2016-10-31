@@ -86,7 +86,7 @@ void LivePacketFeeder::packetCallback(u_char* sniffer,const struct pcap_pkthdr* 
 		//Green light for thread waiting to get PacketBuffer (getSniffedPacketBuffer) 
 		sem_post(((LivePacketFeeder*)sniffer)->waitForLivePacketFeederToEnd);
 
-		DEBUG2("Waiting for swap, collected : %d",((LivePacketFeeder*)sniffer)->packetCounter);
+		cout<<"Waiting for swap, collected : %d",((LivePacketFeeder*)sniffer)->packetCounter;
 		
 		//UNLOCK		
 		pthread_mutex_unlock(&((LivePacketFeeder*)sniffer)->mutex);
@@ -156,10 +156,10 @@ void LivePacketFeeder::_start(void){
 	//Set appropiate datalink info
 	setDeviceDataLinkInfoToBuffers(pcap_datalink(descr));
 
-	//PCAP_LOOP
-	pcap_loop(descr, -1, LivePacketFeeder::packetCallback,(u_char*)this);
+	//PCAP_LOOP //changed -1 to 10. number of packets to capture
+	pcap_loop(descr, 10, LivePacketFeeder::packetCallback,(u_char*)this);
 
-	DEBUG2("Exiting pcap loop");
+	cout<<"Exiting pcap loop";
 
 	//Setting state to LASTBUFFER for consumers	
 	state = SNIFFER_LASTBUFFER_STATE; 
