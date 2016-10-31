@@ -32,7 +32,7 @@ void Scheduler::init(void){
 /* SIGTERM Signal handler*/
 
 void Scheduler_sigterm_handler(int signum){
-	cout<<"Signal handler called with signal number"<<signum<<endl;
+	cerr<<"Signal handler called with signal number"<<signum<<endl;
 	Scheduler::term();
 }
 
