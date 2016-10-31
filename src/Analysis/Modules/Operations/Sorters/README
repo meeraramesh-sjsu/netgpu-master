@@ -1,3 +1,0 @@
-These operations should sort arrays, both data and results (and it would be great also GPU_aux)
-
-As it's not necessary at the moment is incomplete and buggy (and with a poor performance)
