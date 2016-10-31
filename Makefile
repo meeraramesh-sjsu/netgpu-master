@@ -13,7 +13,7 @@
 # PARTICULAR PURPOSE.
 
 
-INSTALL_TOP_DIR=/home/meera/gpudir/netgpu-master
+
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
   case $${target_option-} in \
@@ -75,8 +75,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-unknown-linux-gnu
-host_triplet = x86_64-unknown-linux-gnu
+build_triplet = aarch64-unknown-linux-gnu
+host_triplet = aarch64-unknown-linux-gnu
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) README ar-lib \
@@ -192,20 +192,20 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /home/meera/gpudir/netgpu-master/missing aclocal-1.14
+ACLOCAL = ${SHELL} /home/ubuntu/netgpu-master/missing aclocal-1.14
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 AR = ar
-AUTOCONF = ${SHELL} /home/meera/gpudir/netgpu-master/missing autoconf
-AUTOHEADER = ${SHELL} /home/meera/gpudir/netgpu-master/missing autoheader
-AUTOMAKE = ${SHELL} /home/meera/gpudir/netgpu-master/missing automake-1.14
+AUTOCONF = ${SHELL} /home/ubuntu/netgpu-master/missing autoconf
+AUTOHEADER = ${SHELL} /home/ubuntu/netgpu-master/missing autoheader
+AUTOMAKE = ${SHELL} /home/ubuntu/netgpu-master/missing automake-1.14
 AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inline --compiler-bindir=/usr/bin/g++
 CPP = gcc -E
 CPPFLAGS = 
-CUDA_DIR = /usr/local/cuda/bin/..
+CUDA_DIR = /usr/local/cuda-7.0/bin/..
 CXX = g++
 CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
@@ -229,7 +229,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LD = /usr/bin/ld -m elf_x86_64
+LD = /usr/bin/ld
 LDFLAGS = 
 LIBOBJS = 
 LIBS = 
@@ -237,12 +237,12 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/meera/gpudir/netgpu-master/missing makeinfo
+MAKEINFO = ${SHELL} /home/ubuntu/netgpu-master/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
 NMEDIT = 
-NVCC = /usr/local/cuda/bin/nvcc
+NVCC = /usr/local/cuda-7.0/bin/nvcc
 OBJDUMP = objdump
 OBJEXT = o
 OTOOL = 
@@ -261,10 +261,10 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 VERSION = 0.1
-abs_builddir = /home/meera/gpudir/netgpu-master
-abs_srcdir = /home/meera/gpudir/netgpu-master
-abs_top_builddir = /home/meera/gpudir/netgpu-master
-abs_top_srcdir = /home/meera/gpudir/netgpu-master
+abs_builddir = /home/ubuntu/netgpu-master
+abs_srcdir = /home/ubuntu/netgpu-master
+abs_top_builddir = /home/ubuntu/netgpu-master
+abs_top_srcdir = /home/ubuntu/netgpu-master
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -274,11 +274,10 @@ am__leading_dot = .
 am__quote = 
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
-#bindir = ${exec_prefix}/bin
-bindir = ${prefix}/bin
-build = x86_64-unknown-linux-gnu
+bindir = ${exec_prefix}/bin
+build = aarch64-unknown-linux-gnu
 build_alias = 
-build_cpu = x86_64
+build_cpu = aarch64
 build_os = linux-gnu
 build_vendor = unknown
 builddir = .
@@ -287,17 +286,16 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-unknown-linux-gnu
+host = aarch64-unknown-linux-gnu
 host_alias = 
-host_cpu = x86_64
+host_cpu = aarch64
 host_os = linux-gnu
 host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/meera/gpudir/netgpu-master/install-sh
+install_sh = ${SHELL} /home/ubuntu/netgpu-master/install-sh
 libdir = ${exec_prefix}/lib
-#libdir = ${prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
@@ -305,8 +303,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-#prefix = /usr/local
-prefix = ${INSTALL_TOP_DIR}/usr/local
+prefix = /usr/local
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -699,7 +696,6 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-recursive
-	rm -rf $(prefix)
 
 clean-am: clean-generic clean-libtool mostlyclean-am
 
@@ -799,38 +795,33 @@ install-exec-hook:
 		@echo
 
 # Configuring netgpu_ppp
-		@echo -n "Configuring netgpu_ppp... "
-		$(MKDIR_P) $(bindir)
+		@echo -n "Configuring netgpu_ppp..."
 		@sed -e "3s@_path_to_scripts_@$(datadir)/netgpu/Tools/@" src/Tools/netgpu_ppp > $(bindir)/netgpu_ppp
-		@chmod 766 $(bindir)/netgpu_ppp 
 		@echo "Done."
 
 # Configuring dmodule.sh	
 		@echo -n "Configuring dmodule.sh..."
-		$(MKDIR_P) $(datadir)/netgpu/Tools/
 		@sed -e "3s@_netgpu_path_@$(datadir)/netgpu/include/netgpu/@" src/Tools/dmodule.sh > $(datadir)/netgpu/Tools/dmodule.sh
 		@echo "Done."
 
 # Configuring netgpu__compile_analysis
 		@echo -n "Configuring netgpu__compile_analysis..."
 		@sed -e "2s@_library_path_@$(datadir)/netgpu/include/@" src/Tools/netgpu__compile_analysis > $(bindir)/netgpu__compile_analysis
-		@chmod 766 $(bindir)/netgpu__compile_analysis
 		@echo "Done."
 
 # Configuring netgpu_create_analysis
 		@echo -n "Configuring netgpu_create_analysis..."
 		@sed -e "3s@_library_path_@$(datadir)/netgpu/AnalysisTemplate/@" src/Tools/netgpu_create_analysis > $(bindir)/netgpu_create_analysis
-		@chmod 766 $(bindir)/netgpu_create_analysis
 		@echo "Done."
 
 # Installing modules
 		@echo "Calling Module installer script (datadir)..." 
-		$(MKDIR_P) $(datadir)/netgpu/include/netgpu/
 		@./module-installer.sh $(datadir)/netgpu/include/netgpu/
 		@echo "Calling Module installer script (includedir)..." 
 		@./module-installer.sh $(includedir)/netgpu/
 
-#		@echo "Calling ldconfig"
+		@echo "Calling ldconfig"
+		@/sbin/ldconfig	
 
 uninstall-hook:
 		@echo
