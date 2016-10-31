@@ -15,10 +15,10 @@ using namespace std;
  int main(int args,char *argv[]) {
 
 	//Capture packets from a pcap capture file (argv[1]
-	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
+//	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
 
 	//Capturing from lo
-//	LivePacketFeeder* feeder = new LivePacketFeeder("lo");
+	LivePacketFeeder* feeder = new LivePacketFeeder("lo");
 	
 
 	//cout <<"Starting analysis in few minutes...\n";
