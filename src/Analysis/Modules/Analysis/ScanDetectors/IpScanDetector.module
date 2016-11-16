@@ -117,13 +117,38 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	__shared__ T elements[96];
 	__shared__ clock_t starttime;
 	__shared__ clock_t stoptime;
-
+	__shared__ uchar4 packet[32];
+	
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
 	//Mine to Shared to save memory accesses
 	if(threadIdx.x ==0)
 		starttime = clock();
 
+	if(threadIdx.x < 9)
+	{
+		uint4 *uint4_text = reinterpret_cast<uint4 *>(GPU_buffer->packet + 16*threadIdx.x);
+		uint4 uint4_var;
+
+		//memory transaction
+		uint4_var = uint4_text[0];
+
+		//recast data to uchar4
+		int i=threadIdx.x*4;
+		packet[i] =   *reinterpret_cast<uchar4 *>(&uint4_var.x);
+		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
+		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
+		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);			
+	}
+	
+	if(threadIdx.x == 0 )
+	{
+		printf("Printing the 128 byte packet");
+		for(int i=0;i<32;i++)
+		{
+			printf("0x%d %c %c %c %c \n",i,packet[i].x, packet[i].y,packet[i].z,packet[i].w);
+		}
+	}
 	if(threadIdx.x < 96)
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	__syncthreads();
