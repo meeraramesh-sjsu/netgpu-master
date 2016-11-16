@@ -1,4 +1,3 @@
-
 #if ITERATOR__ < __SYNCBLOCKS_COUNTER
 	
 	//Extra kernel prototype
@@ -15,5 +14,6 @@
 	__syncthreads();	
 
 	}
+	
 #endif
 #undef ITERATOR__

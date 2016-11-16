@@ -16,7 +16,7 @@ ANALYSIS_FOLDER:=Analysis
 LIBS :=  -lnetgpu -lpcap -lpthread -lodbc -lcudart
 
 #Compilation flags
-FLAGS = -pg
+FLAGS = -pg -g
 
 .NOTPARALLEL:
 all:analysis

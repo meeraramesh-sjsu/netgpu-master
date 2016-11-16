@@ -5,7 +5,6 @@
  PrePreprocessor orders (ppp.sh):
 
  ###PATTERNS $IPSCAN_DETECTOR$ANALYSIS(
-
  */
 
 //#warning IpScan Analysis
@@ -18,6 +17,12 @@
 #include <stdio.h>
 using namespace std;
 
+/*Using constant memory for storing multiple patterns, their correspnding indices and pattern hashes in constant memory*/
+__device__ char* const_pattern;
+__device__ int* const_indexes;
+__device__ int const_num_strings;
+__device__ int* const_patHash;
+
 typedef struct {
 	//IP
 	int maliciousVer;
@@ -28,6 +33,7 @@ typedef struct {
 	int maliciousAck;
 	int maliciousDst;
 	int maliciousCheckSum;
+	int maliciousPayload;
 	int size_packet;
 	int signatureFound;
 	int ipPacket;
@@ -41,6 +47,8 @@ typedef struct {
 	int flags;
 	int sport;
 	int timeTaken;
+	int num_strings;
+	int signatureNumber;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
 #endif  //libAnalysisIpScan
@@ -61,11 +69,16 @@ typedef struct {
 			DATA_ELEMENT.signLen = 5;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 			DATA_ELEMENT.ipSrc = -1;\
+			const_pattern = pattern;\
+			const_indexes =indexes;\
+			const_num_strings = num_strings;\
+			const_patHash = patHash;\	
+		    DATA_ELEMENT.num_strings = num_strings;\
 		}while(0)
 
 /***** IPSCAN DETECTOR ANALYSIS *****/
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
-		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,counter,threshold);\
+		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,d_result,counter,threshold);\
 		__syncthreads()
 
 __device__ int lastTwoBytes(char pack)
@@ -85,29 +98,67 @@ __device__ int calcHash(char pattern[], int M)
 	return hash;
 }
 
+template<typename T>
+__device__ int memCmpDev(T input[], char *pattern,int *indexes,int i,int offset,int M)
+{
+	bool result = true;
+	int j = indexes[2*i];
+	for (int i = offset; i < offset + M && result; i++)
+	{
+		if (input[i].packet != pattern[j++]) result = false;
+	}
+	return !result;
+}
+
 template<typename T,typename R>
-__device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold) {
+__device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int* d_result,int *counter,int thresHold) {
 
 	/* Erases duplicates and counts elements inside block */
 	__shared__ T elements[96];
 	__shared__ clock_t starttime;
 	__shared__ clock_t stoptime;
-
+	__shared__ uchar4 packet[32];
+	
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
 	//Mine to Shared to save memory accesses
 	if(threadIdx.x ==0)
 		starttime = clock();
 
+	/*if(threadIdx.x < 9)
+	{
+		uint4 *uint4_text = reinterpret_cast<uint4 *>(GPU_buffer->packet + 16*threadIdx.x);
+		uint4 uint4_var;
+
+		//memory transaction
+		uint4_var = uint4_text[0];
+
+		//recast data to uchar4
+		int i=threadIdx.x*4;
+		packet[i] =   *reinterpret_cast<uchar4 *>(&uint4_var.x);
+		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
+		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
+		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);			
+	}
+	
+	if(threadIdx.x == 0 && blockIdx.x==0)
+	{
+		printf("Printing the 128 byte packet");
+		for(int i=0;i<32;i++)
+		{
+			printf("0x%d %c%c%c%c ",i,packet[i].x, packet[i].y,packet[i].z,packet[i].w);
+			if(i%4==0) printf("\n");
+		}
+	}*/
 	if(threadIdx.x < 96)
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	__syncthreads();
 
-	if(blockIdx.x==2 && threadIdx.x==0)
+	/*if(blockIdx.x==2 && threadIdx.x==0)
 	{
 		for(int i=0;i<96;i++)
 			printf("%d %c ",i,elements[i].packet);
-	}
+	}*/
 
 	if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
 	{
@@ -138,7 +189,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			}
 		}
 	}
-
 	if(threadIdx.x == 33) //Checksum verification
 	{
 		if(IS_IP4()) //check if a IPv4 Packet
@@ -196,7 +246,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		GPU_results[blockIdx.x].ipSrc = ipSrc;
 		GPU_results[blockIdx.x].ipDst = ipDst;
 	}
-	if(threadIdx.x==0) //calculate pattern hash
+	if(threadIdx.x==0 && blockIdx.x==0) //calculate pattern hash
 	{
 		elements[threadIdx.x].patHash = calcHash(elements[threadIdx.x].signature,elements[threadIdx.x].signLen);
 	}
@@ -249,6 +299,33 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			if(result) GPU_results[blockIdx.x].signatureFound = 1;
 		}
 	}
+	
+	/*Rabin Karp Muli-pattern string matching implementation*/
+	if(threadIdx.x >= 54)
+	{
+	GPU_results[0].num_strings = const_num_strings;
+	for(int i=0;i<const_num_strings;i++)
+	{
+    int patLen = const_indexes[2*i+1] - const_indexes[2*i];
+	if(threadIdx.x<=96-patLen)
+	{
+	int hy,j;
+   	for(hy=j=0;j<patLen;j++)
+   	{
+   	if(blockIdx.x==2 && threadIdx.x==54) printf("%c  %d",elements[j+threadIdx.x].packet,hy);
+	hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
+	}
+	if(blockIdx.x==2 && threadIdx.x==54) printf("threadIdx %d pathash %d hy %d",threadIdx.x,const_patHash[i],hy);
+	if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this
+	{
+	GPU_results[blockIdx.x].maliciousPayload = 1;
+	GPU_results[blockIdx.x].signatureNumber = i; 
+	d_result[i]=1;
+	}
+	}
+	}
+	}
+	
 	__syncthreads();
 
 	/*Execution time calc for each block*/
@@ -260,9 +337,9 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 }
 
 template<typename T,typename R>
-__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *counter,int thresHold) {
+__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *d_result,int *counter,int thresHold) {
 
-	ipscananalysis<ANALYSIS_INPUT_TYPE,ANALYSIS_INPUT_TYPE>(GPU_buffer,GPU_data,GPU_results,state,counter,thresHold);
+	ipscananalysis<ANALYSIS_INPUT_TYPE,ANALYSIS_INPUT_TYPE>(GPU_buffer,GPU_data,GPU_results,state,d_result,counter,thresHold);
 	//while(totalThreads<3840) { };
 }
 
