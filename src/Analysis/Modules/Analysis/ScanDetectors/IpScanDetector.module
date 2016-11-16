@@ -127,7 +127,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 	if(threadIdx.x < 8)
 	{
-		uint4 *uint4_text = reinterpret_cast<uint4 *>(GET_FIELD(GPU_buffer->packet)+ 16*threadIdx.x);
+		uint4 *uint4_text = reinterpret_cast<uint4 *>(GET_FIELD(GPU_buffer)->packet+ 16*threadIdx.x);
 		uint4 uint4_var;
 
 		//memory transaction
