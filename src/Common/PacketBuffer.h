@@ -27,7 +27,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "../PacketFeeders/SizeDissector.h"
 
 #define MAX_BUFFER_PACKETS 288 //Max number of packets // Change it to 3840
-#define MAX_BUFFER_PACKET_SIZE 128 //Packet max size
+#define MAX_BUFFER_PACKET_SIZE 96 //Packet max size
 #define TIMESTAMP_OFFSET sizeof(int)
 
 typedef struct{
