@@ -127,6 +127,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 	if(threadIdx.x < 8)
 	{
+		printf("Line1 \n");
 		uint4 *uint4_text = reinterpret_cast<uint4 *>((GPU_buffer)->packet+ 16*threadIdx.x);
 		uint4 uint4_var;
 
@@ -136,9 +137,13 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		//recast data to uchar4
 		int i=threadIdx.x*4;
 		packet[i]   = *reinterpret_cast<uchar4 *>(&uint4_var.x);
+		printf("Line2 \n");
 		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
+		printf("Line3 \n");
 		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
-		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);		
+		printf("Line4 \n");
+		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);
+		printf("Line5 \n");
 	}
 	
 	if(threadIdx.x == 0 && blockIdx.x==0)
@@ -147,6 +152,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		for(int i=0;i<32;i++)
 		{
 			printf("0x%d %c%c%c%c ",i,packet[i].x, packet[i].y,packet[i].z,packet[i].w);
+			printf("Line %d\n",6+i);
 			if(i%4==0) printf("\n");
 		}
 	}
@@ -313,10 +319,8 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	int hy,j;
    	for(hy=j=0;j<patLen;j++)
    	{
-   	if(blockIdx.x==2 && threadIdx.x==54) printf("%c  %d",elements[j+threadIdx.x].packet,hy);
-	hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
+ 	hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
 	}
-	if(blockIdx.x==2 && threadIdx.x==54) printf("threadIdx %d pathash %d hy %d",threadIdx.x,const_patHash[i],hy);
 	if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this
 	{
 	GPU_results[blockIdx.x].maliciousPayload = 1;
