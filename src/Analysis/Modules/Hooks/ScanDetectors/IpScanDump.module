@@ -19,15 +19,21 @@
 using namespace std;
 #include "../hostTimeUtils.h"
 
+//3,11,7,15,1,0
 void printFlagBits(int flags)
 {
-	if(flags&64) cout<<"Congestion Window Reduced ";
+/*	if(flags&64) cout<<"Congestion Window Reduced ";
 	if(flags&32) cout<<"ECN Echo ";
 	if(flags&16) cout<<"ACK ";
 	if(flags&8) cout<<"PSH(Push) ";
 	if(flags&4) cout<<"RST ";
 	if(flags&2) cout<<"SYN ";
-	if(flags&1) cout<<"FIN ";
+	if(flags&1) cout<<"FIN "; */
+	if(flags & 3) cout<<"SYN FIN";
+	if(flags & 11) cout<<"PSH SYN FIN";
+	if(flags & 7) cout<<"RST SYN FIN";
+	if(flags & 15) cout<<"PSH RST SYN FIN";
+	if(flags & 1) cout<<"FIN";
 	if(flags&0) cout<<"NONE ";
 }
 
@@ -90,8 +96,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		uint32_t network_byte_order, network_byte_order1;
 		uint32_t some_long;
 		struct in_addr in,out;
-		totalcycles += results[i].timeTaken;	
-		
+		totalcycles += results[i].timeTaken;			
 		if(results[i].ipPacket)
 		{
 			some_long = results[i].ipSrc;
@@ -101,7 +106,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			network_byte_order1 = htonl(some_long);
 			out.s_addr = network_byte_order1;
 		}
-		if(results[i].maliciousVer)
+	/*	if(results[i].maliciousVer)
 		{
 			incorrectVerNumber++;
 			cout<<"Traffic has incorrect version numer";
@@ -109,7 +114,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<inet_ntoa(in);
 			malicious = true;
 			cout<<endl;
-		}
+		}*/
 		if(results[i].maliciousIP)
 		{
 			cout<<"Alarm!! Src address or Destination address is in private Address range:";
@@ -123,7 +128,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<"Alarm!! Malicious Flag bit combinations found: i.e ";
 			printFlagBits(results[i].flags);
 			malicious = true;
-			cout<<" are set "<<endl;
+			cout<<" are set ; from source IP address"<<inet_ntoa(in)<<endl;
 		}
 		if(results[i].maliciousReserved)
 		{
