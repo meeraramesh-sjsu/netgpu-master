@@ -360,13 +360,13 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		/*** LAUNCH HOOK (Host function) ***/
 
-	/*	printf("Printing the multiple pattern result array \n");
+		/*printf("Printing the multiple pattern result array \n");
 		for(int i=0;i<num_str;i++)
 			cout<<result[i]<<" ";*/
 
 		cout<<endl;
 		//Launch hook (or preHook if window is set)
-	//	COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result,a,stridx);
+		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result,a,stridx);
 		//Frees results
 		cudaAssert(cudaFreeHost(results));
 		//free(results);
