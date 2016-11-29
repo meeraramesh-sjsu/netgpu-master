@@ -1,6 +1,3 @@
-VirtualHeader.lo: VirtualHeader.cpp /usr/include/stdc-predef.h \
- VirtualHeader.h
-
-/usr/include/stdc-predef.h:
+VirtualHeader.lo: VirtualHeader.cpp VirtualHeader.h
 
 VirtualHeader.h:
