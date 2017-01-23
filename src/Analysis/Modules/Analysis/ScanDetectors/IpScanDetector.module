@@ -114,7 +114,7 @@ template<typename T,typename R>
 __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int* d_result,int *counter,int thresHold) {
 
 	/* Erases duplicates and counts elements inside block */
-	__shared__ T elements[128];
+	__shared__ T elements[256];
 	__shared__ clock_t starttime;
 	__shared__ clock_t stoptime;
 	__shared__ uchar4 packet[32];
@@ -287,45 +287,45 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	//		}
 	//	}
 
-	/*Rabin Karp signature matching implementation*/
-	if(threadIdx.x >=54 && threadIdx.x <= 128 - 5)
-	{
-		char *signature = elements[threadIdx.x].signature;
-		GPU_results[blockIdx.x].signature = signature;
-		int hy,i;
-		for(int hy=i=0;i<5;i++)
-		{
-			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
-		}
-		if(hy == elements[0].patHash)
-		{
-			bool result = true;
-			for(int j=0;j<5;j++)
-			{
-				if(elements[j+threadIdx.x].packet != signature[j])
-					result = false;
-			}
-			if(result) GPU_results[blockIdx.x].signatureFound = 1;
-		}
-	}
-
-	/*Rabin Karp Muli-pattern string matching implementation*/
-	if(threadIdx.x >= 54) {
-		GPU_results[0].num_strings = const_num_strings;
-		for(int i=0;i<const_num_strings;i++) {
-			int patLen = const_indexes[2*i+1] - const_indexes[2*i];
-			if(threadIdx.x<=128-patLen) {
-				int hy,j;
-				for(hy=j=0;j<patLen;j++) {
-					hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
-				}
-				if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this 
-				{
-					GPU_results[blockIdx.x].maliciousPayload = 1;
-				GPU_results[blockIdx.x].signatureNumber = i; 
-				d_result[i]=1;
-			} 
-		} } }
+//	/*Rabin Karp signature matching implementation*/
+//	if(threadIdx.x >=54 && threadIdx.x <= 128 - 5)
+//	{
+//		char *signature = elements[threadIdx.x].signature;
+//		GPU_results[blockIdx.x].signature = signature;
+//		int hy,i;
+//		for(int hy=i=0;i<5;i++)
+//		{
+//			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
+//		}
+//		if(hy == elements[0].patHash)
+//		{
+//			bool result = true;
+//			for(int j=0;j<5;j++)
+//			{
+//				if(elements[j+threadIdx.x].packet != signature[j])
+//					result = false;
+//			}
+//			if(result) GPU_results[blockIdx.x].signatureFound = 1;
+//		}
+//	}
+//
+//	/*Rabin Karp Muli-pattern string matching implementation*/
+//	if(threadIdx.x >= 54) {
+//		GPU_results[0].num_strings = const_num_strings;
+//		for(int i=0;i<const_num_strings;i++) {
+//			int patLen = const_indexes[2*i+1] - const_indexes[2*i];
+//			if(threadIdx.x<=128-patLen) {
+//				int hy,j;
+//				for(hy=j=0;j<patLen;j++) {
+//					hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
+//				}
+//				if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this 
+//				{
+//					GPU_results[blockIdx.x].maliciousPayload = 1;
+//				GPU_results[blockIdx.x].signatureNumber = i; 
+//				d_result[i]=1;
+//			} 
+//		} } }
 
 __syncthreads();
 
