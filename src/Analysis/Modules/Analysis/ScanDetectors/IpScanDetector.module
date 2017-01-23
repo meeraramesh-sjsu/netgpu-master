@@ -117,7 +117,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	__shared__ T elements[256];
 	__shared__ clock_t starttime;
 	__shared__ clock_t stoptime;
-	__shared__ uchar4 packet[32];
+	//__shared__ uchar4 packet[32];
 
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
@@ -161,11 +161,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	__syncthreads();
 
-	/*if(blockIdx.x==2 && threadIdx.x==0)
-	{
-		for(int i=0;i<96;i++)
-			printf("%d %c ",i,elements[i].packet);
-	}*/
 
 	if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
 	{

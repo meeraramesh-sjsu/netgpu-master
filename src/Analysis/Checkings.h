@@ -29,7 +29,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 /* Check MAX_BUFFER_PACKETS%ANALYSIS_TPB == 0 */
 #define COMPILATIONASSERT_THREADS(expn) typedef char analysis_threads_is_divisor_of_max_buffer_packets[(expn)?1:-1]
-COMPILATIONASSERT_THREADS(MAX_BUFFER_PACKETS % ANALYSIS_TPB == 0);
+COMPILATIONASSERT_THREADS(MAX_BUFFER_PACKETS % ANALYSIS_TPB > 0);
 
 /* CHECK ANALYSIS_INPUT_TYPE ALIGNMENT */
 #define COMPILATIONASSERT_INPUT(expn) typedef char analysis_input_type_is_not_aligned_to_4_bytes[(expn)?1:-1]

@@ -26,7 +26,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 	#define ANALYSIS_INPUT_TYPE  type 
 
 	/* Threads Per Block (unidimensional): [8-512],default:128 */
-	#define ANALYSIS_TPB 96
+	#define ANALYSIS_TPB 256
 
 	/***** DEFINING COMPLEX TYPES *****/
 

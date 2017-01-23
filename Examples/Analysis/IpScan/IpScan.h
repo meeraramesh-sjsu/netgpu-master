@@ -18,7 +18,7 @@
 /*** General Parameters ***/
 #define ANALYSIS_NAME IpScan
 #define ANALYSIS_INPUT_TYPE  int //int,uint,floats, double(*) intXX_t, uintXX_t, structs etc.. or typedefs (define new types below) 
-#define ANALYSIS_TPB 96 //Threads Per Block (unidimensional): [8-512], default 128
+#define ANALYSIS_TPB 256 //Threads Per Block (unidimensional): [8-512], default 128
 
 /*** Define complex types here (i.e. structs)  ***/
 
