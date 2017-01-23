@@ -135,10 +135,10 @@ if(threadIdx.x < 16)
 		uint4_var = uint4_text[0];
 
 		//recast data to uchar4
-//		int i=threadIdx.x*4;
-//		packet[i]   = *reinterpret_cast<uchar4 *>(&uint4_var.x);
+	int i=threadIdx.x*4;
+		packet[i]   = *reinterpret_cast<uchar4 *>(&uint4_var.x);
 //		printf("Line2 \n");
-//		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
+		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
 //		printf("Line3 \n");
 //		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
 //		printf("Line4 \n");
