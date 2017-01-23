@@ -255,30 +255,30 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 	//Naive Payload Signature Matching
 
-		if(threadIdx.x >=54)
-		{
-			GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
-			char *input = elements[threadIdx.x].signature;
-					int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
-					int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
-					int val = val1 + val2;
-			if(elements[threadIdx.x].packet == val && (96 - threadIdx.x > elements[threadIdx.x].signatureLength))
-			{
-				int j = 1;
-				int k = 4;
-				int i = threadIdx.x;
-				while (input[k]!='\0' && i+j < 96)
-				{
-					val1 = (input[k] - 48) > 9 ? (input[k] - 55) * 16 : (input[k] - 48) * 16;
-					val2 = (input[k+1] - 48) > 9 ? (input[k+1] - 55) : (input[k+1] - 48);
-					val = val1 + val2;
-					if(elements[i+j].packet!=val)
-						break;
-					else {j++;k=k+2;}
-				}
-				if(input[k]=='\0') GPU_results[blockIdx.x].signatureFound = 1;
-			}
-		}
+//		if(threadIdx.x >=54)
+//		{
+//			GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
+//			char *input = elements[threadIdx.x].signature;
+//					int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
+//					int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
+//					int val = val1 + val2;
+//			if(elements[threadIdx.x].packet == val && (96 - threadIdx.x > elements[threadIdx.x].signatureLength))
+//			{
+//				int j = 1;
+//				int k = 4;
+//				int i = threadIdx.x;
+//				while (input[k]!='\0' && i+j < 96)
+//				{
+//					val1 = (input[k] - 48) > 9 ? (input[k] - 55) * 16 : (input[k] - 48) * 16;
+//					val2 = (input[k+1] - 48) > 9 ? (input[k+1] - 55) : (input[k+1] - 48);
+//					val = val1 + val2;
+//					if(elements[i+j].packet!=val)
+//						break;
+//					else {j++;k=k+2;}
+//				}
+//				if(input[k]=='\0') GPU_results[blockIdx.x].signatureFound = 1;
+//			}
+//		}
 
 //	/*Rabin Karp signature matching implementation
 	if(threadIdx.x >=54 && threadIdx.x <= 256 - 5)
