@@ -128,24 +128,23 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 if(threadIdx.x < 16)
 	{
 		printf("Line1 \n");
-		uint4_t *uint4_text = reinterpret_cast<uint4 *>((GPU_buffer)->packet+ 16*threadIdx.x);
-		uint4_t uint4_var;
+		uint4 *uint4_text = reinterpret_cast<uint4 *>((GPU_buffer)->packet+ 16*threadIdx.x);
+		uint4 uint4_var;
 
 		//memory transaction
 		uint4_var = uint4_text[0];
 
 		//recast data to uchar4
-		int i=threadIdx.x*4;
-		packet[i]   = *reinterpret_cast<uchar4 *>(&uint4_var.x);
-		printf("Line2 \n");
-		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
-		printf("Line3 \n");
-		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
-		printf("Line4 \n");
-		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);
-		printf("Line5 \n");
+//		int i=threadIdx.x*4;
+//		packet[i]   = *reinterpret_cast<uchar4 *>(&uint4_var.x);
+//		printf("Line2 \n");
+//		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
+//		printf("Line3 \n");
+//		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
+//		printf("Line4 \n");
+//		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);
+//		printf("Line5 \n");
 	}
-
 
 	if(threadIdx.x == 0 && blockIdx.x==0)
 	{
