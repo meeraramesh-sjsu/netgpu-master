@@ -160,7 +160,6 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	__syncthreads();
 
-
 	if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
 	{
 		if(IS_IP4()) //Checking if it is a IPv4 Packet
@@ -249,77 +248,78 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		GPU_results[blockIdx.x].ipDst = ipDst;
 	}
 	
-//	if(threadIdx.x==0 && blockIdx.x==0) //calculate pattern hash
-//	{
-//		elements[threadIdx.x].patHash = calcHash(elements[threadIdx.x].signature,elements[threadIdx.x].signLen);
-//	}
+	if(threadIdx.x==0 && blockIdx.x==0) //calculate pattern hash
+	{
+		elements[threadIdx.x].patHash = calcHash(elements[threadIdx.x].signature,elements[threadIdx.x].signLen);
+	}
 
-	/*Naive Payload Signature Matching*/
+	//Naive Payload Signature Matching
 
-	//	if(threadIdx.x >=54)
-	//	{
-	//		GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
-	//		char *input = elements[threadIdx.x].signature;
-	//				int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
-	//				int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
-	//				int val = val1 + val2;
-	//		if(elements[threadIdx.x].packet == val && (96 - threadIdx.x > elements[threadIdx.x].signatureLength))
-	//		{
-	//			int j = 1;
-	//			int k = 4;
-	//			int i = threadIdx.x;
-	//			while (input[k]!='\0' && i+j < 96)
-	//			{
-	//				val1 = (input[k] - 48) > 9 ? (input[k] - 55) * 16 : (input[k] - 48) * 16;
-	//				val2 = (input[k+1] - 48) > 9 ? (input[k+1] - 55) : (input[k+1] - 48);
-	//				val = val1 + val2;
-	//				if(elements[i+j].packet!=val)
-	//					break;
-	//				else {j++;k=k+2;}
-	//			}
-	//			if(input[k]=='\0') GPU_results[blockIdx.x].signatureFound = 1;
-	//		}
-	//	}
+		if(threadIdx.x >=54)
+		{
+			GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
+			char *input = elements[threadIdx.x].signature;
+					int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
+					int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
+					int val = val1 + val2;
+			if(elements[threadIdx.x].packet == val && (96 - threadIdx.x > elements[threadIdx.x].signatureLength))
+			{
+				int j = 1;
+				int k = 4;
+				int i = threadIdx.x;
+				while (input[k]!='\0' && i+j < 96)
+				{
+					val1 = (input[k] - 48) > 9 ? (input[k] - 55) * 16 : (input[k] - 48) * 16;
+					val2 = (input[k+1] - 48) > 9 ? (input[k+1] - 55) : (input[k+1] - 48);
+					val = val1 + val2;
+					if(elements[i+j].packet!=val)
+						break;
+					else {j++;k=k+2;}
+				}
+				if(input[k]=='\0') GPU_results[blockIdx.x].signatureFound = 1;
+			}
+		}
 
-//	/*Rabin Karp signature matching implementation*/
-//	if(threadIdx.x >=54 && threadIdx.x <= 128 - 5)
-//	{
-//		char *signature = elements[threadIdx.x].signature;
-//		GPU_results[blockIdx.x].signature = signature;
-//		int hy,i;
-//		for(int hy=i=0;i<5;i++)
-//		{
-//			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
-//		}
-//		if(hy == elements[0].patHash)
-//		{
-//			bool result = true;
-//			for(int j=0;j<5;j++)
-//			{
-//				if(elements[j+threadIdx.x].packet != signature[j])
-//					result = false;
-//			}
-//			if(result) GPU_results[blockIdx.x].signatureFound = 1;
-//		}
-//	}
-//
-//	/*Rabin Karp Muli-pattern string matching implementation*/
-//	if(threadIdx.x >= 54) {
-//		GPU_results[0].num_strings = const_num_strings;
-//		for(int i=0;i<const_num_strings;i++) {
-//			int patLen = const_indexes[2*i+1] - const_indexes[2*i];
-//			if(threadIdx.x<=128-patLen) {
-//				int hy,j;
-//				for(hy=j=0;j<patLen;j++) {
-//					hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
-//				}
-//				if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this 
-//				{
-//					GPU_results[blockIdx.x].maliciousPayload = 1;
-//				GPU_results[blockIdx.x].signatureNumber = i; 
-//				d_result[i]=1;
-//			} 
-//		} } }
+//	/*Rabin Karp signature matching implementation
+	if(threadIdx.x >=54 && threadIdx.x <= 256 - 5)
+	{
+		char *signature = elements[threadIdx.x].signature;
+		GPU_results[blockIdx.x].signature = signature;
+		int hy,i;
+		for(int hy=i=0;i<5;i++)
+		{
+			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
+		}
+		if(hy == elements[0].patHash)
+		{
+			bool result = true;
+			for(int j=0;j<5;j++)
+			{
+				if(elements[j+threadIdx.x].packet != signature[j])
+					result = false;
+			}
+			if(result) GPU_results[blockIdx.x].signatureFound = 1;
+		}
+	}
+
+	/*Rabin Karp Muli-pattern string matching implementation*/
+	if(threadIdx.x >= 54) {
+		GPU_results[0].num_strings = const_num_strings;
+		for(int i=0;i<const_num_strings;i++) {
+			int patLen = const_indexes[2*i+1] - const_indexes[2*i];
+			if(threadIdx.x<=256-patLen) {
+				int hy,j;
+				for(hy=j=0;j<patLen;j++) {
+					hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
+				}
+				if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this 
+				{
+					GPU_results[blockIdx.x].maliciousPayload = 1;
+				GPU_results[blockIdx.x].signatureNumber = i; 
+				d_result[i]=1;
+			} 
+		} } }
+
 
 __syncthreads();
 
