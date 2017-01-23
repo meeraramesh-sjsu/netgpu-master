@@ -140,9 +140,9 @@ if(threadIdx.x < 16)
 //		printf("Line2 \n");
 		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
 //		printf("Line3 \n");
-		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
+//		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
 //		printf("Line4 \n");
-		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);
+//		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);
 //		printf("Line5 \n");
 	}
 
