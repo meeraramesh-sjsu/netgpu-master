@@ -262,7 +262,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//dim3  block(10);
 		//dim3 grid(1);
 		dim3 block(256);
-		dim3 grid(288);
+		dim3 grid(260);
 
 		//Set state number of blocks and last Packet position
 		state.windowState.totalNumberOfBlocks = MAX_BUFFER_PACKETS;

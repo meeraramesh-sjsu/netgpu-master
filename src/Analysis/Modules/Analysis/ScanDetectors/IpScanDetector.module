@@ -158,7 +158,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	}
 */
 	
-	printf("Copy from global to shared");
+	printf("Copy from global to shared %d %d",threadIdx.x,blockIdx.x);
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	__syncthreads();
 
