@@ -167,67 +167,67 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 				GPU_results[blockIdx.x].maliciousAck = 1;
 
 			int reservedVal = lastTwoBytes(elements[46].packet) >> 4;
-//			if(reservedVal != 0) GPU_results[blockIdx.x].maliciousReserved = 1;
-//
-//			int flagVal  = lastTwoBytes(elements[47].packet);
-//
-//			if(flagVal == 3 || flagVal == 11 || flagVal == 7 || flagVal == 15 || flagVal == 1 || flagVal == 0)
-//				GPU_results[blockIdx.x].maliciousFlags = 1;
-//
-//		}
-//	}
-//
-//	if(IS_IP4() && threadIdx.x == 33) //save source and destn IP addres to output
-//	{
-//		GPU_results[blockIdx.x].ipPacket = 1;
-//		uint32_t ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
-//																																																												+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
-//		uint32_t ipDst = ((elements[30].packet & 0x000000FF)  << 24) + ((elements[31].packet & 0x000000FF)  << 16)
-//																																																										+ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
-//
-//		GPU_results[blockIdx.x].ipSrc = ipSrc;
-//		GPU_results[blockIdx.x].ipDst = ipDst;
-//	}
-//	
-//	//Aho Corasick Algorithm
-//	threadIndex = threadIdx.x + blockIdx.x * blockDim.x; 
-//	//Copying the state 0 information to shared memory
-//	stateszero[threadIdx.x] = gotofn[threadIdx.x];
-//	__syncthreads();
-//
-//	int pos=threadIdx.x;
-//	char ch = s_input[pos++];
-//	int nextState = stateszero[ch];
-//	int currState = nextState & 0x0000FFFF;
-//
-//	if(currState!=0) {
-//
-//	nextState >>= 16;
-//	int outputMatch = nextState & 0x0000FFFF;
-//	if(outputMatch > 0) result[blockIdx.x]= outputMatch;
-//	//printf("currstate %d output %d",currState,outputMatch);
-//	while(currState !=0 && pos<256) {
-//	ch = s_input[pos++];
-//	nextState = gotofn[currState*256 + ch];
-//	currState = nextState & 0x0000FFFF;
-//	nextState >>= 16;
-//	outputMatch = nextState & 0x0000FFFF;
-//	//printf("Output Match %d ",outputMatch);
-//	if(outputMatch > 0) result[blockIdx.x] = outputMatch;
-//	}
-//	
-//	
-//
-//__syncthreads();
-//
-///*Execution time calc for each block*/
-//if(threadIdx.x ==0)
-//{
-//	stoptime = clock();
-//	GPU_results[blockIdx.x].timeTaken = int(stoptime - starttime);
-//}
+			if(reservedVal != 0) GPU_results[blockIdx.x].maliciousReserved = 1;
+
+			int flagVal  = lastTwoBytes(elements[47].packet);
+
+			if(flagVal == 3 || flagVal == 11 || flagVal == 7 || flagVal == 15 || flagVal == 1 || flagVal == 0)
+				GPU_results[blockIdx.x].maliciousFlags = 1;
+
+		}
+	}
+
+	if(IS_IP4() && threadIdx.x == 33) //save source and destn IP addres to output
+		{
+		GPU_results[blockIdx.x].ipPacket = 1;
+		uint32_t ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
+																																																												+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
+		uint32_t ipDst = ((elements[30].packet & 0x000000FF)  << 24) + ((elements[31].packet & 0x000000FF)  << 16)
+																																																										+ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
+
+		GPU_results[blockIdx.x].ipSrc = ipSrc;
+		GPU_results[blockIdx.x].ipDst = ipDst;
+	}
+	
+	//Aho Corasick Algorithm
+	threadIndex = threadIdx.x + blockIdx.x * blockDim.x; 
+	//Copying the state 0 information to shared memory
+	stateszero[threadIdx.x] = gotofn[threadIdx.x];
+	__syncthreads();
+
+	int pos=threadIdx.x;
+	char ch = s_input[pos++];
+	int nextState = stateszero[ch];
+	int currState = nextState & 0x0000FFFF;
+
+	if(currState!=0) {
+
+	nextState >>= 16;
+	int outputMatch = nextState & 0x0000FFFF;
+	if(outputMatch > 0) result[blockIdx.x]= outputMatch;
+	//printf("currstate %d output %d",currState,outputMatch);
+	while(currState !=0 && pos<256) {
+	ch = s_input[pos++];
+	nextState = gotofn[currState*256 + ch];
+	currState = nextState & 0x0000FFFF;
+	nextState >>= 16;
+	outputMatch = nextState & 0x0000FFFF;
+	//printf("Output Match %d ",outputMatch);
+	if(outputMatch > 0) result[blockIdx.x] = outputMatch;
+	}
+	
+	
+
+__syncthreads();
+
+	//Execution time calc for each block
+if(threadIdx.x ==0)
+{
+	stoptime = clock();
+	GPU_results[blockIdx.x].timeTaken = int(stoptime - starttime);
 }
-//
+}
+
 template<typename T,typename R>
 __device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *gotofn, int *d_result,int *counter,int thresHold) {
 			
