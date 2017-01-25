@@ -51,10 +51,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "Libs/Gpu/Macros/Util.h"
 
 
-#define statesrow 500
-#define chars 256
-int states = 0;
-int gotofn[statesrow][chars];
 
 /* Base blank class AnalysisSkeleton definition */
 class AnalysisSkeleton {
@@ -68,7 +64,7 @@ private:
 #ifdef __CUDACC__
 
 /**** Forward declaration prototypes ****/
-
+int gotofn[500][256];
 template<typename T,typename R>
 __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *gotofn,int *d_result);
 
@@ -91,10 +87,10 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, 
 #include ".dmodule.ppph"
 
 //GoTO function used for AhoCorasick Algorithm. Using this function the next State to be taken is determined.
+
 int buildGoto(vector<string> arr)
 {
 int states = 1;
-memset(gotofn,0,sizeof(gotofn));
 for(int i=0;i<arr.size();i++)
 {
 	string temp = arr[i];
@@ -120,6 +116,7 @@ return states;
 }
 
 
+
 //default Kernel 
 template<typename T,typename R>
 __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state, int* gotofn, int *result){
@@ -132,7 +129,7 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 	__syncthreads();	
 
 	/* Analysis implementation*/
-//	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state, gotofn, d_result);
+	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state, gotofn, result);
 
 	/* If there are SYNCBLOCKS barriers do not put Operations function call here */
 #if __SYNCBLOCKS_COUNTER == 0 && __SYNCBLOCKS_PRECODED_COUNTER == 0
@@ -210,8 +207,11 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		 tmp.push_back("how");
 		 tmp.push_back("are");
 		 tmp.push_back("you");
-
-		states = buildGoto(tmp);
+		
+		int statesrow=500;
+		int chars = 256;
+		memset(gotofn,0,sizeof(gotofn));
+		int states = buildGoto(tmp);
 
 		int *d_gotofn;
 		size_t pitch;

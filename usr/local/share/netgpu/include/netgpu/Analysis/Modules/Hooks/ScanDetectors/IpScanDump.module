@@ -19,27 +19,33 @@
 using namespace std;
 #include "../hostTimeUtils.h"
 
+//3,11,7,15,1,0
 void printFlagBits(int flags)
 {
-	if(flags&64) cout<<"Congestion Window Reduced ";
+/*	if(flags&64) cout<<"Congestion Window Reduced ";
 	if(flags&32) cout<<"ECN Echo ";
 	if(flags&16) cout<<"ACK ";
 	if(flags&8) cout<<"PSH(Push) ";
 	if(flags&4) cout<<"RST ";
 	if(flags&2) cout<<"SYN ";
-	if(flags&1) cout<<"FIN ";
+	if(flags&1) cout<<"FIN "; */
+	if(flags & 3) cout<<"SYN FIN";
+	if(flags & 11) cout<<"PSH SYN FIN";
+	if(flags & 7) cout<<"RST SYN FIN";
+	if(flags & 15) cout<<"PSH RST SYN FIN";
+	if(flags & 1) cout<<"FIN";
 	if(flags&0) cout<<"NONE ";
 }
 
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE(filename,severe,critical)\
-		dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical,result,pattern,index)
+		dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical,result)
 
 //int *result,char* pattern,int *index
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_STDERR(severe,critical)\
 		dumpIpScanAlarmsToOstream(cerr, packetBuffer,results,state,auxBlocks,severe,critical)
 
 template<typename R>
-void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, char* filename,int severeLimit, int criticalLimit, int *result,char *pattern,int *index){
+void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, char* filename,int severeLimit, int criticalLimit, int *result){
 
 	//cout<<"TCP = "<<(*results).indexTcp<<"UDP= "<< (*results).indexUdp<<"ICMP ="<< (*results).indexIcmp;
 	cout<<endl<<"*********************CPU SECTION***********************************"<<endl;
@@ -63,7 +69,7 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 		file << "#Alarm Output Format: ANALYSIS_NAME> IP_SOURCE RATE(ips/second) IPS_COUNTER(number of different ips) ALARM_TYPE"<<endl<<endl;
 	}
 
-	dumpIpScanAlarmsToOstream(file, packetBuffer,results,state,auxBlocks,severeLimit,criticalLimit,result,pattern,index);
+	dumpIpScanAlarmsToOstream(file, packetBuffer,results,state,auxBlocks,severeLimit,criticalLimit,result);
 
 	//TODO: leave it opened till the end
 	file.close();
@@ -71,17 +77,15 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 }
 
 template<typename R>
-void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, int severeLimit, int criticalLimit,int *result,char* pattern,int *index){
+void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, int severeLimit, int criticalLimit,int *result){
 	int i,j;
 	bool hasResults;
 	uint8_t* pointer;
 	//time vars	
 	time_t aux;
 	struct tm * timeinfo;
-	int noofStr = results[0].num_strings;
 	//Dump alarms
 	cout<<"*************Crafted Packets***************"<<endl;
-	cout<<"No Of Malicious virus signatures used "<<noofStr<<endl;
 	int totalcycles = 0;
 	int incorrectVerNumber = 0;
 	vector<struct in_addr> maliciousSrcIPs;
@@ -90,8 +94,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 		uint32_t network_byte_order, network_byte_order1;
 		uint32_t some_long;
 		struct in_addr in,out;
-		totalcycles += results[i].timeTaken;	
-		
+		totalcycles += results[i].timeTaken;			
 		if(results[i].ipPacket)
 		{
 			some_long = results[i].ipSrc;
@@ -101,7 +104,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			network_byte_order1 = htonl(some_long);
 			out.s_addr = network_byte_order1;
 		}
-		if(results[i].maliciousVer)
+	/*	if(results[i].maliciousVer)
 		{
 			incorrectVerNumber++;
 			cout<<"Traffic has incorrect version numer";
@@ -109,7 +112,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<inet_ntoa(in);
 			malicious = true;
 			cout<<endl;
-		}
+		}*/
 		if(results[i].maliciousIP)
 		{
 			cout<<"Alarm!! Src address or Destination address is in private Address range:";
@@ -123,7 +126,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<"Alarm!! Malicious Flag bit combinations found: i.e ";
 			printFlagBits(results[i].flags);
 			malicious = true;
-			cout<<" are set "<<endl;
+			cout<<" are set ; from source IP address"<<inet_ntoa(in)<<endl;
 		}
 		if(results[i].maliciousReserved)
 		{
@@ -159,7 +162,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<"Alarm!! The IPv4 Packet has an incorrect checksum and should be discarded"<<endl;
 			cout<<"From"<<inet_ntoa(in)<<endl;
 		}
-		if(results[i].maliciousPayload)
+		/*if(results[i].maliciousPayload)
 		{  
 			cout<<"**************Deep packet Inspection*************************"<<endl;
 			malicious = true;
@@ -169,11 +172,11 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			int end = index[2*results[i].signatureNumber+1];
 			for(int j=start;j<end;j++)
 			cout<<pattern[j]<<endl;
-		}
+			cout<<"****************************************************************** DPI END***************"<<endl;
+		}*/
 		maliciousSrcIPs.push_back(in);
 	}
-	
-		for(int i=0;i<noofStr;i++)
+	/*	for(int i=0;i<noofStr;i++)
 		{
 			if(result[i])
 			{
@@ -185,7 +188,18 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 					cout<<pattern[j];
 				cout<<endl;
 			}
-		}
+		} */
+		
+		for(int i=0;i<state.lastPacket;i++)
+			{
+				if(result[i]>0)
+				{
+					cout<<"************************************************";
+					cout<<"Virus pattern found: ";
+					cout<<result[i]<<" ";
+					cout<<endl;
+				}
+			}
 	
 		cout<<"Traffic from the following source IPs should be blocked"<<endl;
 		for(int i=0;i<maliciousSrcIPs.size();i++)

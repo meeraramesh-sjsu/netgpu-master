@@ -27,7 +27,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "../Analysis/Libs/Host/Database/DatabaseManager.h"
 #include "../Analysis/Libs/Host/Database/ODBCDatabaseManager.h"
 
-#define SCHEDULER_MAX_ANALYSIS_POOL_SIZE 128
+#define SCHEDULER_MAX_ANALYSIS_POOL_SIZE 256
 #define SCHEDULER_MAX_FEEDERS_POOL_SIZE 1 //DO NOT MODIFY. Still not able to handle more than 1 feeder at the time
 
 typedef struct{

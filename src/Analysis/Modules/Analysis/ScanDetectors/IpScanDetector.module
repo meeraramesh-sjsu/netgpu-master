@@ -73,100 +73,100 @@ __device__ int lastTwoBytes(char pack)
 		
 template<typename T,typename R>
 __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int* gotofn,int* d_result,int* counter,int thresHold) {
-//
-//	/* Erases duplicates and counts elements inside block */
-//	__shared__ T elements[256];
-//	__shared__ clock_t starttime;
-//	__shared__ clock_t stoptime;
-//	__shared__ uchar4 packet[64];
-//	__shared__ int stateszero[256];
-//	
-//	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
-//
-//	//Mine to Shared to save memory accesses
-//	if(threadIdx.x ==0)
-//		starttime = clock();
-//
-//	if(threadIdx.x == 0 && blockIdx.x==0)
-//	{
-//		printf("Printing the 256 byte packet");
-//		for(int i=0;i<64;i++)
-//		{
-//			printf("0x%d %c%c%c%c",i,packet[i].x, packet[i].y,packet[i].z,packet[i].w);
-//			printf("Line %d\n",6+i);
-//			if(i%4==0) printf("\n");
-//		}
-//	}
-//
-//	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
-//	__syncthreads();
-//
-//	if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
-//	{
-//		if(IS_IP4()) //Checking if it is a IPv4 Packet
-//		{
-//			GPU_results[blockIdx.x].ipPacket = 1;
-//			int verBlock = (elements[14].packet & 0x000000F0) >> 4;
-//			if(verBlock !=4 && verBlock !=6) GPU_results[blockIdx.x].maliciousVer=1;
-//
-//			int octet1 = elements[26].packet & 0x000000FF;
-//			int octet2 = elements[27].packet & 0x000000FF;
-//			int octet1Dst = elements[30].packet & 0x000000FF;
-//			int octet2Dst = elements[31].packet & 0x000000FF;
-//
-//			if (octet1 == 10 || octet1Dst == 10)
-//			{
-//				GPU_results[blockIdx.x].maliciousIP=1;
-//			}
-//			// 172.16.0.0 - 172.31.255.255
-//			if ((octet1 == 172 || octet1Dst == 172 ) && (octet2 >= 16 || octet2Dst >=16 ) && (octet2 <= 31 || octet2Dst<=31))
-//			{
-//				GPU_results[blockIdx.x].maliciousIP=1;
-//			}
-//			// 192.168.0.0 - 192.168.255.255
-//			if ((octet1 == 192  || octet1Dst == 192) && (octet2 == 168 || octet2Dst == 168))
-//			{
-//				GPU_results[blockIdx.x].maliciousIP=1;
-//			}
-//		}
-//	}
-//	if(threadIdx.x == 33) //Checksum verification
-//	{
-//		if(IS_IP4()) //check if a IPv4 Packet
-//		{
-//			int checksum = ((elements[14].packet & 0x000000FF)<<8 + (elements[15].packet & 0x000000FF)) +
-//					((elements[16].packet & 0x000000FF)<<8 + (elements[17].packet & 0x000000FF)) +
-//					((elements[18].packet & 0x000000FF)<<8  + (elements[19].packet & 0x000000FF )) +
-//					((elements[20].packet & 0x000000FF)<<8 + (elements[21].packet & 0x000000FF)) +
-//					((elements[22].packet & 0x000000FF)<<8  + (elements[23].packet & 0x000000FF)) +
-//					((elements[24].packet & 0x000000FF)<<8 + (elements[25].packet & 0x000000FF)) +
-//					(lastTwoBytes(elements[26].packet)<<8 + lastTwoBytes(elements[27].packet)) +
-//					(lastTwoBytes(elements[28].packet)<<8 + lastTwoBytes(elements[29].packet)) +
-//					(lastTwoBytes(elements[30].packet)<<8 + lastTwoBytes(elements[31].packet)) +
-//					(lastTwoBytes(elements[32].packet)<<8 + lastTwoBytes(elements[33].packet));
-//
-//			unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
-//			if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
-//		}
-//	}
-//	
-//	if(threadIdx.x == 64) //check sport or dport is 0; check ackNo is o, with ack bit set; check malicious flag bit combinations
-//	{
-//		if(IS_TCP())
-//		{
-//			GPU_results[blockIdx.x].flags = lastTwoBytes(elements[47].packet);
-//			GPU_results[blockIdx.x].sport = lastTwoBytes(elements[34].packet) << 8 + lastTwoBytes(elements[35].packet);
-//			if(lastTwoBytes(elements[33].packet) == 255)
-//				GPU_results[blockIdx.x].maliciousDst = 1;
-//
-//			if((lastTwoBytes(elements[34].packet) == 0 && lastTwoBytes(elements[35].packet) == 0) ||
-//					(lastTwoBytes(elements[36].packet) == 0 && lastTwoBytes(elements[37].packet) == 0))
-//				GPU_results[blockIdx.x].maliciousPort = 1;
-//			int ackNo = lastTwoBytes(elements[42].packet)<<24 + lastTwoBytes(elements[43].packet)<<16 + lastTwoBytes(elements[44].packet)<<8 + lastTwoBytes(elements[45].packet);
-//			if(lastTwoBytes(elements[47].packet & 16) ==1 && (ackNo == 0))
-//				GPU_results[blockIdx.x].maliciousAck = 1;
-//
-//			int reservedVal = lastTwoBytes(elements[46].packet) >> 4;
+
+	/* Erases duplicates and counts elements inside block */
+	__shared__ T elements[256];
+	__shared__ clock_t starttime;
+	__shared__ clock_t stoptime;
+	__shared__ uchar4 packet[64];
+	__shared__ int stateszero[256];
+	
+	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
+
+	//Mine to Shared to save memory accesses
+	if(threadIdx.x ==0)
+		starttime = clock();
+
+	if(threadIdx.x == 0 && blockIdx.x==0)
+	{
+		printf("Printing the 256 byte packet");
+		for(int i=0;i<64;i++)
+		{
+			printf("0x%d %c%c%c%c",i,packet[i].x, packet[i].y,packet[i].z,packet[i].w);
+			printf("Line %d\n",6+i);
+			if(i%4==0) printf("\n");
+		}
+	}
+
+	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+	__syncthreads();
+
+	if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
+	{
+		if(IS_IP4()) //Checking if it is a IPv4 Packet
+		{
+			GPU_results[blockIdx.x].ipPacket = 1;
+			int verBlock = (elements[14].packet & 0x000000F0) >> 4;
+			if(verBlock !=4 && verBlock !=6) GPU_results[blockIdx.x].maliciousVer=1;
+
+			int octet1 = elements[26].packet & 0x000000FF;
+			int octet2 = elements[27].packet & 0x000000FF;
+			int octet1Dst = elements[30].packet & 0x000000FF;
+			int octet2Dst = elements[31].packet & 0x000000FF;
+
+			if (octet1 == 10 || octet1Dst == 10)
+			{
+				GPU_results[blockIdx.x].maliciousIP=1;
+			}
+			// 172.16.0.0 - 172.31.255.255
+			if ((octet1 == 172 || octet1Dst == 172 ) && (octet2 >= 16 || octet2Dst >=16 ) && (octet2 <= 31 || octet2Dst<=31))
+			{
+				GPU_results[blockIdx.x].maliciousIP=1;
+			}
+			// 192.168.0.0 - 192.168.255.255
+			if ((octet1 == 192  || octet1Dst == 192) && (octet2 == 168 || octet2Dst == 168))
+			{
+				GPU_results[blockIdx.x].maliciousIP=1;
+			}
+		}
+	}
+	if(threadIdx.x == 33) //Checksum verification
+	{
+		if(IS_IP4()) //check if a IPv4 Packet
+		{
+			int checksum = ((elements[14].packet & 0x000000FF)<<8 + (elements[15].packet & 0x000000FF)) +
+					((elements[16].packet & 0x000000FF)<<8 + (elements[17].packet & 0x000000FF)) +
+					((elements[18].packet & 0x000000FF)<<8  + (elements[19].packet & 0x000000FF )) +
+					((elements[20].packet & 0x000000FF)<<8 + (elements[21].packet & 0x000000FF)) +
+					((elements[22].packet & 0x000000FF)<<8  + (elements[23].packet & 0x000000FF)) +
+					((elements[24].packet & 0x000000FF)<<8 + (elements[25].packet & 0x000000FF)) +
+					(lastTwoBytes(elements[26].packet)<<8 + lastTwoBytes(elements[27].packet)) +
+					(lastTwoBytes(elements[28].packet)<<8 + lastTwoBytes(elements[29].packet)) +
+					(lastTwoBytes(elements[30].packet)<<8 + lastTwoBytes(elements[31].packet)) +
+					(lastTwoBytes(elements[32].packet)<<8 + lastTwoBytes(elements[33].packet));
+
+			unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
+			if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
+		}
+	}
+	
+	if(threadIdx.x == 64) //check sport or dport is 0; check ackNo is o, with ack bit set; check malicious flag bit combinations
+	{
+		if(IS_TCP())
+		{
+			GPU_results[blockIdx.x].flags = lastTwoBytes(elements[47].packet);
+			GPU_results[blockIdx.x].sport = lastTwoBytes(elements[34].packet) << 8 + lastTwoBytes(elements[35].packet);
+			if(lastTwoBytes(elements[33].packet) == 255)
+				GPU_results[blockIdx.x].maliciousDst = 1;
+
+			if((lastTwoBytes(elements[34].packet) == 0 && lastTwoBytes(elements[35].packet) == 0) ||
+					(lastTwoBytes(elements[36].packet) == 0 && lastTwoBytes(elements[37].packet) == 0))
+				GPU_results[blockIdx.x].maliciousPort = 1;
+			int ackNo = lastTwoBytes(elements[42].packet)<<24 + lastTwoBytes(elements[43].packet)<<16 + lastTwoBytes(elements[44].packet)<<8 + lastTwoBytes(elements[45].packet);
+			if(lastTwoBytes(elements[47].packet & 16) ==1 && (ackNo == 0))
+				GPU_results[blockIdx.x].maliciousAck = 1;
+
+			int reservedVal = lastTwoBytes(elements[46].packet) >> 4;
 //			if(reservedVal != 0) GPU_results[blockIdx.x].maliciousReserved = 1;
 //
 //			int flagVal  = lastTwoBytes(elements[47].packet);
