@@ -73,7 +73,7 @@ __device__ int lastTwoBytes(char pack)
 {
 	return pack & 0x000000FF;
 }
-
+	
 template<typename T,typename R>
 __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int* gotofn,int* d_result,int *counter,int thresHold) {
 
