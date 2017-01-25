@@ -219,12 +219,12 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int * result = (int*)malloc(N *sizeof(int));
 		memset(result,0,N *sizeof(int));
 		int * d_result;
-		gpuErrchk(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
-		gpuErrchk(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
+		cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
+		cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
 
-		gpuErrchk(cudaMalloc(&d_result,N *sizeof (int)));
+		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
 
-		gpuErrchk(cudaMemset(d_result,0,N*sizeof (int)));
+		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
 
 
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_gotofn,d_result);
@@ -239,7 +239,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,MAX_BUFFER_PACKETS*sizeof(R),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS,cudaMemcpyDeviceToHost));
-		gpuErrchk(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
+		cudaAssert(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/
