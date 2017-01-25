@@ -51,7 +51,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "Libs/Gpu/Macros/Util.h"
 
 
-#define statesrow 500
+#define statesrow 11
 #define chars 256
 int states = 0;
 int gotofn[statesrow][chars];
@@ -70,32 +70,145 @@ private:
 /**** Forward declaration prototypes ****/
 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *gotofn,int *d_result);
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash,int *d_result);
 
 template<typename T,typename R>
-__device__  void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
+__device__  void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash);
 
 template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,filtering)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
 
 template<typename T,typename R>
-__device__  void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *gotofn, int *d_result);
+__device__  void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *d_result);
 
 template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state);
 
 template<typename R>
-void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, analysisState_t state, int64_t* auxBlocks,int *d_result);
+void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, analysisState_t state, int64_t* auxBlocks,int *d_result,char *pattern,int *stridx);
 
 /**** Module loader ****/
 #include ".dmodule.ppph"
 
+/*
+*** Kernel Prototypes ***
+//Predefined Code kernels
+#define ITERATOR__ 0
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 1
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 2 
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 3
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 4
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 5
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 6
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 7
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 8
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 9
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 10
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 11
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 12
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 13
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 14 
+#include "PredefinedExtraKernel.def"
+
+#define ITERATOR__ 15
+#include "PredefinedExtraKernel.def"
+
+//User kernels
+#define ITERATOR__ 0
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 1 
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 2
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 3
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 4
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 5
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 6
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 7
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 8
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 9
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 10
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 11
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 12
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 13
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 14
+#include "UserExtraKernel.def"
+
+#define ITERATOR__ 15
+#include "UserExtraKernel.def"
+*/
+
+/* END OF EXTRA KERNELS */
+void calcPatHash(vector<string> tmp, int *patHash, int numStr)
+{
+ for(int i=0;i<numStr;i++)
+ {
+ for(int index=0;index<(tmp[i].size());index++)
+ {
+ patHash[i] = (patHash[i] * 256 + tmp[i][index]) % 997;
+ }
+ }
+}
+
 //GoTO function used for AhoCorasick Algorithm. Using this function the next State to be taken is determined.
-int buildGoto(vector<string> arr)
+int buildGoto(string arr[],int k)
 {
 int states = 1;
 memset(gotofn,0,sizeof(gotofn));
-for(int i=0;i<arr.size();i++)
+for(int i=0;i<k;i++)
 {
 	string temp = arr[i];
 	int currentState = 0;
@@ -122,9 +235,9 @@ return states;
 
 //default Kernel 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state, int* gotofn, int *result){
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,char* pattern,int * indexes,int num_strings,int * patHash,int *d_result){
 	state.blockIterator = blockIdx.x;
-	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state);
+	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state,pattern,indexes,num_strings,patHash);
 	__syncthreads();	
 
 	state.blockIterator = blockIdx.x;
@@ -132,7 +245,7 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 	__syncthreads();	
 
 	/* Analysis implementation*/
-	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state, gotofn, d_result);
+	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state, d_result);
 
 	/* If there are SYNCBLOCKS barriers do not put Operations function call here */
 #if __SYNCBLOCKS_COUNTER == 0 && __SYNCBLOCKS_PRECODED_COUNTER == 0
@@ -211,23 +324,54 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		 tmp.push_back("are");
 		 tmp.push_back("you");
 
-		states = buildGoto(tmp);
+		 int *patHash;
+		 int *d_patHash;
 
-		int *d_gotofn;
-		size_t pitch;
-		size_t N = 260;
-		int * result = (int*)malloc(N *sizeof(int));
-		memset(result,0,N *sizeof(int));
-		int * d_result;
-		gpuErrchk(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
-		gpuErrchk(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
+		 int num_str = tmp.size();
 
-		gpuErrchk(cudaMalloc(&d_result,N *sizeof (int)));
+		 patHash = (int*) calloc(num_str,sizeof(int));
 
-		gpuErrchk(cudaMemset(d_result,0,N*sizeof (int)));
+		 int stridx[2*num_str];
+		 memset(stridx,0,2*num_str);
+		 int *d_stridx;
 
+		 for(int i=0,j=0,k=0;i<2*num_str;i+=2)
+		 {
+		 stridx[i]= k;
+		 stridx[i+1]= stridx[i]+tmp[j++].size();
+		 k=stridx[i+1];
+		 }
 
-		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_gotofn,d_result);
+		 char *a, *d_a;
+		 int *d_result;
+		 a = (char *)malloc(stridx[2*num_str - 1]*sizeof(char));
+		 //flatten
+		 int subidx = 0;
+		 for(int i=0;i<num_str;i++)
+		 {
+		 for (int j=stridx[2*i]; j<stridx[2*i+1]; j++)
+		 {
+		     a[j] = tmp[i][subidx++];
+		}
+		 subidx = 0;
+		}
+
+		calcPatHash(tmp,patHash,num_str);
+		cudaMalloc((void**)&d_a,stridx[2*num_str - 1]*sizeof(char));
+		cudaMemcpy(d_a, a, stridx[2*num_str - 1]*sizeof(char),cudaMemcpyHostToDevice);
+		cudaMalloc((void**)&d_stridx,num_str*2*sizeof(int));
+		cudaMemcpy(d_stridx, stridx,2*num_str*sizeof(int),cudaMemcpyHostToDevice);
+		cudaMalloc((void **)&d_patHash, num_str * sizeof(int));
+		cudaMemcpy(d_patHash,patHash,num_str * sizeof(int), cudaMemcpyHostToDevice);
+		cudaMalloc((void**)&d_result,num_str * sizeof(int));
+		cudaMemset(d_result,0,num_str*sizeof(int));
+		int *result;
+		result = (int*)malloc(num_str * sizeof(int));
+		memset(result,0,num_str*sizeof(int));
+		//char* pattern,int * indexes,int num_strings,int * patHash add to kernel
+		/*Pattern matching ends*/
+
+		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_a,d_stridx,num_str,d_patHash,d_result);
 		cudaAssert(cudaThreadSynchronize());
 
 		cudaAssert( cudaEventRecord(stop, 0) );
@@ -239,7 +383,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,MAX_BUFFER_PACKETS*sizeof(R),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS,cudaMemcpyDeviceToHost));
-		gpuErrchk(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
+		cudaAssert(cudaMemcpy(result,d_result,num_str*sizeof(int),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/
@@ -258,7 +402,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		cout<<endl;
 		//Launch hook (or preHook if window is set)
-		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result);
+		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result,a,stridx);
 		//Frees results
 		cudaAssert(cudaFreeHost(results));
 		//free(results);

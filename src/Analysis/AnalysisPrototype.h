@@ -11,11 +11,8 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 */
 
 /*Include skeleton */
-#include "AnalysisSkeleton.h"
-
-/* Includes QueryManager (database) -> conditionally include and create var,defining a preprocessor Macro ?*/
-
 #include "../Scheduler/Scheduler.h"
+#include "AnalysisSkeleton.h"
 #include "Libs/Host/Database/QueryManager.h"
 #include "Libs/Host/Database/DatabaseManager.h"
 

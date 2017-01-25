@@ -77,7 +77,7 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 }
 
 template<typename R>
-void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, int severeLimit, int criticalLimit,int *result){
+void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, int severeLimit, int criticalLimit,int *result,char* pattern,int *index){
 	int i,j;
 	bool hasResults;
 	uint8_t* pointer;
@@ -164,7 +164,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<"Alarm!! The IPv4 Packet has an incorrect checksum and should be discarded"<<endl;
 			cout<<"From"<<inet_ntoa(in)<<endl;
 		}
-		/*if(results[i].maliciousPayload)
+		if(results[i].maliciousPayload)
 		{  
 			cout<<"**************Deep packet Inspection*************************"<<endl;
 			malicious = true;
@@ -175,10 +175,10 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			for(int j=start;j<end;j++)
 			cout<<pattern[j]<<endl;
 			cout<<"****************************************************************** DPI END***************"<<endl;
-		}*/
+		}
 		maliciousSrcIPs.push_back(in);
 	}
-	/*	for(int i=0;i<noofStr;i++)
+		for(int i=0;i<noofStr;i++)
 		{
 			if(result[i])
 			{
@@ -190,18 +190,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 					cout<<pattern[j];
 				cout<<endl;
 			}
-		} */
-		
-		for(int i=0;i<state.lastPacket;i++)
-			{
-				if(result[i]>0)
-				{
-					cout<<"************************************************";
-					cout<<"Virus pattern found: ";
-					cout<<result[i]<<" ";
-					cout<<endl;
-				}
-			}
+		}
 	
 		cout<<"Traffic from the following source IPs should be blocked"<<endl;
 		for(int i=0;i<maliciousSrcIPs.size();i++)
