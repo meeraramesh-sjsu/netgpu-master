@@ -56,7 +56,7 @@ __device__ void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* G
 */
 	int *counter = 0;	
    /* CUDA CODE: Implement Analysis Routine here. Use a predefined Analysis or Implement code here */
-	$IPSCAN_DETECTOR$ANALYSIS(15);
+//	$IPSCAN_DETECTOR$ANALYSIS(15);
 
 }
 
