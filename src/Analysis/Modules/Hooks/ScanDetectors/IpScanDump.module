@@ -84,10 +84,8 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 	//time vars	
 	time_t aux;
 	struct tm * timeinfo;
-	int noofStr = results[0].num_strings;
 	//Dump alarms
 	cout<<"*************Crafted Packets***************"<<endl;
-	cout<<"No Of Malicious virus signatures used "<<noofStr<<endl;
 	int totalcycles = 0;
 	int incorrectVerNumber = 0;
 	vector<struct in_addr> maliciousSrcIPs;
