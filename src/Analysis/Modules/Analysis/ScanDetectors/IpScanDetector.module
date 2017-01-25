@@ -99,6 +99,11 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	}
 
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+	//Copying the state 0 information to shared memory
+	stateszero[threadIdx.x] = gotofn[threadIdx.x];
+	__syncthreads();
+
+
 	__syncthreads();
 
 	if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
@@ -190,24 +195,18 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	}
 	
 	//Aho Corasick Algorithm
-/*	threadIndex = threadIdx.x + blockIdx.x * blockDim.x; 
-	//Copying the state 0 information to shared memory
-	stateszero[threadIdx.x] = gotofn[threadIdx.x];
-	__syncthreads();
-
 	int pos=threadIdx.x;
-	char ch = s_input[pos++];
+	char ch = elements[pos++].packet;
 	int nextState = stateszero[ch];
 	int currState = nextState & 0x0000FFFF;
 
 	if(currState!=0) {
-
 	nextState >>= 16;
 	int outputMatch = nextState & 0x0000FFFF;
 	if(outputMatch > 0) result[blockIdx.x]= outputMatch;
 	//printf("currstate %d output %d",currState,outputMatch);
 	while(currState !=0 && pos<256) {
-	ch = s_input[pos++];
+	ch = elements[pos++].packet;
 	nextState = gotofn[currState*256 + ch];
 	currState = nextState & 0x0000FFFF;
 	nextState >>= 16;
@@ -215,9 +214,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	//printf("Output Match %d ",outputMatch);
 	if(outputMatch > 0) result[blockIdx.x] = outputMatch;
 	}
-	*/
-	
-
+	}
 __syncthreads();
 
 	//Execution time calc for each block
