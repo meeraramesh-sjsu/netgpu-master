@@ -74,7 +74,7 @@ __device__ int lastTwoBytes(char pack)
 template<typename T,typename R>
 __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int* gotofn,int* result,int *d_output,int* counter,int thresHold) {
 	
-	if(blockIdx.x > state.lastPacket) return;
+	if(blockIdx.x >= state.lastPacket) return;
 	/* Erases duplicates and counts elements inside block */
 	__shared__ T elements[256];
 	__shared__ clock_t starttime;
