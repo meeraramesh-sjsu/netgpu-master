@@ -40,7 +40,7 @@ __device__ void COMPOUND_NAME(ANALYSIS_NAME,filtering)(packet_t* GPU_buffer, T* 
 }
 
 template<typename T,typename R>
-__device__ void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int* gotofn, int* d_result){
+__device__ void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int* gotofn, int* d_result,int *d_output){
 //	printf("Analysis");
 //static int i = 0;
 //  --added on June 1st 
