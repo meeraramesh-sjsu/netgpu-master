@@ -203,7 +203,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	//printf("currstate %d output %d",currState,outputMatch);
 	while(nextState!=0 && pos<256) {
 //		printf("In AhoCorasick Payload matching2 \n");
-	printf("%d nextState %c char \n",nextState,ch);
+	printf("%d nextState %d char \n",nextState,ch);
 	ch = elements[pos++].packet;
 	
 	nextState = gotofn[nextState*256 + ch];
