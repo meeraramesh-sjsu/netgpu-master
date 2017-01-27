@@ -196,9 +196,11 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	printf("In AhoCorasick Payload matching \n");
 	//Aho Corasick Algorithm
 	int pos=threadIdx.x;
+	printf("In AhoCorasick Payload matching0 \n");
 	char ch = elements[pos++].packet;
+	printf("In AhoCorasick Payload matching-1 \n");
 	int nextState = stateszero[ch];
-
+	printf("In AhoCorasick Payload matching-2 \n");
 	if(nextState!=0) {
 	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
 	printf("In AhoCorasick Payload matching1 \n");
