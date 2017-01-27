@@ -95,7 +95,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, 
 double timeTaken = 0;
 int buildGoto(vector<string> arr)
 {
-	clock_t begin = clock();
+struct timeval startTV, endTV;
+gettimeofday(&startTV, NULL);
+
 int states = 1;
 memset(gotofn,0,sizeof(gotofn));
 for(int i=0;i<arr.size();i++)
@@ -118,8 +120,9 @@ for(int i=0;i<arr.size();i++)
 
 	output[currentState] = i;
 	}
-clock_t end = clock();
-timeTaken = double(end - begin) / CLOCKS_PER_SEC;
+
+gettimeofday(&endTV, NULL);
+timeTaken = endTV.tv_sec * 1e6 + endTV.tv_usec - (startTV.tv_sec * 1e6 + startTV.tv_usec);
 return states;
 }
 
@@ -2059,7 +2062,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//free(results);
 
 
-		cout<<"Time taken for GOTO"<<timeTaken<<endl;
+		cout<<"Time taken for GOTO "<<timeTaken<<" us"<<endl;
 	}
 }
 
