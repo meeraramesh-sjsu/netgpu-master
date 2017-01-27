@@ -17,6 +17,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <iostream>
 #include <vector>
 #include <string>
+#include <ctime>
 //#include <cuda.h>
 //#include <cuda_runtime.h>
 #include "/usr/local/cuda/include/cuda.h"
@@ -91,9 +92,10 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, 
 #include ".dmodule.ppph"
 
 //GoTO function used for AhoCorasick Algorithm. Using this function the next State to be taken is determined.
-
+double timeTaken = 0;
 int buildGoto(vector<string> arr)
 {
+	clock_t begin = clock();
 int states = 1;
 memset(gotofn,0,sizeof(gotofn));
 for(int i=0;i<arr.size();i++)
@@ -116,7 +118,8 @@ for(int i=0;i<arr.size();i++)
 
 	output[currentState] = i;
 	}
-
+clock_t end = clock();
+timeTaken = double(end - begin) / CLOCKS_PER_SEC;
 return states;
 }
 
@@ -2002,7 +2005,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int chars = 256;
 		memset(gotofn,0,sizeof(gotofn));
 		int states = buildGoto(tmp);
-
+		cout<<"total packets= "<<state.lastPacket<<endl;
 		int *d_gotofn;
 		int *d_output;
 		size_t pitch;
@@ -2054,6 +2057,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//Frees results
 		cudaAssert(cudaFreeHost(results));
 		//free(results);
+
+
+		cout<<"Time taken for GOTO"<<timeTaken<<endl;
 	}
 }
 

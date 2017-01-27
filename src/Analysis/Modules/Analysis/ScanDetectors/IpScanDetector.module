@@ -193,19 +193,18 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		GPU_results[blockIdx.x].ipSrc = ipSrc;
 		GPU_results[blockIdx.x].ipDst = ipDst;
 	}
-	printf("%d blockIdx.x", blockIdx.x);
+
 	//Aho Corasick Algorithm
 	int pos=threadIdx.x;
 	char ch = elements[pos++].packet;
 	int chint = ch & 0x000000FF; 
 	int nextState = stateszero[chint];
 	if(nextState!=0) {
-//	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
+	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
 	
 	//printf("currstate %d output %d",currState,outputMatch);
 	while(nextState!=0 && pos<256) {
 //		printf("In AhoCorasick Payload matching2 \n");
-	printf("%d nextState %d char %d blockId %d threadIdx\n",nextState,chint,blockIdx.x,threadIdx.x);
 	ch = elements[pos++].packet;
 	chint = ch & 0x000000FF;
 	nextState = gotofn[nextState*256 + chint];
@@ -214,7 +213,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	//nextState >>= 16;
 	//outputMatch = nextState & 0x0000FFFF;
 	//printf("Output Match %d ",outputMatch);
-//	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
+	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
 	}
 	}
 __syncthreads();
