@@ -1,12 +1,14 @@
 #include<stdio.h>
 #include<string>
 #include<iostream>
+#include<vector>
 using namespace std;
 
-#define statesrow 11
+#define statesrow 550000
 #define chars 256
 int states = 0;
 int gotofn[statesrow][chars];	
+int output[statesrow];
 
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 
@@ -18,7 +20,7 @@ inline void gpuAssert(cudaError_t code, char *file, int line, bool abort=true)
    }
 }
 
-int buildGoto(string arr[],int k)
+int buildGoto(vector<string> arr,int k)
 {
 int states = 1;
 memset(gotofn,0,sizeof(gotofn));
@@ -28,25 +30,27 @@ for(int i=0;i<k;i++)
 	int currentState = 0;
 	int ch = 0;
 	
-	for(int j=0;;j++) {
+	for(int j=0;j<temp.size();j++) {
 	ch = temp[j];	
-		
+	
+	cout<<"currentState="<<currentState;	
 	if(gotofn[currentState][ch] == 0)
 	gotofn[currentState][ch] = states++;
 	
-	if(j==temp.size()-1) {
+/*	if(j==temp.size()-1) {
 	gotofn[currentState][ch] |= ((1<<i)<<16);
-	break;
+	break;*/
+	currentState = gotofn[currentState][ch];
 	}
 		
-	currentState = gotofn[currentState][ch] & 0x0000FFFF;
-	
+	output[currentState] = i;
+cout<<"currentState= "<<i<<"output="<<output[currentState]<<endl;	
 	}
-}
+
 return states;	
 }
 
-__global__ void kernelFn(int* gotofn, size_t pitch,char *input,int *result)
+__global__ void kernelFn(int* gotofn, size_t pitch,char *input,int *result,int *output)
 {
 __shared__ int stateszero[256];
 __shared__ char s_input[256];
@@ -60,22 +64,23 @@ __syncthreads();
 int pos=threadIdx.x;
 char ch = s_input[pos++];
 int nextState = stateszero[ch];
-int currState = nextState & 0x0000FFFF;
-if(blockIdx.x == 0) printf("ch=%c nextState=%d currState=%d \n",ch,nextState,currState);
-if(currState!=0) {
+//int currState = nextState & 0x0000FFFF;
+//if(blockIdx.x == 0) printf("ch=%c nextState=%d currState=%d \n",ch,nextState,currState);
+if(nextState!=0) {
 
-nextState >>= 16;
-int outputMatch = nextState & 0x0000FFFF;
-if(outputMatch > 0) result[blockIdx.x]= outputMatch;
+//nextState >>= 16;
+//int outputMatch = nextState & 0x0000FFFF;
+if(output[nextState] > 0) result[blockIdx.x]= output[nextState];
 //printf("currstate %d output %d",currState,outputMatch);
-while(currState !=0 && pos<256) {
+while(nextState !=0 && pos<256) {
 ch = s_input[pos++];
-nextState = gotofn[currState*256 + ch];
-currState = nextState & 0x0000FFFF;
-nextState >>= 16;
-outputMatch = nextState & 0x0000FFFF;
+printf("In kernel%c char , output of nextState %d \n",ch, output[nextState]);
+nextState = gotofn[nextState*256 + ch];
+//currState = nextState & 0x0000FFFF;
+//nextState >>= 16;
+//outputMatch = nextState & 0x0000FFFF;
 //printf("Output Match %d ",outputMatch);
-if(outputMatch > 0) result[blockIdx.x] = outputMatch;
+if(output[nextState] > 0) result[blockIdx.x] = output[nextState];
 }
 }
 
@@ -1884,10 +1889,17 @@ tmp.push_back("33f6bb0c00b905008a0704148842f64346e2f5c642f600c7");
 tmp.push_back("680001501e06ba44008ec226ah13b0600017423be000189f7b96701f3a4061fb82135cd213e891e48013e8c064a01b82125ba5901cd21071fbf00febe4c01");
 tmp.push_back("hers");
 
+vector<string> arr;
+arr.push_back("he");
+arr.push_back("she");
+arr.push_back("hers");
+arr.push_back("his");
+
 char *input = "qwertyuheshehershisjxcvbnm1qwertyuiopasdfghjklzxcvbnm2qwertyuiopasdfghjklzxcvbnm3qwertyuiopasdfghjklzxcvbnm4qwertyuiopasdfghjklzxcvbnm5qwertyuiopasdfghjklzxcvbnm6qwertyuiopasdfghjklzxcvbnm7qwertyuiopasdfghjklzxcvbnm8qwertyuiopasdfghjklzxcvbnm9qwertyuiopaaaqwertyuheshehershisjxcvbnm1qwertyuiopasdfghjklzxcvbnm2qwertyuiopasdfghjklzxcvbnm3qwertyuiopasdfghjklzxcvbnm4qwertyuiopasdfghjklzxcvbnm5qwertyuiopasdfghjklzxcvbnm6qwertyuiopasdfghjklzxcvbnm7qwertyuiopasdfghjklzxcvbnm8qwertyuiopasdfghjklzxcvbnm9qwertyuiopaaaqwertyuheshemershisjxcvbnm1qwertyuiopasdfghjklzxcvbnm2qwertyuiopasdfghjklzxcvbnm3qwertyuiopasdfghjklzxcvbnm4qwertyuiopasdfghjklzxcvbnm5qwertyuiopasdfghjklzxcvbnm6qwertyuiopasdfghjklzxcvbnm7qwertyuiopasdfghjklzxcvbnm8qwertyuiopasdfghjklzxcvbnm9qwertyuiopaaaqwertyuabchimerslisjxcvbnm1qwertyuiopasdfghjklzxcvbnm2qwertyuiopasdfghjklzxcvbnm3qwertyuiopasdfghjklzxcvbnm4qwertyuiopasdfghjklzxcvbnm5qwertyuiopasdfghjklzxcvbnm6qwertyuiopasdfghjklzxcvbnm7qwertyuiopasdfghjklzxcvbnm8qwertyuiopasdfghjklzxcvbnm9qwertyuiopaaa";
 
 states = buildGoto(tmp,tmp.size());
 cout<<"states="<<states<<endl;
+int *d_output;
 int *d_gotofn;
 size_t pitch;
 char* d_input;
@@ -1902,9 +1914,11 @@ gpuErrchk(cudaMalloc(&d_input,strlen(input)*sizeof (char)));
 gpuErrchk(cudaMalloc(&d_result,N *sizeof (int)));
 gpuErrchk(cudaMemcpy(d_input,input,strlen(input)*sizeof (char),cudaMemcpyHostToDevice));
 gpuErrchk(cudaMemset(d_result,0,N*sizeof (int)));
+gpuErrchk(cudaMalloc(&d_output,states * sizeof(int)));
+gpuErrchk(cudaMemcpy(d_output,output,states * sizeof(int),cudaMemcpyHostToDevice));
 dim3 block(256);
 dim3 grid(N);
-kernelFn<<<grid,block>>>(d_gotofn,pitch,d_input,d_result);
+kernelFn<<<grid,block>>>(d_gotofn,pitch,d_input,d_result,d_output);
 cudaDeviceSynchronize();
 cout <<"Last Error= "<<  cudaGetErrorString(cudaGetLastError())<<endl;
 gpuErrchk(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
