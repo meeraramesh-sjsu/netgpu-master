@@ -2019,7 +2019,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert(cudaMalloc(&d_output,states * sizeof(int)));
 		cudaAssert(cudaMemcpy(d_output,output,states * sizeof(int),cudaMemcpyHostToDevice));
 
-
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_gotofn,d_result,d_output);
 		cudaAssert(cudaThreadSynchronize());
 

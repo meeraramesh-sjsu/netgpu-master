@@ -202,7 +202,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	int nextState = stateszero[ch];
 	printf("In AhoCorasick Payload matching-2 \n");
 	if(nextState!=0) {
-	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
+//	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
 	printf("In AhoCorasick Payload matching1 \n");
 
 	//printf("currstate %d output %d",currState,outputMatch);
@@ -219,7 +219,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	//nextState >>= 16;
 	//outputMatch = nextState & 0x0000FFFF;
 	//printf("Output Match %d ",outputMatch);
-	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
+//	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
 	}
 	}
 __syncthreads();
