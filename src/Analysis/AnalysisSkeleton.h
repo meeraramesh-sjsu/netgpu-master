@@ -186,6 +186,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//dim3 grid(1);
 		dim3 block(256);
 		dim3 grid(260);
+		size_t N = 260;
 
 		//Set state number of blocks and last Packet position
 		state.windowState.totalNumberOfBlocks = MAX_BUFFER_PACKETS;
@@ -2005,7 +2006,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int *d_gotofn;
 		int *d_output;
 		size_t pitch;
-		size_t N = 260;
+
 		int * result = (int*)malloc(N *sizeof(int));
 		memset(result,0,N *sizeof(int));
 		int * d_result;
