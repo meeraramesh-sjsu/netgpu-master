@@ -100,11 +100,11 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	//Copying the state 0 information to shared memory
-	printf("Copying to shared memory");
+	//printf("Copying to shared memory");
 	stateszero[threadIdx.x] = gotofn[threadIdx.x];
 	__syncthreads();
 
-	printf("In header checking");
+//	printf("In header checking");
 	if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
 	{
 		if(IS_IP4()) //Checking if it is a IPv4 Packet
@@ -193,27 +193,20 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		GPU_results[blockIdx.x].ipDst = ipDst;
 	}
 	
-	printf("In AhoCorasick Payload matching \n");
 	//Aho Corasick Algorithm
 	int pos=threadIdx.x;
-	printf("In AhoCorasick Payload matching0 \n");
 	char ch = elements[pos++].packet;
-	printf("In AhoCorasick Payload matching-1 \n");
 	int nextState = stateszero[ch];
-	printf("In AhoCorasick Payload matching-2 \n");
 	if(nextState!=0) {
 //	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
-	printf("In AhoCorasick Payload matching1 \n");
-
+	
 	//printf("currstate %d output %d",currState,outputMatch);
 	while(nextState!=0 && pos<256) {
-		printf("In AhoCorasick Payload matching2 \n");
-
+//		printf("In AhoCorasick Payload matching2 \n");
+	printf("%d nextState %c char \n",nextState,ch);
 	ch = elements[pos++].packet;
-	printf("In AhoCorasick Payload matching3 \n");
-
+	
 	nextState = gotofn[nextState*256 + ch];
-	printf("In AhoCorasick Payload matching4 \n");
 
 	//currState = nextState & 0x0000FFFF;
 	//nextState >>= 16;
