@@ -212,7 +212,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert( cudaEventRecord(start, 0) );
 
 		vector<string> tmp;
-/*
+
 		tmp.push_back("ec020e1ff3a4b82125061fbab300cd21");
 		tmp.push_back("b840008ed8a11300b106d3e02d00088e");
 		tmp.push_back("fe3a558bec50817e0400c0730c2ea147");
@@ -492,7 +492,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		tmp.push_back("ac009c0650ea0000000033c08ed88f0602008f060000fb");
 		tmp.push_back("2135cd21891eb7018c06b901baab01b8");
 		tmp.push_back("e889078cd80e1fbe910881ee030103f38904be930881ee030103f38cc089040e0753b8002fcd218bcb5bbe330c81ee030103f3890c83c6028cc089040e07bfb7");
-		tmp.push_back("b8001acd215e8b1cb90308b80040cd21");*/
+		tmp.push_back("b8001acd215e8b1cb90308b80040cd21");
 		tmp.push_back("bf5053bdeefa58595af7dd55be5301b9202032e9ac488bd8ac2c4103c3aa4d7402e2f10bed7405ad");
 		tmp.push_back("b44e31c9ba0001cd21ba9e00bf9e00b000b90c00f2aec60500b43db001cd2189c3b440ba0001b91c01cd21b43ecd21b44fba0001");
 		tmp.push_back("2a2e65786500b42ccd2180fd00750ab002b90500ba0000cd26b44eba000131c9cd21ba9e00bf9e00b000b90c00f2aec60500b43db001cd2189c3b440ba0001b9");
