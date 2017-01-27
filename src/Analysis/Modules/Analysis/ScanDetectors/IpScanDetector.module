@@ -88,7 +88,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(threadIdx.x ==0)
 		starttime = clock();
 
-	if(threadIdx.x == 0 && blockIdx.x==0)
+	/*if(threadIdx.x == 0 && blockIdx.x==0)
 	{
 		printf("Printing the 256 byte packet");
 		for(int i=0;i<64;i++)
@@ -97,7 +97,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			printf("Line %d\n",6+i);
 			if(i%4==0) printf("\n");
 		}
-	}
+	}*/
 
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
 	//Copying the state 0 information to shared memory
@@ -204,7 +204,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	//printf("currstate %d output %d",currState,outputMatch);
 	while(nextState!=0 && pos<256) {
 //		printf("In AhoCorasick Payload matching2 \n");
-	printf("%d nextState %d char \n",nextState,ch);
+	printf("%d nextState %d char %d blockId %d threadIdx\n",nextState,ch,blockIdx.x,threadIdx.x);
 	ch = elements[pos++].packet;
 	
 	nextState = gotofn[nextState*256 + ch];
