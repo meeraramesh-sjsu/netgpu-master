@@ -105,7 +105,6 @@ for(int i=0;i<arr.size();i++)
 	for(int j=0;j<temp.size();j++) {
 	ch = temp[j];
 
-	cout<<"currentState="<<currentState;
 	if(gotofn[currentState][ch] == 0)
 	gotofn[currentState][ch] = states++;
 
@@ -116,7 +115,6 @@ for(int i=0;i<arr.size();i++)
 	}
 
 	output[currentState] = i;
-cout<<"currentState= "<<i<<"output="<<output[currentState]<<endl;
 	}
 
 return states;
