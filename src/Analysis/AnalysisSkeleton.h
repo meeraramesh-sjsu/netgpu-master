@@ -2182,7 +2182,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//free(results);
 
 
-		cout<<"Time taken for GOTO "<<timeTaken<<" us"<<endl;
+		cout<<"Time taken for preprocessing "<<timeTaken<<" us"<<endl;
 	}
 }
 
