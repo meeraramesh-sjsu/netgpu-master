@@ -39,7 +39,7 @@ void printFlagBits(int flags)
 }
 
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE(filename,severe,critical)\
-		dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical,result)
+		dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical,result,pattern)
 
 //int *result,char* pattern,int *index
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_STDERR(severe,critical)\
