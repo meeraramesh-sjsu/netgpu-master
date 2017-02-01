@@ -221,8 +221,8 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	int starttxt = threadIdx.x - m + 1 + 2;
 	int startpat = d_stridx[2*patIndex] + 2;
 	int endpat = d_stridx[2*patIndex+1];
-	while(d_text[starttxt]!='\0' && startpat < endpat) {
-	if(d_text[starttxt++]!=d_pattern[startpat++]) return;
+	while(elements[starttxt].packet!='\0' && startpat < endpat) {
+	if(elements[starttxt++].packet!=d_pattern[startpat++]) return;
 	}
 	if(startpat >= endpat) { 
 		printf("The pattern exists %d\n", patIndex);
