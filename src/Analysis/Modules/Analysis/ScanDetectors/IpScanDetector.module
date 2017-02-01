@@ -56,6 +56,7 @@ typedef struct {
 			DATA_ELEMENT.maliciousFlags=0;\
 			DATA_ELEMENT.maliciousPort=0;\
 			DATA_ELEMENT.signatureFound=0;\
+			DATA_ELEMENT.signatureNumber=0;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 			DATA_ELEMENT.ipSrc = -1;\
 }while(0)
@@ -227,7 +228,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(startpat >= endpat) { 
 		printf("The pattern exists %d\n", patIndex);
 		GPU_results[blockIdx.x].maliciousPayload = 1;
-		GPU_results[blockIdx.x].signatureNumber = patIndex;
+		atomicAdd(&GPU_results[blockIdx.x].signatureNumber,1);
 		result[blockIdx.x] = patIndex;
 	}
 	}
