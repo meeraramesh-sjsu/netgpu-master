@@ -63,8 +63,7 @@ typedef struct {
 
 	/***** IPSCAN DETECTOR ANALYSIS *****/
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
-		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer, GPU_data, GPU_results, state, d_result, d_pattern, d_stridx, d_SHIFT,
-d_PREFIX_value, d_PREFIX_index, d_PREFIX_size, m, prefixPitch,counter,threshold);\
+		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer, GPU_data, GPU_results, state, d_result, d_pattern, d_stridx, d_SHIFT, d_PREFIX_value, d_PREFIX_index, d_PREFIX_size, m, prefixPitch,counter,threshold);\
 		__syncthreads()
 
 __device__ int lastTwoBytes(char pack)
