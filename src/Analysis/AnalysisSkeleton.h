@@ -243,8 +243,8 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//dim3  block(10);
 		//dim3 grid(1);
 		dim3 block(256);
-		dim3 grid(260);
-		size_t N = 260;
+		dim3 grid(288);
+		size_t N = 288;
 
 		//Set state number of blocks and last Packet position
 		state.windowState.totalNumberOfBlocks = MAX_BUFFER_PACKETS;
@@ -1047,7 +1047,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		tmp.push_back("068600fb1fb8000150c33d03c6750a58");
 		tmp.push_back("5b7305b8000150c383fce072f62ec747");
 		tmp.push_back("b440b93e030e1f33d2cd21fa5a1f7200b43ecd21fa");
-		tmp.push_back("e90000e800005d81ed06018db62703bf000157a5a48bfd8bec81ec8000b42f90cd2153b41a8d568090cd21b9030051e8810059e2f9e8f5013d0f007f03eb5d90b90500");
+		tmp.push_back("e90000e800005d81ed06018db62703bf000157a5a48bfd8bec81ec8000b42N90cd2153b41a8d568090cd21b9030051e8810059e2f9e8f5013d0f007f03eb5d90b90500");
 		tmp.push_back("ba0001cd21ba9e00bf9e00b000b90c00f2aec60500b43db001cd2189c3b440ba0001b91c01cd21b4");
 		tmp.push_back("b82135cd21bff503891ef5038c06f703ba1b01b425cd218bd7cd273d004b74083d003d7403e9cc02");
 		tmp.push_back("e800005db84effcd213d494f74181e06b42ccd2180c5042e882e7501e89500061fe8d700071f2e81be3f044d5a74258db63f04bf0001fca4a4a4a4a433c08bd8");
