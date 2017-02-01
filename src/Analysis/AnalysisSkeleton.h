@@ -71,7 +71,8 @@ int gotofn[550000][256];
 int output[statesrow];
 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *gotofn,int *d_result,int *d_output);
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *d_result,char* d_pattern, int* d_stridx, int* d_SHIFT,
+		int* d_PREFIX_value, int* d_PREFIX_index, int* d_PREFIX_size,int m,int prefixPitch);
 
 template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
@@ -80,7 +81,8 @@ template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,filtering)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
 
 template<typename T,typename R>
-__device__  void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *gotofn, int *d_result);
+__device__  void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *d_result,char* d_pattern, int* d_stridx, int* d_SHIFT,
+		int* d_PREFIX_value, int* d_PREFIX_index, int* d_PREFIX_size,int m,int prefixPitch);
 
 template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state);
@@ -91,44 +93,92 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, 
 /**** Module loader ****/
 #include ".dmodule.ppph"
 
-//GoTO function used for AhoCorasick Algorithm. Using this function the next State to be taken is determined.
 double timeTaken = 0;
-int buildGoto(vector<string> arr)
-{
-struct timeval startTV, endTV;
-gettimeofday(&startTV, NULL);
 
-int states = 1;
-memset(gotofn,0,sizeof(gotofn));
-for(int i=0;i<arr.size();i++)
-{
-	string temp = arr[i];
-	int currentState = 0;
-	int ch = 0;
+unsigned int determine_shiftsize(int alphabet) {
 
-	for(int j=0;j<temp.size();j++) {
-	ch = temp[j];
+		//the maximum size of the hash value of the B-size suffix of the patterns for the Wu-Manber algorithm
+		if (alphabet == 2)
+			return 22; // 1 << 2 + 1 << 2 + 1 + 1
 
-	if(gotofn[currentState][ch] == 0)
-	gotofn[currentState][ch] = states++;
+		else if (alphabet == 4)
+			return 64; // 3 << 2 + 3 << 2 + 3 + 1
 
-/*	if(j==temp.size()-1) {
-	gotofn[currentState][ch] |= ((1<<i)<<16);
-	break;*/
-	currentState = gotofn[currentState][ch];
+		else if (alphabet == 8)
+			return 148; // 7 << 2 + 7 << 2 + 7 + 1
+
+		else if (alphabet == 20)
+			return 400; // 19 << 2 + 19 << 2 + 19 + 1
+
+		else if (alphabet == 128)
+			return 2668; // 127 << 2 + 127 << 2 + 127 + 1
+
+		else if (alphabet == 256)
+			return 5356; //304 << 2 + 304 << 2 + 304 + 1
+
+		else if (alphabet == 512)
+			return 10732; //560 << 2 + 560 << 2 + 560 + 1
+
+		else if (alphabet == 1024)
+			return 21484; //1072 << 2 + 1072 << 2 + 1072 + 1
+
+		else {
+			printf("The alphabet size is not supported by wu-manber\n");
+			exit(1);
+		}
 	}
 
-	output[currentState] = i;
-	}
+void preprocessing(vector<string> pattern,int* SHIFT,int shiftsize,int* PREFIX_value,int* PREFIX_index,int* PREFIX_size,int m) {
 
+	struct timeval startTV, endTV;
+	gettimeofday(&startTV, NULL);
+
+
+unsigned int j, q, hash;
+
+size_t shiftlen, prefixhash;
+int p_size = pattern.size();
+int m_nBitsInShift = 2;
+for (j = 0; j < p_size; ++j) {
+
+	//add last 3-character subpattern
+
+		hash = pattern[j][m - 2 - 1]; // bring in offsets of X in pattern j
+		hash <<= m_nBitsInShift;
+		hash += pattern[j][m - 1 - 1];
+		hash <<= m_nBitsInShift;
+		hash += pattern[j][m - 1];
+
+		SHIFT[hash] = 0;
+
+		//calculate the hash of the prefixes for each pattern
+
+		prefixhash = pattern[j][0];
+		prefixhash <<= m_nBitsInShift;
+		prefixhash += pattern[j][1];
+
+		PREFIX_value[hash * p_size + PREFIX_size[hash]] = prefixhash;
+		PREFIX_index[hash * p_size + PREFIX_size[hash]] = j;
+			PREFIX_size[hash]++;
+
+	}
 gettimeofday(&endTV, NULL);
 timeTaken = endTV.tv_sec * 1e6 + endTV.tv_usec - (startTV.tv_sec * 1e6 + startTV.tv_usec);
-return states;
+
 }
+
+struct length {
+  bool operator() ( const string& a, const string& b )
+  {
+    return a.size() < b.size();
+  }
+};
+
 
 //default Kernel 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state, int* gotofn, int *result,int *d_output){
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *result, char* d_pattern, int* d_stridx, int* d_SHIFT,
+		int* d_PREFIX_value, int* d_PREFIX_index, int* d_PREFIX_size,int m,int prefixPitch){
 	state.blockIterator = blockIdx.x;
 	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state);
 	__syncthreads();	
@@ -138,7 +188,8 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 	__syncthreads();	
 
 	/* Analysis implementation*/
-	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state, gotofn, result, d_output);
+	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state, result, d_pattern, d_stridx, d_SHIFT,
+			d_PREFIX_value, d_PREFIX_index, d_PREFIX_size, m, prefixPitch);
 
 	/* If there are SYNCBLOCKS barriers do not put Operations function call here */
 #if __SYNCBLOCKS_COUNTER == 0 && __SYNCBLOCKS_PRECODED_COUNTER == 0
@@ -210,6 +261,10 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert( cudaEventCreate(&start) );
 		cudaAssert( cudaEventCreate(&stop) );
 		cudaAssert( cudaEventRecord(start, 0) );
+
+		int n = 14;
+		int p_size = 3;
+		int alphabet = 256;
 
 		vector<string> tmp;
 
@@ -2005,27 +2060,91 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		 tmp.push_back("are");
 		 tmp.push_back("you");*/
 		
-		int chars = 256;
-		memset(gotofn,0,sizeof(gotofn));
-		int states = buildGoto(tmp);
-		cout<<"total packets= "<<state.lastPacket<<endl;
-		int *d_gotofn;
-		int *d_output;
-		size_t pitch;
+				int m = (*min_element(tmp.begin(),tmp.end(),length())).size();
+				p_size = tmp.size();
+				int B = 3;
+				int stridx[2*p_size];
+				memset(stridx,0,2*p_size);
+
+				//Giving value for stride
+				for(int i=0,j=0,k=0;i<2*p_size;i+=2)
+				{
+				stridx[i]= k;
+				stridx[i+1]= stridx[i]+tmp[j++].size();
+				k=stridx[i+1];
+				}
+
+				char* pattern2 =  (char *)malloc(stridx[2*p_size - 1]*sizeof(char));
+
+				//flatten
+				int subidx = 0;
+				for(int i=0;i<p_size;i++)
+				{
+				for (int j=stridx[2*i]; j<stridx[2*i+1]; j++)
+				{
+				pattern2[j] = tmp[i][subidx++];
+				}
+				subidx = 0;
+				}
+
+				int shiftsize = determine_shiftsize(alphabet);
+
+
+
+				int *SHIFT = (int *) malloc(shiftsize * sizeof(int)); //shiftsize = maximum hash value of the B-size suffix of the patterns
+
+				//The hash value of the B'-character prefix of a pattern
+				int *PREFIX_value = (int *) malloc(shiftsize * p_size * sizeof(int)); //The possible prefixes for the hash values.
+
+					//The pattern number
+				int *PREFIX_index = (int *) malloc(shiftsize * p_size * sizeof(int));
+
+					//How many patterns with the same prefix hash exist
+				int *PREFIX_size = (int *) malloc(shiftsize * sizeof(int));
+
+				for (int i = 0; i < shiftsize; i++) {
+
+						//*( *SHIFT + i ) = m - B + 1;
+						SHIFT[i] = m - B + 1;
+						PREFIX_size[i] = 0;
+					}
+
+
+
+				preprocessing(tmp,SHIFT,shiftsize,PREFIX_value,PREFIX_index,PREFIX_size,m);
+				char *d_pattern;
+				int *d_stridx;
+
+				   int *d_SHIFT;
+				   int *d_PREFIX_value;
+				   int *d_PREFIX_index;
+				   int *d_PREFIX_size;
 
 		int * result = (int*)malloc(N *sizeof(int));
 		memset(result,0,N *sizeof(int));
 		int * d_result;
-		cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
-		cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
-
 		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
-
 		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
-		cudaAssert(cudaMalloc(&d_output,states * sizeof(int)));
-		cudaAssert(cudaMemcpy(d_output,output,states * sizeof(int),cudaMemcpyHostToDevice));
 
-		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_gotofn,d_result,d_output);
+		//Allocating device memory
+		   cudaAssert(cudaMalloc((void **)&d_SHIFT,shiftsize * sizeof(int)));
+		   cudaAssert(cudaMalloc((void **)&d_PREFIX_value,shiftsize * p_size * sizeof(int)));
+		   cudaAssert(cudaMalloc((void **)&d_PREFIX_index,shiftsize * p_size * sizeof(int)));
+		   cudaAssert(cudaMalloc((void **)&d_PREFIX_size,shiftsize * sizeof(int)));
+		   cudaAssert(cudaMalloc((void **)&d_pattern,strlen(pattern2) * sizeof(char)));
+		   cudaAssert(cudaMalloc((void **)&d_stridx, 2*p_size * sizeof(int)));
+
+		   //Copy Device Vectors
+		  	cudaAssert(cudaMemcpy(d_SHIFT,SHIFT,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
+		  	cudaAssert(cudaMemcpy(d_PREFIX_value,PREFIX_value,shiftsize * p_size * sizeof(int), cudaMemcpyHostToDevice));
+		  	cudaAssert(cudaMemcpy(d_PREFIX_index,PREFIX_index,shiftsize * p_size * sizeof(int), cudaMemcpyHostToDevice));
+		  	cudaAssert(cudaMemcpy(d_PREFIX_size,PREFIX_size,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
+		  	cudaAssert(cudaMemcpy(d_pattern,pattern2,strlen(pattern2) * sizeof(char),cudaMemcpyHostToDevice));
+		  	cudaAssert(cudaMemcpy(d_stridx,stridx,2*p_size * sizeof(int), cudaMemcpyHostToDevice));
+
+
+		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_result,d_pattern,d_stridx, d_SHIFT,
+			d_PREFIX_value, d_PREFIX_index, d_PREFIX_size, m, p_size);
 		cudaAssert(cudaThreadSynchronize());
 
 		cudaAssert( cudaEventRecord(stop, 0) );
