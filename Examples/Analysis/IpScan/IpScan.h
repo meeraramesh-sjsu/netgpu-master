@@ -1,5 +1,8 @@
 // Do not delete/edit this line
 #include <netgpu/Analysis/Initializer.h>
+#include <vector>
+#include <string>
+using namespace std;
 //#include "../../../src/Analysis/Initializer.h"
 /* 
 	ANALYSIS_NAME MACRO: NAME OF THE ANALYSIS.

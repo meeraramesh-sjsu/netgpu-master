@@ -89,7 +89,7 @@ template<typename T,typename R>
 __device__  void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state);
 
 template<typename R>
-void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, analysisState_t state, int64_t* auxBlocks,int *d_result);
+void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, analysisState_t state, int64_t* auxBlocks,int *d_result,std::vector<string> pattern);
 
 /**** Module loader ****/
 #include ".dmodule.ppph"
@@ -2176,7 +2176,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		cout<<endl;
 		//Launch hook (or preHook if window is set)
-		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result);
+		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result,tmp);
 		//Frees results
 		cudaAssert(cudaFreeHost(results));
 		//free(results);

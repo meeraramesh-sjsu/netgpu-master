@@ -228,6 +228,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		printf("The pattern exists %d\n", patIndex);
 		GPU_results[blockIdx.x].maliciousPayload = 1;
 		GPU_results[blockIdx.x].signatureNumber = patIndex;
+		d_result[blockIdx.x] = patIndex;
 	}
 	}
 	}

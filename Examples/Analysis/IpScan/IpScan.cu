@@ -82,7 +82,7 @@ __device__ void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T*
 }
 
 template<typename R>
-void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results,analysisState_t state,int64_t* auxBlocks,int *result){
+void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer* packetBuffer,R* results,analysisState_t state,int64_t* auxBlocks,int *result,std::vector<string> pattern){
 	printf("hooks");
         /* HOST CODE: Implement HOOKS code here. Use predefined hooks or define new ones. */
 	
