@@ -4,7 +4,7 @@ PacketBuffer::PacketBuffer(void){
 	
 	//Allocate memory for buffer
 //	buffer = new packet_t[MAX_BUFFER_PACKETS];
-        cudaAssert(cudaHostAlloc((void**)&buffer,sizeof(packet_t)*MAX_BUFFER_PACKETS,cudaHostAllocPortable));
+    cudaAssert(cudaHostAlloc((void**)&buffer,sizeof(packet_t)*MAX_BUFFER_PACKETS,cudaHostAllocPortable));
 	memset(buffer,0,sizeof(packet_t)*MAX_BUFFER_PACKETS);
 	lastPacketIndex = 0;
 	lostPackets = 0;
@@ -32,6 +32,7 @@ void PacketBuffer::setDeviceDataLinkInfo(int deviceDataLinkInfo){
 int PacketBuffer::getDeviceDataLinkInfo(void){
 	return deviceDataLink;
 }
+
 unsigned int PacketBuffer::getNumOfPackets(void){
 	return lastPacketIndex;
 }
@@ -48,6 +49,7 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 
 	//cout<<"call2:in push packet";
 	SizeDissector sizeDissector;
+	PreAnalyzerDissector preAnalyzerDissector;
 	int totalLength;
 	headers_t headers;	
 
@@ -62,6 +64,8 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 
 	memset(&headers,0,sizeof(headers_t));
 	
+	preAnalyzerDissector.dissect(packetPointer,hdr,deviceDataLink,&headers);
+
 	//get size from packet(headers) & fill headers
 	
 	totalLength = sizeDissector.dissect(packetPointer,hdr,deviceDataLink,&headers);
@@ -82,7 +86,6 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 		return 0;
 	}*/
 
-	
 	//Copy timestamp 
 	buffer[lastPacketIndex].timestamp = hdr->ts;
 	
