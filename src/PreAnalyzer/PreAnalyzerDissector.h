@@ -20,6 +20,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 #include "../Util.h"
 #include "../Common/Dissector.h"
+#include "../Common/PacketBuffer.h"
 
 using namespace std;
 
