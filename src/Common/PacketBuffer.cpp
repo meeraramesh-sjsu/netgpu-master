@@ -64,7 +64,7 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 
 	memset(&headers,0,sizeof(headers_t));
 	
-	preAnalyzerDissector.dissect(packetPointer,hdr,deviceDataLink,&headers);
+	//preAnalyzerDissector.dissect(packetPointer,hdr,deviceDataLink,&headers);
 
 	//get size from packet(headers) & fill headers
 	
