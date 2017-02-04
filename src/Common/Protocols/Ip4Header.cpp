@@ -43,6 +43,7 @@ void Ip4Header::dump(void){
 
 	//Check if IP checksum is malicious
 	string headerVerTosstr = std::to_string((ip4->headerLength & 0x0000000F) << 12) + to_string((ip4->version & 0x0000000F) << 8) + to_string(ip4->tos & 0x000000FF);
+	cout<<"strhead"<<headerVerTosstr<<endl;
 	int headerVerTos = stoi(headerVerTosstr);
 
 	int ttlprotocol = ((ip4->ttl & 0x000000FF)<<8) | (ip4->protocol & 0x000000FF);
