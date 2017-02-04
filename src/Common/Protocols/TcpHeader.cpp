@@ -25,13 +25,6 @@ void TcpHeader::dump(void){
 		if((tcp->flags & 16) ==1 && tcp->ack==0)
 			cout<<"The ack bit is set, but the ack number is zero"<<endl;
 
-		//Printing the payload
-		unsigned char payload[60]=tcp->data;
-		int i=0;
-		while(i<60) {
-			cout<<payload[i++];
-		}
-		cout<<endl;
 }
 
 uint8_t TcpHeader::getHeaderLength(void){
