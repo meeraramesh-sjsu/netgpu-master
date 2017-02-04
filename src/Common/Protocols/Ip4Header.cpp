@@ -46,6 +46,9 @@ void Ip4Header::dump(void){
 	int srcSecHalf = (ip4->ip_src & 0x0000FFFF)>>16;
 	int dstFirstHalf = (ip4->ip_src & 0xFFFF0000)>>16;
 	int dstSecHalf = (ip4->ip_src & 0x0000FFFF)>>16;
+	cout<<"Checksum Calculation:  "<<endl;
+	cout<<headerVerTos<<" "<<ttlprotocol<<" "<<srcFirstHalf<<" "<<srcSecHalf<<" "<<dstFirstHalf<<" "<<dstSecHalf<<" ";
+	cout<<" "<<ip4->totalLength<<" "<<ip4->identification<<" "<<ip4->flagsAndOffset<<" "<<ip4->checksum<<endl;
 	int result = headerVerTos + ttlprotocol
 			+ srcFirstHalf + srcSecHalf
 			+ dstFirstHalf + dstSecHalf

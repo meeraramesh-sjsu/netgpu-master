@@ -88,7 +88,7 @@ void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	}
 	*totalHeaderLength = Ip4Header::totalPacketLength(packetPointer);
-	packetLength = ((struct ip4_header*)packetPointer)->totalLength;
+	packetLength = ((struct ip4_header*)packetPointer)->totalLength & 0x0000FFFF;
 	}
 
 /*end of L3 dissectors*/
