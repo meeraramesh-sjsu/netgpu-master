@@ -8,6 +8,8 @@
 		} \
 	}while(0)
 
+//TotalPacketLength, used to find the payload
+int packetLength;
 /*L2 dissectors */
 void Dissector::dissectEthernet(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){
 	//cout<<"call4:dissectethernet";
@@ -86,10 +88,10 @@ void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	}
 	*totalHeaderLength = Ip4Header::totalPacketLength(packetPointer);
+	packetLength = ((struct ip4_header*)packetPointer)->totalLength;
 	}
 
 /*end of L3 dissectors*/
-
 /*L4 Dissectors*/
 
 void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){
@@ -109,10 +111,10 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	//Setting pointer to on board protocol
 	onBoardProtocol =(uint8_t *)packetPointer+TcpHeader::calcHeaderLengthInBytes(packetPointer);
 
-	int payLoadLength = Ip4Header::getTotalLength() - 54;
+	int payLoadLength = packetLength - 40;
 	while(payLoadLength-- > 0)
 	{
-		cout<<*onBoardProtocol;
+		cout<<*(char*) onBoardProtocol;
 		onBoardProtocol++;
 	}
 }
