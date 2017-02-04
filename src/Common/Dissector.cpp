@@ -112,11 +112,13 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	onBoardProtocol =(uint8_t *)packetPointer+TcpHeader::calcHeaderLengthInBytes(packetPointer);
 
 	int payLoadLength = packetLength - 40;
+	cout<<"payLoadLength= "<<payLoadLength<<endl;
 	while(payLoadLength-- > 0)
 	{
 		cout<<*(char*) onBoardProtocol;
 		onBoardProtocol++;
 	}
+	cout<<endl;
 }
 
 void Dissector::dissectUdp(const uint8_t* packetPointer, unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){
