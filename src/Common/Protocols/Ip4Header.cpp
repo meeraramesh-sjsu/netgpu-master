@@ -3,6 +3,7 @@
 #include <iostream>
 #include <arpa/inet.h>
 using namespace std;
+
 void Ip4Header::dump(void){
 
 	cout <<"IP4 Header ; ";
@@ -49,24 +50,15 @@ void Ip4Header::dump(void){
 
 void Ip4Header16::dump(void){
 
-	cout<<" "<<ntohs(ip4->headerVertos) <<" "<< ntohs(ip4->ttlprotocol)
-				<<" "<<  ntohs(ip4->ip_srcFirstHalf) <<" "<<  ntohs(ip4->ip_srcSecHalf)
-				<<" "<<  ntohs(ip4->ip_dstFirstHalf) <<" "<<  ntohs(ip4->ip_dstSecHalf)
-				<<" "<<  ntohs(ip4->totalLength) <<" "<<  ntohs(ip4->identification)
-				<<" "<<  ntohs(ip4->flagsAndOffset) <<" "<<  ntohs(ip4->checksum)<<endl;
-
-	cout <<"IP4 Header checksum computation";
-	int result =  ntohs(ip4->headerVertos) + ntohs(ip4->ttlprotocol)
+		int result =  ntohs(ip4->headerVertos) + ntohs(ip4->ttlprotocol)
 					+ ntohs(ip4->ip_srcFirstHalf)+ ntohs(ip4->ip_srcSecHalf)
 						+ ntohs(ip4->ip_dstFirstHalf) + ntohs(ip4->ip_dstSecHalf)
 						+  ntohs(ip4->totalLength) + ntohs(ip4->identification)
 						+  ntohs(ip4->flagsAndOffset) +  ntohs(ip4->checksum);
-	cout<<"Result= "<<hex<<result<<endl;
-	cout<<hex<<(result>>16)<<" "<<hex<<(result & 0xFFFF)<<" "<<hex<<( (result>>16) + (result & 0xFFFF))<<endl;
-	 int sum = ((result>>16) + (result & 0xFFFF));
 
-	cout<<"checksum= "<<sum<<endl;
-	if(sum!=65535) cout<<"The checksum is malicious"<<endl;
+		int sum = ((result>>16) + (result & 0xFFFF));
+
+		if(sum!=65535) cout<<"The checksum is malicious"<<endl;
 }
 
 uint8_t Ip4Header::getHeaderLength(void){
