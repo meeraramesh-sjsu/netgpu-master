@@ -103,8 +103,19 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	*totalHeaderLength +=TcpHeader::calcHeaderLengthInBytes(packetPointer);
 	DEBUG2("TCP packet");
 
-	//HERE should come L5 switch
-	//TODO: L5 support
+	//Setting pointer to Payload
+	uint8_t* onBoardProtocol;
+
+	//Setting pointer to on board protocol
+	onBoardProtocol =(uint8_t *)packetPointer+TcpHeader::calcHeaderLengthInBytes(packetPointer);
+
+	int payLoadLength = ip4->totalLength - 54;
+	while(payLoadLength > 0)
+	{
+		cout<<*onBoardProtocol;
+		onBoardProtocol++;
+	}
+
 }
 
 void Dissector::dissectUdp(const uint8_t* packetPointer, unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){
