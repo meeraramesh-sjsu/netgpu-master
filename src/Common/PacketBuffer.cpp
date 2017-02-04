@@ -4,7 +4,7 @@ PacketBuffer::PacketBuffer(void){
 	
 	//Allocate memory for buffer
 //	buffer = new packet_t[MAX_BUFFER_PACKETS];
-        cudaAssert(cudaHostAlloc((void**)&buffer,sizeof(packet_t)*MAX_BUFFER_PACKETS,cudaHostAllocPortable));
+	cudaAssert(cudaHostAlloc((void**)&buffer,sizeof(packet_t)*MAX_BUFFER_PACKETS,cudaHostAllocPortable));
 	memset(buffer,0,sizeof(packet_t)*MAX_BUFFER_PACKETS);
 	lastPacketIndex = 0;
 	lostPackets = 0;
@@ -47,7 +47,7 @@ packet_t* PacketBuffer::getBuffer(void){
 int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr){
 
 	cout<<"call2:in push packet";
-	SizeDissector sizeDissector;
+//	SizeDissector sizeDissector;
 	PreAnalyzerDissector preAnalyzerDissector;
 	int totalLength;
 	headers_t headers;	
@@ -85,7 +85,7 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 
 	
 	//Copy timestamp 
-	buffer[lastPacketIndex].timestamp = hdr->ts;
+	//buffer[lastPacketIndex].timestamp = hdr->ts;
 	
 	//Copy headers
 	memcpy(&buffer[lastPacketIndex].headers,&headers,sizeof(headers_t));
