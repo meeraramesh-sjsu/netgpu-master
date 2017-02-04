@@ -62,8 +62,8 @@ void Ip4Header16::dump(void){
 						+  ntohs(ip4->totalLength) + ntohs(ip4->identification)
 						+  ntohs(ip4->flagsAndOffset) +  ntohs(ip4->checksum);
 	cout<<"Result= "<<hex<<result<<endl;
-	cout<<hex<<(result>>16)<<" "<<hex<<(result & 0xFFFF)<<" "<<hex<<(result>>16 + (result & 0xFFFF))<<endl;
-	unsigned int sum = ~(result>>16 + (result & 0xFFFF));
+	cout<<hex<<(result>>16)<<" "<<hex<<(result & 0xFFFF)<<" "<<hex<<( (result>>16) + (result & 0xFFFF))<<endl;
+	unsigned int sum = ~((result>>16) + (result & 0xFFFF));
 
 	cout<<"checksum= "<<sum<<endl;
 	if(sum!=-1) cout<<"The checksum is malicious"<<endl;
