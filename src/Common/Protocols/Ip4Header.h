@@ -19,7 +19,9 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
+#include <string>
+using namespace std;
+#include <sstream>
 #include "../VirtualHeader.h"
 
 #define IP4_NO_OPTIONS_HEADER_SIZE 20
