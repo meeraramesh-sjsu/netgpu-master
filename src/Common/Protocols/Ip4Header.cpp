@@ -1,6 +1,7 @@
 #include "Ip4Header.h"
 #include <string>
-
+#include <iostream>
+using namespace std;
 void Ip4Header::dump(void){
 
 	cout <<"IP4 Header ; ";
