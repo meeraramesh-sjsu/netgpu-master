@@ -27,7 +27,7 @@ using namespace std;
 
 
 	//Adding analysis to pool
-	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);
+//	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);
 //	Scheduler::addAnalysisToPool(Kernel::launchAnalysis);
 //	Scheduler::addAnalysisToPool(PortScan::launchAnalysis);
 //	Scheduler::addAnalysisToPool(Anomalies::launchAnalysis);
@@ -37,10 +37,10 @@ using namespace std;
 //	Scheduler::addAnalysisToPool(AdvancedExample::launchAnalysis);
 
 	//Adding a single feeder
-	Scheduler::addFeederToPool(feeder);
+//	Scheduler::addFeederToPool(feeder);
 
 	//Starting execution (infinite loop)
-	Scheduler::start();
+//	Scheduler::start();
 
 	//std::cout<<" \n Ending ......."<<endl;
 

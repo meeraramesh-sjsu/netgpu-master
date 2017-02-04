@@ -65,7 +65,7 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 	
 	//get size from packet(headers) & fill headers
 	totalLength = preAnalyzerDissector.dissect(packetPointer,hdr,deviceDataLink,&headers);
-	totalLength = sizeDissector.dissect(packetPointer,hdr,deviceDataLink,&headers);
+	//totalLength = sizeDissector.dissect(packetPointer,hdr,deviceDataLink,&headers);
 	
 	if(totalLength<0){
 		//Not supported
