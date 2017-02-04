@@ -95,6 +95,7 @@ private:
 public: 
 	inline Ip4Header(const uint8_t* ip4Pointer){ip4=(struct ip4_header*)ip4Pointer;};
 	void dump(void);
+	void dumpnew(void);
 	uint8_t getHeaderLength(void);
 	uint32_t getHeaderLengthInBytes(void);
 	uint8_t getProtocol(void);
@@ -104,4 +105,13 @@ public:
 	//uint16_t getTotalLength();
 };
 
+class Ip4Header16 : public VirtualHeader {
+
+private:
+	struct ip4_header16Byte* ip4;
+
+public:
+	inline Ip4Header16(const uint8_t* ip4Pointer){ip4=(struct ip4_header16Byte*)ip4Pointer;};
+	void dump(void);
+};
 #endif // Ip4Header_h

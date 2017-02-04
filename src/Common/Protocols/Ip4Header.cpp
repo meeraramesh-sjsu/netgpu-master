@@ -41,32 +41,23 @@ void Ip4Header::dump(void){
 		cout<<"Packet src IP " << ipsrc << "or Dst IP address" << ipdst << "is in private address range" <<endl;
 	}
 
-	//Check if IP checksum is malicious
-	string headerVerTosstr = to_string((ip4->version & 0x0000000F)) + std::to_string((ip4->headerLength & 0x0000000F)) +  to_string(ip4->tos & 0x000000FF);
-	cout<<"strhead"<<headerVerTosstr<<endl;
-	int headerVerTos = stoi(headerVerTosstr);
-
-	int ttlprotocol = ((ip4->ttl & 0x000000FF)<<8) | (ip4->protocol & 0x000000FF);
-	int srcFirstHalf = (ip4->ip_src & 0xFFFF0000)>>16;
-	int srcSecHalf = (ip4->ip_src & 0x0000FFFF)>>16;
-	int dstFirstHalf = (ip4->ip_src & 0xFFFF0000)>>16;
-	int dstSecHalf = (ip4->ip_src & 0x0000FFFF)>>16;
-	cout<<"Checksum Calculation "<<endl;
-	cout<<headerVerTos<<" "<<ttlprotocol<<" "<<srcFirstHalf<<" "<<srcSecHalf<<" "<<dstFirstHalf<<" "<<dstSecHalf<<" ";
-	cout<<" "<<ip4->totalLength<<" "<<ip4->identification<<" "<<ip4->flagsAndOffset<<" "<<ip4->checksum<<endl;
-	int result = headerVerTos + ttlprotocol
-			+ srcFirstHalf + srcSecHalf
-			+ dstFirstHalf + dstSecHalf
-			+ ip4->totalLength + ip4->identification
-			+ ip4->flagsAndOffset + ip4->checksum;
-	unsigned int sum = ~(result>>16 + (result & 0xFFFF));
-	if(sum!=-1) cout<<"The checksum is malicious"<<endl;
-
 	//Checking if it is a broadcast packet
 	if( (ip4->protocol==6 && octet4Dst == 0) || octet4Dst == 255)
 	 cout<<"TCP Broadcast packets are not allowed!"<<endl;
 }
 
+void Ip4Header16::dump(void){
+
+	cout <<"IP4 Header checksum computation";
+	int result = ip4->headerVertos + ip4->ttlprotocol
+			+ ip4->ip_srcFirstHalf + ip4->ip_srcSecHalf
+			+ ip4->ip_dstFirstHalf + ip4->ip_dstSecHalf
+			+ ip4->totalLength + ip4->identification
+			+ ip4->flagsAndOffset + ip4->checksum;
+	unsigned int sum = ~(result>>16 + (result & 0xFFFF));
+	if(sum!=-1) cout<<"The checksum is malicious"<<endl;
+
+}
 uint8_t Ip4Header::getHeaderLength(void){
 	return ip4->headerLength;
 }

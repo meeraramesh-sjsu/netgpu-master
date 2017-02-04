@@ -56,6 +56,8 @@ void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	//ACTIONS::VIRTUAL ACTION
 	Ip4VirtualAction(packetPointer,totalHeaderLength,hdr,new Ip4Header(packetPointer),user);
+	//Only for checksum
+	Ip4VirtualActionnew(packetPointer,totalHeaderLength,hdr,new Ip4Header16(packetPointer),user);
 
 	//Adding size of this header	
 	*totalHeaderLength +=Ip4Header::calcHeaderLengthInBytes(packetPointer);

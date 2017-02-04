@@ -12,9 +12,13 @@ void PreAnalyzerDissector::Ip4VirtualAction(const uint8_t* packetPointer,unsigne
 #if DEBUG_LEVEL > 0
 	header->dump();
 #endif
-		
+}
 
+void PreAnalyzerDissector::Ip4VirtualActionnew(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ip4Header16* header,void* user){
 
+#if DEBUG_LEVEL > 0
+	header->dump();
+#endif
 }
 
 void PreAnalyzerDissector::TcpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,TcpHeader* header,void* user){
