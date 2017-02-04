@@ -535,7 +535,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** LAUNCH HOOK (Host function) ***/		
-		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks);
+		//COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks);
 
 		//Frees host results arrays
 		//free(results);

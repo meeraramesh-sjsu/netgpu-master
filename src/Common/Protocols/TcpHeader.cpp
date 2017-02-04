@@ -3,7 +3,7 @@
 void TcpHeader::dump(void){
 
 	cout <<"TCP Header ; ";
-	cout<< "Port src: "<< ntohs(tcp->sport)  <<" Port dst: "<< ntohs(tcp->dport) <<endl<<endl;
+	//cout<< "Port src: "<< ntohs(tcp->sport)  <<" Port dst: "<< ntohs(tcp->dport) <<endl<<endl;
 
 	//Checking if the TCP flags are malicious
 	if(tcp->flags == 3 ||

@@ -4,8 +4,8 @@ void Ip4Header::dump(void){
 
 	cout <<"IP4 Header ; ";
 
-	fprintf(stdout,"Src address: %s ",inet_ntoa(*(struct in_addr*)&ip4->ip_src));
-	fprintf(stdout,"Dst address: %s \n\n",inet_ntoa(*(struct in_addr*)&ip4->ip_dst));
+	//fprintf(stdout,"Src address: %s ",inet_ntoa(*(struct in_addr*)&ip4->ip_src));
+	//fprintf(stdout,"Dst address: %s \n\n",inet_ntoa(*(struct in_addr*)&ip4->ip_dst));
 
 	//Check if IP address is in private address range
 	int octet4 = (ip4->ip_src & 0xff000000) >> 24;
@@ -20,8 +20,8 @@ void Ip4Header::dump(void){
 
 	string ipsrc =  inet_ntoa(*(struct in_addr*)&ip4->ip_src);
 	string ipdst =  inet_ntoa(*(struct in_addr*)&ip4->ip_dst);
-	cout<<"Src octets"<<octet1<<" "<<octet2<<" "<<octet3<<" "<<octet4<<" "<<endl;
-	cout<<"Dst octets"<<octet1Dst<<" "<<octet2Dst<<" "<<octet3Dst<<" "<<octet4Dst<<" "<<endl;
+	//cout<<"Src octets"<<octet1<<" "<<octet2<<" "<<octet3<<" "<<octet4<<" "<<endl;
+	//cout<<"Dst octets"<<octet1Dst<<" "<<octet2Dst<<" "<<octet3Dst<<" "<<octet4Dst<<" "<<endl;
 
 	if (octet1 == 10 || octet1Dst==10)
 	{

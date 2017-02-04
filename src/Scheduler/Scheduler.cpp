@@ -231,8 +231,7 @@ void Scheduler::start(void){
 				buffer = feedersPool[i].feeder->getSniffedPacketBuffer();
 			
 				//Analyse it
-                                cout<< " \n ---- calling analyze function \n";
-			        analyzeBuffer(buffer);
+                  //analyzeBuffer(buffer);
 
 				//Check if(offline) feeder has no more packets to get
 				if(buffer == NULL || buffer->getFlushFlag())
@@ -240,8 +239,6 @@ void Scheduler::start(void){
 				else
 				{
 					hasFeedersLeft = true;	
-				cout<<"Feeder has more packets to get"<<endl;
-				 cout<<buffer->getNumOfPackets()<<endl;
 				}}
 		}
 
