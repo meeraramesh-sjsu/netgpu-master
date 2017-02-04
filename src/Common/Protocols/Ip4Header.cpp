@@ -62,7 +62,7 @@ void Ip4Header16::dump(void){
 						+  ntohs(ip4->totalLength) + ntohs(ip4->identification)
 						+  ntohs(ip4->flagsAndOffset) +  ntohs(ip4->checksum);
 	cout<<"Result= "<<result<<endl;
-	cout<<(result>>16)<<endl;
+	cout<<(result>>16)<<" "<<hex<<(result & 0xFFFF)<<" "<<(result>>16 + (result & 0xFFFF))<<endl;
 	unsigned int sum = ~(result>>16 + (result & 0xFFFF));
 
 	cout<<"checksum= "<<sum<<endl;
