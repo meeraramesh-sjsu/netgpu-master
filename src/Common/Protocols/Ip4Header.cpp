@@ -40,13 +40,13 @@ void Ip4Header::dump(void){
 	}
 
 	//Check if IP checksum is malicious
-	int headerVerTos = ((ip4->headerLength & 0x0000000F) << 12) + ((ip4->version & 0x0000000F) << 8) + (ip4->tos & 0x000000FF);
-	int ttlprotocol = ((ip4->ttl & 0x000000FF)<<8) + (ip4->protocol & 0x000000FF);
+	int headerVerTos = ((ip4->headerLength & 0x0000000F) << 12) | ((ip4->version & 0x0000000F) << 8) | (ip4->tos & 0x000000FF);
+	int ttlprotocol = ((ip4->ttl & 0x000000FF)<<8) | (ip4->protocol & 0x000000FF);
 	int srcFirstHalf = (ip4->ip_src & 0xFFFF0000)>>16;
 	int srcSecHalf = (ip4->ip_src & 0x0000FFFF)>>16;
 	int dstFirstHalf = (ip4->ip_src & 0xFFFF0000)>>16;
 	int dstSecHalf = (ip4->ip_src & 0x0000FFFF)>>16;
-	cout<<"Checksum Calculation:  "<<endl;
+	cout<<"Checksum Calculation "<<endl;
 	cout<<headerVerTos<<" "<<ttlprotocol<<" "<<srcFirstHalf<<" "<<srcSecHalf<<" "<<dstFirstHalf<<" "<<dstSecHalf<<" ";
 	cout<<" "<<ip4->totalLength<<" "<<ip4->identification<<" "<<ip4->flagsAndOffset<<" "<<ip4->checksum<<endl;
 	int result = headerVerTos + ttlprotocol
