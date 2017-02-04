@@ -8,15 +8,15 @@ void Ip4Header::dump(void){
 	fprintf(stdout,"Dst address: %s \n\n",inet_ntoa(*(struct in_addr*)&ip4->ip_dst));
 
 	//Check if IP address is in private address range
-	int octet1 = (ip4->ip_src & 0xff000000) >> 24;
-	int octet2 = (ip4->ip_src & 0x00ff0000) >> 16;
-	int octet3 = (ip4->ip_src & 0x0000ff00) >> 8;
-	int octet4 = (ip4->ip_src & 0x000000ff);
+	int octet4 = (ip4->ip_src & 0xff000000) >> 24;
+	int octet3 = (ip4->ip_src & 0x00ff0000) >> 16;
+	int octet2 = (ip4->ip_src & 0x0000ff00) >> 8;
+	int octet1 = (ip4->ip_src & 0x000000ff);
 
-	int octet1Dst = (ip4->ip_dst & 0xff000000) >> 24;
-	int octet2Dst = (ip4->ip_dst & 0x00ff0000) >> 16;
-	int octet3Dst = (ip4->ip_dst & 0x0000ff00) >> 8;
-	int octet4Dst = (ip4->ip_dst & 0x000000ff);
+	int octet4Dst = (ip4->ip_dst & 0xff000000) >> 24;
+	int octet3Dst = (ip4->ip_dst & 0x00ff0000) >> 16;
+	int octet2Dst = (ip4->ip_dst & 0x0000ff00) >> 8;
+	int octet1Dst = (ip4->ip_dst & 0x000000ff);
 
 	string ipsrc =  inet_ntoa(*(struct in_addr*)&ip4->ip_src);
 	string ipdst =  inet_ntoa(*(struct in_addr*)&ip4->ip_dst);
