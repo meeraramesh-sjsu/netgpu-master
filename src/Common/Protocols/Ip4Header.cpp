@@ -69,6 +69,12 @@ uint8_t Ip4Header::getProtocol(void){
 
 	return ip4->protocol; 
 }
+
+uint16_t Ip4Header::getTotalLength(void){
+
+	return ip4->totalLength;
+}
+
 uint32_t Ip4Header::calcHeaderLengthInBytes(const uint8_t * ipPointer){
 	return (uint32_t)((struct ip4_header *)ipPointer)->headerLength*4;
 }
