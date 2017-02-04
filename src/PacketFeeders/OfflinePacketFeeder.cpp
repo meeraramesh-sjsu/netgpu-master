@@ -73,6 +73,7 @@ PacketBuffer* OfflinePacketFeeder::getSniffedPacketBuffer(void){
 
 void OfflinePacketFeeder::packetCallback(u_char* sniffer,const struct pcap_pkthdr* pkthdr,const u_char* packet){
 	
+	cout<<"In packet callback"<<endl;
 	//LOCK
 	pthread_mutex_lock(&((OfflinePacketFeeder*)sniffer)->mutex);
 
@@ -135,6 +136,7 @@ void OfflinePacketFeeder::flushAndExit(void){
 }
 void OfflinePacketFeeder::_start(void){
 
+	cout<<"In start , offline packet feeder"<<endl;
         char errbuf[PCAP_ERRBUF_SIZE];
 
 	/*TODO: FILTERS TO PCAP */

@@ -27,7 +27,7 @@ using namespace std;
 
 
 	//Adding analysis to pool
-//	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);
+	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);
 //	Scheduler::addAnalysisToPool(Kernel::launchAnalysis);
 //	Scheduler::addAnalysisToPool(PortScan::launchAnalysis);
 //	Scheduler::addAnalysisToPool(Anomalies::launchAnalysis);

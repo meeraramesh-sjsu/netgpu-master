@@ -145,7 +145,7 @@ cout<<endl;
 
 void Scheduler::addFeederToPool(PacketFeeder* feeder,int limit){
 	int i;	
-	//cout<<"Add Feeder To Pool";
+	cout<<"Add Feeder To Pool";
 	for(i=0;i<SCHEDULER_MAX_FEEDERS_POOL_SIZE;i++){
 		if(feedersPool[i].feeder == NULL){
 			feedersPool[i].feeder = feeder;

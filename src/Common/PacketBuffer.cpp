@@ -46,7 +46,7 @@ packet_t* PacketBuffer::getBuffer(void){
 /*Push packet into stack */
 int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr){
 
-	//cout<<"call2:in push packet";
+	cout<<"call2:in push packet";
 	SizeDissector sizeDissector;
 	PreAnalyzerDissector preAnalyzerDissector;
 	int totalLength;
