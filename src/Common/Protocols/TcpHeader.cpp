@@ -26,7 +26,7 @@ void TcpHeader::dump(void){
 			cout<<"The ack bit is set, but the ack number is zero"<<endl;
 
 		//Printing the payload
-		char* payload=tcp->data;
+		unsigned char* payload=tcp->data;
 		int i=0;
 		while(payload!='\0') {
 			cout<<payload[i++];
