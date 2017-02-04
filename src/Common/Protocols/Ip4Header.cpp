@@ -20,6 +20,9 @@ void Ip4Header::dump(void){
 
 	string ipsrc =  inet_ntoa(*(struct in_addr*)&ip4->ip_src);
 	string ipdst =  inet_ntoa(*(struct in_addr*)&ip4->ip_dst);
+	cout<<"Src octets"<<octet1<<" "<<octet2<<" "<<octet3<<" "<<octet4<<" "<<endl;
+	cout<<"Dst octets"<<octet1Dst<<" "<<octet2Dst<<" "<<octet3Dst<<" "<<octet4Dst<<" "<<endl;
+
 	if (octet1 == 10 || octet1Dst==10)
 	{
 		cout<<"Packet src IP " << ipsrc << "or Dst IP address" << ipdst << "is in private address range" <<endl;
