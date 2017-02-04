@@ -48,6 +48,12 @@ void Ip4Header::dump(void){
 
 void Ip4Header16::dump(void){
 
+	cout<<" "<<ip4->headerVertos <<" "<< ip4->ttlprotocol
+				<<" "<< ip4->ip_srcFirstHalf <<" "<< ip4->ip_srcSecHalf
+				<<" "<< ip4->ip_dstFirstHalf <<" "<< ip4->ip_dstSecHalf
+				<<" "<< ip4->totalLength <<" "<< ip4->identification
+				<<" "<<ip4->flagsAndOffset <<" "<< ip4->checksum<<endl;
+
 	cout <<"IP4 Header checksum computation";
 	int result = ip4->headerVertos + ip4->ttlprotocol
 			+ ip4->ip_srcFirstHalf + ip4->ip_srcSecHalf
