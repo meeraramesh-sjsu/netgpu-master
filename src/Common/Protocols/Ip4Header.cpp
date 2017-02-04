@@ -1,6 +1,7 @@
 #include "Ip4Header.h"
 #include <string>
 #include <iostream>
+#include <arpa/inet.h>
 using namespace std;
 void Ip4Header::dump(void){
 
@@ -48,18 +49,19 @@ void Ip4Header::dump(void){
 
 void Ip4Header16::dump(void){
 
-	cout<<" "<<ip4->headerVertos <<" "<< ip4->ttlprotocol
-				<<" "<< ip4->ip_srcFirstHalf <<" "<< ip4->ip_srcSecHalf
-				<<" "<< ip4->ip_dstFirstHalf <<" "<< ip4->ip_dstSecHalf
-				<<" "<< ip4->totalLength <<" "<< ip4->identification
-				<<" "<<ip4->flagsAndOffset <<" "<< ip4->checksum<<endl;
+	cout<<" "<<ntohs(ip4->headerVertos) <<" "<< ntohs(ip4->ttlprotocol)
+				<<" "<<  ntohs(ip4->ip_srcFirstHalf) <<" "<<  ntohs(ip4->ip_srcSecHalf)
+				<<" "<<  ntohs(ip4->ip_dstFirstHalf) <<" "<<  ntohs(ip4->ip_dstSecHalf)
+				<<" "<<  ntohs(ip4->totalLength) <<" "<<  ntohs(ip4->identification)
+				<<" "<<  ntohs(ip4->flagsAndOffset) <<" "<<  ntohs(ip4->checksum)<<endl;
 
 	cout <<"IP4 Header checksum computation";
-	int result = ip4->headerVertos + ip4->ttlprotocol
-			+ ip4->ip_srcFirstHalf + ip4->ip_srcSecHalf
-			+ ip4->ip_dstFirstHalf + ip4->ip_dstSecHalf
-			+ ip4->totalLength + ip4->identification
-			+ ip4->flagsAndOffset + ip4->checksum;
+	int result = ntohs(ip4->headerVertos) + ntohs(ip4->ttlprotocol)
+					+ ntohs(ip4->ip_srcFirstHalf)+ ntohs(ip4->ip_srcSecHalf)
+						+ ntohs(ip4->ip_dstFirstHalf) + ntohs(ip4->ip_dstSecHalf)
+						+  ntohs(ip4->totalLength) + ntohs(ip4->identification)
+						+  ntohs(ip4->flagsAndOffset) +  ntohs(ip4->checksum);
+
 	unsigned int sum = ~(result>>16 + (result & 0xFFFF));
 	if(sum!=-1) cout<<"The checksum is malicious"<<endl;
 
