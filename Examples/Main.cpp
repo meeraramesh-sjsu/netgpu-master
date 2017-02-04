@@ -36,11 +36,12 @@ using namespace std;
 //	Scheduler::addAnalysisToPool(Throughput::launchAnalysis);
 //	Scheduler::addAnalysisToPool(AdvancedExample::launchAnalysis);
 
+	cout<<"Adding feeder to pool"<<endl;
 	//Adding a single feeder
-//	Scheduler::addFeederToPool(feeder);
+	Scheduler::addFeederToPool(feeder);
 
 	//Starting execution (infinite loop)
-//	Scheduler::start();
+	//Scheduler::start();
 
 	//std::cout<<" \n Ending ......."<<endl;
 
