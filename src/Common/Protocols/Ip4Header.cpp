@@ -56,18 +56,19 @@ void Ip4Header16::dump(void){
 				<<" "<<  ntohs(ip4->flagsAndOffset) <<" "<<  ntohs(ip4->checksum)<<endl;
 
 	cout <<"IP4 Header checksum computation";
-	int result =   ntohs(ip4->headerVertos) + ntohs(ip4->ttlprotocol)
+	int result =  ntohs(ip4->headerVertos) + ntohs(ip4->ttlprotocol)
 					+ ntohs(ip4->ip_srcFirstHalf)+ ntohs(ip4->ip_srcSecHalf)
 						+ ntohs(ip4->ip_dstFirstHalf) + ntohs(ip4->ip_dstSecHalf)
 						+  ntohs(ip4->totalLength) + ntohs(ip4->identification)
 						+  ntohs(ip4->flagsAndOffset) +  ntohs(ip4->checksum);
 	cout<<"Result= "<<result<<endl;
+	cout<<(result>>16)<<endl;
 	unsigned int sum = ~(result>>16 + (result & 0xFFFF));
 
 	cout<<"checksum= "<<sum<<endl;
 	if(sum!=-1) cout<<"The checksum is malicious"<<endl;
-
 }
+
 uint8_t Ip4Header::getHeaderLength(void){
 	return ip4->headerLength;
 }
