@@ -41,7 +41,7 @@ using namespace std;
 	Scheduler::addFeederToPool(feeder);
 
 	//Starting execution (infinite loop)
-	//Scheduler::start();
+	Scheduler::start();
 
 	//std::cout<<" \n Ending ......."<<endl;
 
