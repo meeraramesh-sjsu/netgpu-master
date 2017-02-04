@@ -99,8 +99,7 @@ public:
 	static uint32_t totalPacketLength(const uint8_t * ipPointer);
 	//static method to calculate header length in bytes from a ip4_header struct -> dissector
 	static uint32_t calcHeaderLengthInBytes(const uint8_t * ipPointer);
-	static uint16_t getTotalLength();
-
+	uint16_t getTotalLength();
 };
 
 #endif // Ip4Header_h
