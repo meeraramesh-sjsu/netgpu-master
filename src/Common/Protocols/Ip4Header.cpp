@@ -1,4 +1,5 @@
 #include "Ip4Header.h"
+#include <string>
 
 void Ip4Header::dump(void){
 
@@ -40,7 +41,9 @@ void Ip4Header::dump(void){
 	}
 
 	//Check if IP checksum is malicious
-	int headerVerTos = ((ip4->headerLength & 0x0000000F) << 12) | ((ip4->version & 0x0000000F) << 8) | (ip4->tos & 0x000000FF);
+	string headerVerTosstr = to_string((ip4->headerLength & 0x0000000F) << 12) + to_string((ip4->version & 0x0000000F) << 8) + to_string(ip4->tos & 0x000000FF);
+	int headerVerTos = stoi(headerVerTosstr);
+
 	int ttlprotocol = ((ip4->ttl & 0x000000FF)<<8) | (ip4->protocol & 0x000000FF);
 	int srcFirstHalf = (ip4->ip_src & 0xFFFF0000)>>16;
 	int srcSecHalf = (ip4->ip_src & 0x0000FFFF)>>16;
