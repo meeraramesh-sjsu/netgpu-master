@@ -1,12 +1,12 @@
 #include "Dissector.h"
 
 #define _DISSECTOR_CHECK_OVERFLOW(a,b) \
-	do{ \
-		if(hdr!=NULL){ \
-			if(a>b) \
+		do{ \
+			if(hdr!=NULL){ \
+				if(a>b) \
 				return; \
-		} \
-	}while(0)
+			} \
+		}while(0)
 
 //TotalPacketLength, used to find the payload
 int packetLength;
@@ -26,18 +26,18 @@ void Dissector::dissectEthernet(const uint8_t* packetPointer,unsigned int* total
 
 	DEBUG2("Ethernet packet");
 	switch(ntohs(((struct ether_header*)packetPointer)->type)){
-	
-		case ETHER2_TYPE_IP4:
-				_DISSECTOR_CHECK_OVERFLOW(*totalHeaderLength+IP4_NO_OPTIONS_HEADER_SIZE,hdr->caplen);
-				dissectIp4(onBoardProtocol,totalHeaderLength,hdr,user);
-				break;
-		case ETHER2_TYPE_IP6: 
-				//dissectIp6( onBoardProtocol,bufferPointer,totalHeaderLength);
-				//break;
-		
-		default://NOT SUPPORTED
-			DEBUG2("NOT supported");
-			break;
+
+	case ETHER2_TYPE_IP4:
+		_DISSECTOR_CHECK_OVERFLOW(*totalHeaderLength+IP4_NO_OPTIONS_HEADER_SIZE,hdr->caplen);
+		dissectIp4(onBoardProtocol,totalHeaderLength,hdr,user);
+		break;
+	case ETHER2_TYPE_IP6:
+		//dissectIp6( onBoardProtocol,bufferPointer,totalHeaderLength);
+		//break;
+
+	default://NOT SUPPORTED
+		DEBUG2("NOT supported");
+		break;
 
 	}	
 
@@ -50,7 +50,7 @@ void Dissector::dissectEthernet(const uint8_t* packetPointer,unsigned int* total
 void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){
 	//cout<<"dissectIpv4";
 	uint8_t* onBoardProtocol;	
-	
+
 	//Setting pointer to on board protocol	
 	onBoardProtocol =(uint8_t *)packetPointer+Ip4Header::calcHeaderLengthInBytes(packetPointer);
 
@@ -65,33 +65,33 @@ void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeade
 	DEBUG2("IP4 packet");
 	switch(((struct ip4_header*)packetPointer)->protocol){
 
-		case IP_PROT_ICMP: 
-				 _DISSECTOR_CHECK_OVERFLOW(*totalHeaderLength+ICMP_HEADER_SIZE,hdr->caplen);
+	case IP_PROT_ICMP:
+		_DISSECTOR_CHECK_OVERFLOW(*totalHeaderLength+ICMP_HEADER_SIZE,hdr->caplen);
 
-				dissectIcmp(onBoardProtocol,totalHeaderLength,hdr,user); 
-				break;
+		dissectIcmp(onBoardProtocol,totalHeaderLength,hdr,user);
+		break;
 		//case IP_PROT_IP4: 
-				//Tunnel Ip4
-				//break;
-		case IP_PROT_TCP:
-				 _DISSECTOR_CHECK_OVERFLOW(*totalHeaderLength+TCP_NO_OPTIONS_HEADER_SIZE,hdr->caplen);
-				dissectTcp(onBoardProtocol,totalHeaderLength,hdr,user); 
-				break;
-		case IP_PROT_UDP:
-				 _DISSECTOR_CHECK_OVERFLOW(*totalHeaderLength+UDP_HEADER_SIZE,hdr->caplen);
-				dissectUdp(onBoardProtocol,totalHeaderLength,hdr,user); 
-				break;	
+		//Tunnel Ip4
+		//break;
+	case IP_PROT_TCP:
+		_DISSECTOR_CHECK_OVERFLOW(*totalHeaderLength+TCP_NO_OPTIONS_HEADER_SIZE,hdr->caplen);
+		dissectTcp(onBoardProtocol,totalHeaderLength,hdr,user);
+		break;
+	case IP_PROT_UDP:
+		_DISSECTOR_CHECK_OVERFLOW(*totalHeaderLength+UDP_HEADER_SIZE,hdr->caplen);
+		dissectUdp(onBoardProtocol,totalHeaderLength,hdr,user);
+		break;
 		//case IP_PROT_IP6: 
-				//Tunnel Ip6
-				//break;
-		default://NOT SUPPORTED
-				DEBUG2("NOT supported");
-				break;
+		//Tunnel Ip6
+		//break;
+	default://NOT SUPPORTED
+		DEBUG2("NOT supported");
+		break;
 
 	}
 	*totalHeaderLength = Ip4Header::totalPacketLength(packetPointer);
 	packetLength = ((struct ip4_header*)packetPointer)->totalLength & 0x0000FFFF;
-	}
+}
 
 /*end of L3 dissectors*/
 /*L4 Dissectors*/
@@ -113,14 +113,54 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	//Setting pointer to on board protocol
 	onBoardProtocol =(uint8_t *)packetPointer+TcpHeader::calcHeaderLengthInBytes(packetPointer);
 
+	payLoadRabinKarp(onBoardProtocol);
+}
+
+long hash(char* key, int m,int offset) {
+	long h = 0;
+	for (int j = 0; j < m; j++)
+		h = (256 * h + key[offset + j]) % 997;
+	return h;
+}
+
+void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
+
 	int payLoadLength = packetLength - 40;
+	int m = 5;
+	char* pattern = "Hello";
 	cout<<"payLoadLength= "<<payLoadLength<<endl;
 	while(payLoadLength-- > 0)
 	{
-		cout<<*(char*) onBoardProtocol;
-		onBoardProtocol++;
+		cout<<*(char*) packetPointer;
+		packetPointer++;
 	}
-	cout<<endl;
+
+	int RM = 1;
+	for (int i = 1; i <= m-1; i++)
+		RM = (256 * RM) % 997;
+	int q = 997;
+	int R = 256;
+
+	if (payLoadLength < m) return;
+	long txtHash = hash((char*)packetPointer, m,0);
+	long patHash = hash((char*)pattern, m,0);
+
+	// check for match at offset 0
+	if ((patHash == txtHash) && memcmp(packetPointer,pattern,0))
+		{ cout<<"Pattern Hello exists"<<endl; return;}
+
+	// check for hash match; if hash match, check for exact match
+	for (int i = m; i < payLoadLength; i++) {
+		// Remove leading digit, add trailing digit, check for match.
+		txtHash = (txtHash + q - RM*packetPointer[i-m] % q) % q;
+		txtHash = (txtHash*R + packetPointer[i]) % q;
+
+		// match
+		int offset = i - m + 1;
+		if ((patHash == txtHash) && memcmp(packetPointer + offset, pattern,m))
+			{ cout<<"Pattern Hello exists"<<endl;return;}
+	}
+
 }
 
 void Dissector::dissectUdp(const uint8_t* packetPointer, unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){
@@ -128,15 +168,15 @@ void Dissector::dissectUdp(const uint8_t* packetPointer, unsigned int* totalHead
 	//uint8_t* onBoardProtocol;	
 
 	//Setting pointer to on board protocol	for L5 analysis
-	
+
 	//ACTIONS::VIRTUAL ACTION
 	UdpVirtualAction(packetPointer,totalHeaderLength,hdr, new UdpHeader(packetPointer),user);
 
 	//Adding size of this header	
 	*totalHeaderLength +=UDP_HEADER_SIZE;
 	DEBUG2("UDP packet");
-	
-	
+
+
 	//HERE should come L5 switch
 	//TODO: L5 support
 }
@@ -170,10 +210,10 @@ unsigned int Dissector::dissect(const uint8_t* packetPointer,const struct pcap_p
 	DEBUG2("Starting dissection...");
 	switch(deviceDataLinkInfo){
 
-		case DLT_EN10MB: //Ethernet
-					dissectEthernet(packetPointer,&totalHeaderLength,hdr,user);
-				break;
-/*		case DLT_IEEE802: //Token ring
+	case DLT_EN10MB: //Ethernet
+		dissectEthernet(packetPointer,&totalHeaderLength,hdr,user);
+		break;
+		/*		case DLT_IEEE802: //Token ring
 				break;
 		case DLT_PPP:	//PPP
 				break;
@@ -193,11 +233,11 @@ unsigned int Dissector::dissect(const uint8_t* packetPointer,const struct pcap_p
 				break;		
 		case DLT_IEEE802_11_RADIO: //802.11 RADIO
 				break;
-*/
-		default: //Rest of LLtypes, check documentation and add code
-				DEBUG2("Not implemented yet");
-				return -1;
-				break;
+		 */
+	default: //Rest of LLtypes, check documentation and add code
+		DEBUG2("Not implemented yet");
+		return -1;
+		break;
 	}
 	DEBUG2("End of dissection\n");
 	//ACTIONS::VIRTUAL ACTION

@@ -143,6 +143,7 @@ __device__ int checkSignature(const u_char *payload, u_char *signature, int payL
 {
 int i = blockIdx.x * blockDim.x + threadIdx.x;
 }
+
 __device__ void print_hex_ascii_line(/*const u_*/char /*uint8_t*/ *payload, int len, int offset)
 {
 
