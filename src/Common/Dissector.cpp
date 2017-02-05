@@ -116,7 +116,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	payLoadRabinKarp(onBoardProtocol);
 }
 
-long hash(char* key, int m,int offset) {
+long hashCal(char* key, int m,int offset) {
 	long h = 0;
 	for (int j = 0; j < m; j++)
 		h = (256 * h + key[offset + j]) % 997;
@@ -142,8 +142,8 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	int R = 256;
 
 	if (payLoadLength < m) return;
-	long txtHash = hash((char*)packetPointer, m,0);
-	long patHash = hash((char*)pattern, m,0);
+	long txtHash = hashCal((char*)packetPointer, m,0);
+	long patHash = hashCal((char*)pattern, m,0);
 
 	// check for match at offset 0
 	if ((patHash == txtHash) && memcmp(packetPointer,pattern,5))
