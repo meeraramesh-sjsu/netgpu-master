@@ -146,7 +146,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	long patHash = hash((char*)pattern, m,0);
 
 	// check for match at offset 0
-	if ((patHash == txtHash) && memcmp(packetPointer,pattern,0))
+	if ((patHash == txtHash) && memcmp(packetPointer,pattern,5))
 		{ cout<<"Pattern Hello exists"<<endl; return;}
 
 	// check for hash match; if hash match, check for exact match
