@@ -90,7 +90,7 @@ void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	}
 	*totalHeaderLength = Ip4Header::totalPacketLength(packetPointer);
-	packetLength = ((struct ip4_header*)packetPointer)->totalLength & 0x0000FFFF;
+	packetLength = ntohs(((struct ip4_header*)packetPointer)->totalLength) & 0x0000FFFF;
 }
 
 /*end of L3 dissectors*/
@@ -144,9 +144,9 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	if (payLoadLength < m) return;
 	long txtHash = hashCal((char*)packetPointer, m,0);
 	long patHash = hashCal((char*)pattern, m,0);
-
+	cout<<"textHash= "<<txtHash<<"patHash= "<<patHash<<endl;
 	// check for match at offset 0
-	if ((patHash == txtHash) && memcmp(packetPointer,pattern,5))
+	if ((patHash == txtHash) && memcmp((char*)packetPointer,pattern,5))
 		{ cout<<"Pattern Hello exists"<<endl; return;}
 
 	// check for hash match; if hash match, check for exact match
@@ -157,7 +157,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 
 		// match
 		int offset = i - m + 1;
-		if ((patHash == txtHash) && memcmp(packetPointer + offset, pattern,m))
+		if ((patHash == txtHash) && memcmp((char*) (packetPointer + offset), pattern,m))
 			{ cout<<"Pattern Hello exists"<<endl;return;}
 	}
 
