@@ -129,11 +129,11 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	int m = 5;
 	char* pattern = "Hello";
 	cout<<"payLoadLength= "<<payLoadLength<<endl;
-	while(payLoadLength-- > 0)
+	/*while(payLoadLength-- > 0)
 	{
 		cout<<*(char*) packetPointer;
 		packetPointer++;
-	}
+	}*/
 
 	int RM = 1;
 	for (int i = 1; i <= m-1; i++)
