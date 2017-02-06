@@ -125,7 +125,7 @@ long hashCal(const char* key, int  m, int offset) {
 
 bool compare(string a,string b)
 {
-	return a.length() < b.length();
+	return a.size() < b.size();
 }
 
 void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
@@ -165,6 +165,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	for (int i = 1; i <= m-1; i++)
 		RM = (256 * RM) % 997;*/
 	int minLen = tmp[0].length();
+	cout<<"minLen= "<<minLen<<endl;
 
 	int q = 997;
 	int R = 256;
