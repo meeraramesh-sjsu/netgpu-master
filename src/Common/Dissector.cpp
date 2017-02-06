@@ -176,7 +176,6 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 		   for(int j=0;j<tmp.size();j++) {
 			   if(tmp[j].size()==minLen) break;
 	            if(i+tmp[j].size()>= payLoadLength) break;
-	            	int hy,j;
 	                for(int k=minLen;k<tmp[j].size();k++)
 	                hy = (hy * 256 + packetPointer[k+i]) % 997;
 	                if(mapHash.count(hy)>0 && memcmp((char*)packetPointer,tmp[hy].c_str(),tmp[j].size()) == 0)
