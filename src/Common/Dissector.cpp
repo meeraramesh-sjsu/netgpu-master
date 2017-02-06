@@ -133,30 +133,30 @@ bool compare(string a,string b)
 void Dissector::payLoadRabinKarp(char* packetPointer) {
 	vector<int> mapHash(997,-1);
 	vector<string> tmp;
-    ifstream myFile ("/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns10.cpp", ios::in);
-    std::string line;
+	set<int> setlen;
+	ifstream myFile ("Pattern/patterns10.cpp", ios::in);
+	std::string line;
 
-    if (myFile.is_open()) {
-     while (std::getline(myFile, line))
-    {
-       tmp.push_back(line);
-    }
-    }
-    else cout << "Unable to open file";
+	if (myFile.is_open()) {
+		while (std::getline(myFile, line))
+		{
+			tmp.push_back(line);
+		}
+	}
+	else cout << "Unable to open file";
 
-    cout<<"Copied to vector, size= "<<tmp.size()<<endl;
-    sort(tmp.begin(),tmp.end(),compare);
+	for(int i=0;i<tmp.size();i++)
+		setlen.insert(tmp[i].size());
 
-    //Fill the map with pattern hashes
-    for(int i=0;i<tmp.size();i++)
-    {
-    	long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
-    	mapHash[patHash] = i;
-    	cout<<"Pattern= "<<tmp[i]<<"hash= "<<patHash<<" ";
-    }
-    cout<<endl;
+	sort(tmp.begin(),tmp.end(),compare);
 
-    cout<<"filled into map" << endl;
+	//Fill the map with pattern hashes
+	for(int i=0;i<tmp.size();i++)
+	{
+		long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
+		mapHash[patHash] = i;
+	}
+
 	int payLoadLength = packetLength - 40;
 	/*int m = 5;
 	char* pattern = "Hello";
@@ -165,70 +165,70 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 	{
 		cout<<*(char*) packetPointer;
 		packetPointer++;
-	}
+	}*/
 		int RM = 1;
 	for (int i = 1; i <= m-1; i++)
-		RM = (256 * RM) % 997;*/
+		RM = (256 * RM) % 997;
 	int minLen = tmp[0].length();
 	cout<<"minLen= "<<minLen<<"payLoadLen= "<<payLoadLength<<endl;
 
 	int q = 997;
 	int R = 256;
-	long hy = 0;
+
+	/*long hy = 0;
+
 	if(payLoadLength < minLen) return;
 
-		for (int j = 0; j < minLen; j++)
-		{
-			cout<<"j= "<<j<<"packet= "<<packetPointer[j]<<endl;
-			hy = (256 * hy + packetPointer[j]) % 997;
-		}
-
-//	cout<<"pattern at hy= "<< tmp[mapHash[hy]] <<endl;
+	for (int j = 0; j < minLen; j++)
+	{
+		hy = (256 * hy + packetPointer[j]) % 997;
+	}
 
 	if(mapHash[hy]>0 && memcmp((char*)packetPointer,tmp[mapHash[hy]].c_str(),minLen) == 0)
-		               cout<<"Pattern "<<tmp[hy]<<" exists!"<<endl;
+		cout<<"Pattern "<<tmp[hy]<<" exists!"<<endl;
 
-	   for(int i=0;i<payLoadLength;i++) {
-		   bool found = false;
-		   for(int j=0;j<tmp.size();j++) {
-			  if(found) continue;
-	            if(i+tmp[j].size()> payLoadLength) break;
-	                for(int k=minLen;k<tmp[j].size();k++)
-	                hy = (hy * 256 + packetPointer[k+i]) % 997;
-	                cout<<"j= "<<j<<"hy= "<<hy<<endl;
-	                int patIndex = mapHash[hy];
-	                if(patIndex>=0)
-	                {
-	                 cout<<"pattern= "<<tmp[patIndex]<<endl;
-	                if(memcmp((packetPointer+i),tmp[patIndex].c_str(),tmp[patIndex].size()) == 0) cout<<"Pattern "<<tmp[patIndex]<<" exists!"<<endl;
-	                minLen = tmp[patIndex].size();
-	                found = true;
-	                }
-		   }
-		   hy = 0;
-		   minLen = 0;
+	for(int i=0;i<payLoadLength;i++) {
+		bool found = false;
+		for(int j=0;j<tmp.size();j++) {
+			if(found) continue;
+			if(i+tmp[j].size()> payLoadLength) break;
+			for(int k=minLen;k<tmp[j].size();k++)
+				hy = (hy * 256 + packetPointer[k+i]) % 997;
+			int patIndex = mapHash[hy];
+			if(patIndex>=0)
+			{
+				if(memcmp((packetPointer+i),tmp[patIndex].c_str(),tmp[patIndex].size()) == 0) cout<<"Pattern "<<tmp[patIndex]<<" exists!"<<endl;
+				minLen = tmp[patIndex].size();
+				found = true;
+			}
 		}
+		hy = 0;
+		minLen = 0;
+	}*/
 
-/*	if (payLoadLength < m) return;
-	long txtHash = hashCal((char*)packetPointer, m,0);
-	long patHash = hashCal((char*)pattern, m,0);
-	cout<<"textHash= "<<txtHash<<"patHash= "<<patHash<<endl;
+	for(auto it= setlen.begin();it!=setlen.end();it++)
+	{
+	int m = *it;
+	if (m > payLoadLength) break;
+	int txtHash = hashCal((char*)packetPointer, m,0);
+
 	// check for match at offset 0
-	if ((patHash == txtHash) && memcmp((char*)packetPointer,pattern,5)==0)
-		{ cout<<"Pattern Hello exists"<<endl; return;}
+	if ((mapHash[txtHash]>0) && memcmp((char*)packetPointer,tmp[mapHash[txtHash]].c_str(),m)==0)
+		{ cout<<"Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
 
 	// check for hash match; if hash match, check for exact match
-	for (int i = m; i < payLoadLength; i++) {
+	for (int j = m; j < payLoadLength; j++) {
 		// Remove leading digit, add trailing digit, check for match.
-		txtHash = (txtHash + q - RM*packetPointer[i-m] % q) % q;
-		txtHash = (txtHash*R + packetPointer[i]) % q;
+		txtHash = (txtHash + q - RM*packetPointer[j-m] % q) % q;
+		txtHash = (txtHash*R + packetPointer[j]) % q;
 
 		// match
-		int offset = i - m + 1;
-		if ((patHash == txtHash) && memcmp((char*) (packetPointer + offset), pattern,m)==0)
-			{ cout<<"Pattern Hello exists"<<endl;return;}
+		int offset = j - m + 1;
+		if ((mapHash[txtHash]>0) && memcmp((char*) (packetPointer + offset), tmp[mapHash[txtHash]].c_str(),m)==0)
+			{ cout<<"Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
 	}
-*/
+	}
+
 }
 
 void Dissector::dissectUdp(const uint8_t* packetPointer, unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){
