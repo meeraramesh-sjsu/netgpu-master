@@ -134,7 +134,7 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 	vector<int> mapHash(997,-1);
 	vector<string> tmp;
 	set<int> setlen;
-	ifstream myFile ("Pattern/patterns10.cpp", ios::in);
+	ifstream myFile ("/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns10.cpp", ios::in);
 	std::string line;
 
 	if (myFile.is_open()) {
@@ -146,17 +146,17 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 	else cout << "Unable to open file";
 
 	for(int i=0;i<tmp.size();i++)
-		setlen.insert(tmp[i].size());
-
+		setlen.insert(tmp[i].length());
+cout<<"inserted into set"<<endl;
 	sort(tmp.begin(),tmp.end(),compare);
-
+cout<<"sorted temp"<<endl;
 	//Fill the map with pattern hashes
 	for(int i=0;i<tmp.size();i++)
 	{
 		long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
 		mapHash[patHash] = i;
 	}
-
+	cout<<"Filled map"<<endl;
 	int payLoadLength = packetLength - 40;
 	/*int m = 5;
 	char* pattern = "Hello";
