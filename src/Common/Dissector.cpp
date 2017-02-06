@@ -131,14 +131,14 @@ bool compare(string a,string b)
 void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	vector<int> mapHash(997,-1);
 	vector<string> tmp;
-    ifstream myFile ("./Pattern/patterns10.cpp", ios::in);
+    ifstream myFile ("Pattern/patterns10.cpp", ios::in);
     std::string line;
 
     while (std::getline(myFile, line))
     {
        tmp.push_back(line);
     }
-
+    cout<<"Copied to vector, size= "<<tmp.size()<<endl;
     sort(tmp.begin(),tmp.end(),compare);
 
     //Fill the map with patternhashes
@@ -147,7 +147,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
     	long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
     	mapHash[patHash] = i;
     }
-
+    cout<<"filled into map" << endl;
 	int payLoadLength = packetLength - 40;
 /*	int m = 5;
 	char* pattern = "Hello";
@@ -168,11 +168,13 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	if(payLoadLength < minLen) return;
 	hy = hashCal((char*)packetPointer,minLen,0);
 
+	cout<<"pattern at hy= "<< tmp[mapHash[hy]] <<endl;
+
 	if(mapHash[hy]>0 && memcmp((char*)packetPointer,tmp[mapHash[hy]].c_str(),minLen) == 0)
 		               cout<<"Pattern "<<tmp[hy]<<" exists!"<<endl;
 
 
-	   for(int i=0;i<payLoadLength;i++) {
+	/*   for(int i=0;i<payLoadLength;i++) {
 		   for(int j=0;j<tmp.size();j++) {
 			   if(tmp[j].size()==minLen) break;
 	            if(i+tmp[j].size()>= payLoadLength) break;
@@ -183,7 +185,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	               cout<<"Pattern "<<tmp[hy]<<" exists!"<<endl;
 	                minLen = tmp[j].size();
 		   }
-		}
+		}*/
 
 /*	if (payLoadLength < m) return;
 	long txtHash = hashCal((char*)packetPointer, m,0);
