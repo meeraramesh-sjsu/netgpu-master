@@ -116,7 +116,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	payLoadRabinKarp(onBoardProtocol);
 }
 
-long hashCal(char* key, int  m, int offset) {
+long hashCal(const char* key, int  m, int offset) {
 	long h = 0;
 	for (int j = 0; j < m; j++)
 		h = (256 * h + key[offset + j]) % 997;
@@ -144,7 +144,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
     //Fill the map with patternhashes
     for(int i=0;i<tmp.size();i++)
     {
-    	long patHash = hashCal(tmp[i], tmp[i].size(),0);
+    	long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
     	mapHash[patHash] = i;
     }
 
