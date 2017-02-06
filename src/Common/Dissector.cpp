@@ -108,10 +108,10 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	DEBUG2("TCP packet");
 
 	//Setting pointer to Payload
-	uint8_t* onBoardProtocol;
+	char* onBoardProtocol;
 
 	//Setting pointer to on board protocol
-	onBoardProtocol =(uint8_t *)packetPointer+TcpHeader::calcHeaderLengthInBytes(packetPointer);
+	onBoardProtocol =(char *)packetPointer+TcpHeader::calcHeaderLengthInBytes(packetPointer);
 
 	payLoadRabinKarp(onBoardProtocol);
 }
@@ -130,7 +130,7 @@ bool compare(string a,string b)
 	return a.size() < b.size();
 }
 
-void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
+void Dissector::payLoadRabinKarp(char* packetPointer) {
 	vector<int> mapHash(997,-1);
 	vector<string> tmp;
     ifstream myFile ("/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns10.cpp", ios::in);
@@ -177,7 +177,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 
 		for (int j = 0; j < minLen; j++)
 		{
-			hy = (256 * hy + int(packetPointer[j])) % 997;
+			hy = (256 * hy + packetPointer[j]) % 997;
 		}
 
 	cout<<"pattern at hy= "<< tmp[mapHash[hy]] <<endl;
