@@ -177,7 +177,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 
 		for (int j = 0; j < minLen; j++)
 		{
-			hy = (256 * hy + packetPointer[j]) % 997;
+			hy = (256 * hy + int(packetPointer[j])) % 997;
 		}
 
 	cout<<"pattern at hy= "<< tmp[mapHash[hy]] <<endl;
