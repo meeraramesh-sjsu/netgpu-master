@@ -147,12 +147,13 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
     cout<<"Copied to vector, size= "<<tmp.size()<<endl;
     sort(tmp.begin(),tmp.end(),compare);
 
-    //Fill the map with patternhashes
+    //Fill the map with pattern hashes
     for(int i=0;i<tmp.size();i++)
     {
     	long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
     	mapHash[patHash] = i;
     }
+
     cout<<"filled into map" << endl;
 	int payLoadLength = packetLength - 40;
 	/*int m = 5;
@@ -173,7 +174,11 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	int R = 256;
 	int hy = 0;
 	if(payLoadLength < minLen) return;
-	hy = hashCal((const char*)packetPointer,minLen,0);
+
+		for (int j = 0; j < minLen; j++)
+		{
+			hy = (256 * hy + packetPointer[j]) % 997;
+		}
 
 	cout<<"pattern at hy= "<< tmp[mapHash[hy]] <<endl;
 
