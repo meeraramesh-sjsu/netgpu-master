@@ -116,32 +116,76 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	payLoadRabinKarp(onBoardProtocol);
 }
 
-long hashCal(char* key, int m,int offset) {
+long hashCal(char* key, int  m, int offset) {
 	long h = 0;
 	for (int j = 0; j < m; j++)
 		h = (256 * h + key[offset + j]) % 997;
 	return h;
 }
 
+bool compare(string a,string b)
+{
+	return a.length() < b.length();
+}
+
 void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
+	unordered_map<int,int> mapHash;
+	vector<string> tmp;
+    ifstream myFile ("Pattern/patterns10.cpp", ios::in);
+    std::string line;
+    std::vector<std::string> myLines;
+    while (std::getline(myFile, line))
+    {
+       tmp.push_back(line);
+    }
+
+    sort(tmp.begin(),tmp.end(),compare);
+
+    //Fill the map with patternhashes
+    for(int i=0;i<tmp.size();i++)
+    {
+    	long patHash = hashCal(tmp[i], tmp[i].size(),0);
+    	mapHash[patHash] = i;
+    }
 
 	int payLoadLength = packetLength - 40;
-	int m = 5;
+/*	int m = 5;
 	char* pattern = "Hello";
 	cout<<"payLoadLength= "<<payLoadLength<<endl;
 	/*while(payLoadLength-- > 0)
 	{
 		cout<<*(char*) packetPointer;
 		packetPointer++;
-	}*/
-
-	int RM = 1;
+	}
+		int RM = 1;
 	for (int i = 1; i <= m-1; i++)
-		RM = (256 * RM) % 997;
+		RM = (256 * RM) % 997;*/
+	int minLen = tmp[0].length();
+
 	int q = 997;
 	int R = 256;
+	int hy = 0;
+	if(payLoadLength < minLen) return;
+	int hy = hashCal((char*)packetPointer,minLen,0);
 
-	if (payLoadLength < m) return;
+	if(mapHash.count(hy)>0 && memcmp((char*)packetPointer,tmp[hy].c_str(),minLen) == 0)
+		               cout<<"Pattern "<<tmp[hy]<<" exists!"<<endl;
+
+
+	   for(int i=0;i<payLoadLength;i++) {
+		   for(int j=0;j<tmp.size();j++) {
+			   if(tmp[j].size()==minLen) break;
+	            if(i+tmp[j].size()>= payLoadLength) break;
+	            	int hy,j;
+	                for(int k=minLen;k<tmp[j].size();k++)
+	                hy = (hy * 256 + packetPointer[k+i]) % 997;
+	                if(mapHash.count(hy)>0 && memcmp((char*)packetPointer,tmp[hy].c_str(),tmp[j].size()) == 0)
+	               cout<<"Pattern "<<tmp[hy]<<" exists!"<<endl;
+	                minLen = tmp[j].size();
+		   }
+		}
+
+/*	if (payLoadLength < m) return;
 	long txtHash = hashCal((char*)packetPointer, m,0);
 	long patHash = hashCal((char*)pattern, m,0);
 	cout<<"textHash= "<<txtHash<<"patHash= "<<patHash<<endl;
@@ -160,7 +204,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 		if ((patHash == txtHash) && memcmp((char*) (packetPointer + offset), pattern,m)==0)
 			{ cout<<"Pattern Hello exists"<<endl;return;}
 	}
-
+*/
 }
 
 void Dissector::dissectUdp(const uint8_t* packetPointer, unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){
