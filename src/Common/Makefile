@@ -269,8 +269,8 @@ CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inl
 CPP = gcc -E
 CPPFLAGS = -std=c++11  -std=c++0x
 CUDA_DIR = /usr/local/cuda/bin/..
-CXX = g++
-CXXCPP = g++ -E
+CXX = g++  -std=c++11  -std=c++0x
+CXXCPP = g++  -std=c++11  -std=c++0x -E
 CXXDEPMODE = depmode=gcc3
 CXXFLAGS = -O3 -fomit-frame-pointer
 CYGPATH_W = echo
