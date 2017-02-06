@@ -172,11 +172,12 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 
 	int q = 997;
 	int R = 256;
-	int hy = 0;
+	long hy = 0;
 	if(payLoadLength < minLen) return;
 
 		for (int j = 0; j < minLen; j++)
 		{
+			cout<<"j= "<<j<<"packet= "<<packetPointer[j]<<endl;
 			hy = (256 * hy + packetPointer[j]) % 997;
 		}
 
