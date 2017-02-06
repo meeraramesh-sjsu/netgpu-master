@@ -120,7 +120,6 @@ long hashCal(const char* key, int  m, int offset) {
 	long h = 0;
 	for (int j = 0; j < m; j++)
 	{
-		cout<<"payload= "<<key[offset + j]<<" ";
 		h = (256 * h + key[offset + j]) % 997;
 	}
 	return h;
