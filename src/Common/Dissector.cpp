@@ -152,7 +152,7 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
     {
     	long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
     	mapHash[patHash] = i;
-    	cout<<"Pattern= "<<tmp[i]<<"hash= "<<mapHash[patHash]<<" ";
+    	cout<<"Pattern= "<<tmp[i]<<"hash= "<<patHash<<" ";
     }
     cout<<endl;
 
@@ -191,7 +191,7 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 
 	   for(int i=0;i<payLoadLength;i++) {
 		   for(int j=0;j<tmp.size();j++) {
-			   if(tmp[j].size()==minLen) break;
+			   if(tmp[j].size()==minLen) continue;
 	            if(i+tmp[j].size()>= payLoadLength) break;
 	                for(int k=minLen;k<tmp[j].size();k++)
 	                hy = (hy * 256 + packetPointer[k+i]) % 997;
