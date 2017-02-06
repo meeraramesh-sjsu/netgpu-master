@@ -131,7 +131,7 @@ bool compare(string a,string b)
 void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	unordered_map<int,int> mapHash;
 	vector<string> tmp;
-    ifstream myFile ("Pattern/patterns10.cpp", ios::in);
+    ifstream myFile ("./Pattern/patterns10.cpp", ios::in);
     std::string line;
 
     while (std::getline(myFile, line))
