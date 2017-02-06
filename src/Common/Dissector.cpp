@@ -133,7 +133,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	vector<string> tmp;
     ifstream myFile ("Pattern/patterns10.cpp", ios::in);
     std::string line;
-    std::vector<std::string> myLines;
+
     while (std::getline(myFile, line))
     {
        tmp.push_back(line);
@@ -166,7 +166,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	int R = 256;
 	int hy = 0;
 	if(payLoadLength < minLen) return;
-	int hy = hashCal((char*)packetPointer,minLen,0);
+	hy = hashCal((char*)packetPointer,minLen,0);
 
 	if(mapHash.count(hy)>0 && memcmp((char*)packetPointer,tmp[hy].c_str(),minLen) == 0)
 		               cout<<"Pattern "<<tmp[hy]<<" exists!"<<endl;

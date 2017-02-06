@@ -18,6 +18,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <iostream>
 #include <arpa/inet.h>
 #include <unordered_map>
+#include <algorithm>
 #include <fstream>
 #include "../Util.h"
 
