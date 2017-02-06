@@ -192,7 +192,7 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 		   bool found = false;
 		   for(int j=0;j<tmp.size();j++) {
 			  if(found) continue;
-	            if(i+tmp[j].size()>= payLoadLength) break;
+	            if(i+tmp[j].size()> payLoadLength) break;
 	                for(int k=minLen;k<tmp[j].size();k++)
 	                hy = (hy * 256 + packetPointer[k+i]) % 997;
 	                cout<<"j= "<<j<<"hy= "<<hy<<endl;
