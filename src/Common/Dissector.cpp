@@ -165,7 +165,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	for (int i = 1; i <= m-1; i++)
 		RM = (256 * RM) % 997;*/
 	int minLen = tmp[0].length();
-	cout<<"minLen= "<<minLen<<endl;
+	cout<<"minLen= "<<minLen<<"payLoadLen= "<<payLoadLength<<endl;
 
 	int q = 997;
 	int R = 256;
