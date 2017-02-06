@@ -131,13 +131,17 @@ bool compare(string a,string b)
 void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	vector<int> mapHash(997,-1);
 	vector<string> tmp;
-    ifstream myFile ("Pattern/patterns10.cpp", ios::in);
+    ifstream myFile ("/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns10.cpp", ios::in);
     std::string line;
 
-    while (std::getline(myFile, line))
+    if (myFile.is_open()) {
+     while (std::getline(myFile, line))
     {
        tmp.push_back(line);
     }
+    }
+    else cout << "Unable to open file";
+
     cout<<"Copied to vector, size= "<<tmp.size()<<endl;
     sort(tmp.begin(),tmp.end(),compare);
 
@@ -149,7 +153,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
     }
     cout<<"filled into map" << endl;
 	int payLoadLength = packetLength - 40;
-/*	int m = 5;
+	/*int m = 5;
 	char* pattern = "Hello";
 	cout<<"payLoadLength= "<<payLoadLength<<endl;
 	/*while(payLoadLength-- > 0)
