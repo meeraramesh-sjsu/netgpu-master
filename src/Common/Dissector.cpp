@@ -181,13 +181,13 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 			hy = (256 * hy + packetPointer[j]) % 997;
 		}
 
-	cout<<"pattern at hy= "<< tmp[mapHash[hy]] <<endl;
+//	cout<<"pattern at hy= "<< tmp[mapHash[hy]] <<endl;
 
 	if(mapHash[hy]>0 && memcmp((char*)packetPointer,tmp[mapHash[hy]].c_str(),minLen) == 0)
 		               cout<<"Pattern "<<tmp[hy]<<" exists!"<<endl;
 
 
-	/*   for(int i=0;i<payLoadLength;i++) {
+	   for(int i=0;i<payLoadLength;i++) {
 		   for(int j=0;j<tmp.size();j++) {
 			   if(tmp[j].size()==minLen) break;
 	            if(i+tmp[j].size()>= payLoadLength) break;
@@ -198,7 +198,7 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 	               cout<<"Pattern "<<tmp[hy]<<" exists!"<<endl;
 	                minLen = tmp[j].size();
 		   }
-		}*/
+		}
 
 /*	if (payLoadLength < m) return;
 	long txtHash = hashCal((char*)packetPointer, m,0);
