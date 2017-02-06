@@ -196,12 +196,14 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 	                hy = (hy * 256 + packetPointer[k+i]) % 997;
 	                int patIndex = mapHash[hy];
 	                cout<<"patIndex= "<<patIndex<<endl;
-	                if(patIndex>0 && memcmp((packetPointer+i),tmp[patIndex].c_str(),tmp[patIndex].size()) == 0)
+	                if(patIndex>0)
 	                {
-	                cout<<"Pattern "<<tmp[patIndex]<<" exists!"<<endl;
+	                if(memcmp((packetPointer+i),tmp[patIndex].c_str(),tmp[patIndex].size()) == 0) cout<<"Pattern "<<tmp[patIndex]<<" exists!"<<endl;
 	                minLen = tmp[patIndex].size();
 	                }
 		   }
+		   hy = 0;
+		   minLen = 0;
 		}
 
 /*	if (payLoadLength < m) return;
