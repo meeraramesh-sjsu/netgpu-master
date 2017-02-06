@@ -119,7 +119,10 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 long hashCal(const char* key, int  m, int offset) {
 	long h = 0;
 	for (int j = 0; j < m; j++)
+	{
+		cout<<"payload= "<<key[offset + j]<<" ";
 		h = (256 * h + key[offset + j]) % 997;
+	}
 	return h;
 }
 
@@ -171,7 +174,7 @@ void Dissector::payLoadRabinKarp(const uint8_t* packetPointer) {
 	int R = 256;
 	int hy = 0;
 	if(payLoadLength < minLen) return;
-	hy = hashCal((char*)packetPointer,minLen,0);
+	hy = hashCal((const char*)packetPointer,minLen,0);
 
 	cout<<"pattern at hy= "<< tmp[mapHash[hy]] <<endl;
 
