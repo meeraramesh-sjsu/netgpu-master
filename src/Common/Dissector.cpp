@@ -147,16 +147,16 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 
 	for(int i=0;i<tmp.size();i++)
 		setlen.insert(tmp[i].length());
-cout<<"inserted into set"<<endl;
+
 	sort(tmp.begin(),tmp.end(),compare);
-cout<<"sorted temp"<<endl;
+
 	//Fill the map with pattern hashes
 	for(int i=0;i<tmp.size();i++)
 	{
 		long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
 		mapHash[patHash] = i;
 	}
-	cout<<"Filled map"<<endl;
+
 	int payLoadLength = packetLength - 40;
 	/*int m = 5;
 	char* pattern = "Hello";
@@ -169,7 +169,6 @@ cout<<"sorted temp"<<endl;
 
 
 	int minLen = tmp[0].length();
-	cout<<"minLen= "<<minLen<<"payLoadLen= "<<payLoadLength<<endl;
 
 	int q = 997;
 	int R = 256;
@@ -217,7 +216,7 @@ cout<<"sorted temp"<<endl;
 
 	// check for match at offset 0
 	if ((mapHash[txtHash]>0) && memcmp((char*)packetPointer,tmp[mapHash[txtHash]].c_str(),m)==0)
-		{ cout<<"Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
+		{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
 
 	// check for hash match; if hash match, check for exact match
 	for (int j = m; j < payLoadLength; j++) {
@@ -228,7 +227,7 @@ cout<<"sorted temp"<<endl;
 		// match
 		int offset = j - m + 1;
 		if ((mapHash[txtHash]>0) && memcmp((char*) (packetPointer + offset), tmp[mapHash[txtHash]].c_str(),m)==0)
-			{ cout<<"Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
+			{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
 	}
 	}
 
