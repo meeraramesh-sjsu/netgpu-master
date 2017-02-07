@@ -98,6 +98,7 @@ int buildMatchingMachine(vector<string> arr, int k)
     // Now queue has states 1 and 3
     while (q.size())
     {
+    	cout<<"q size=" <<q.size();
         // Remove the front state from queue
         int state = q.front();
         q.pop();
@@ -105,7 +106,7 @@ int buildMatchingMachine(vector<string> arr, int k)
         // For the removed state, find failure function for
         // all those characters for which goto function is
         // not defined.
-        for (int ch = 0; ch <= MAXC; ++ch)
+        for (int ch = 0; ch < MAXC; ++ch)
         {
             // If goto function is defined for character 'ch'
             // and 'state'
