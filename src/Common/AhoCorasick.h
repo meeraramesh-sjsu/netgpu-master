@@ -98,7 +98,6 @@ int buildMatchingMachine(vector<string> arr, int k)
     // Now queue has states 1 and 3
     while (q.size())
     {
-    	cout<<"q size=" <<q.size();
         // Remove the front state from queue
         int state = q.front();
         q.pop();
