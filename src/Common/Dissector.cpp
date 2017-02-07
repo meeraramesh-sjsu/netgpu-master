@@ -1,4 +1,5 @@
 #include "Dissector.h"
+#include "AhoCorasick.h"
 
 #define _DISSECTOR_CHECK_OVERFLOW(a,b) \
 		do{ \

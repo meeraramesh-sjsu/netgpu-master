@@ -28,7 +28,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "Protocols/TcpHeader.h"
 #include "Protocols/UdpHeader.h"
 #include "Protocols/IcmpHeader.h"
-#include "AhoCorasick.h"
 using namespace std;
 
 class Dissector {
