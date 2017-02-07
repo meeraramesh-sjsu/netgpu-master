@@ -130,6 +130,41 @@ bool compare(string a,string b)
 	return a.size() < b.size();
 }
 
+// This function finds all occurrences of all array words
+// in text.
+void searchWords(string arr[], int k, string text)
+{
+    // Preprocess patterns.
+    // Build machine with goto, failure and output functions
+    buildMatchingMachine(arr, k);
+
+    // Initialize current state
+    int currentState = 0;
+
+    // Traverse the text through the nuilt machine to find
+    // all occurrences of words in arr[]
+    for (int i = 0; i < text.size(); ++i)
+    {
+        currentState = findNextState(currentState, text[i]);
+
+        // If match not found, move to next state
+        if (out[currentState] == 0)
+             continue;
+
+        // Match found, print all matching words of arr[]
+        // using output function.
+        for (int j = 0; j < k; ++j)
+        {
+            if (out[currentState] & (1 << j))
+            {
+                cout << "Word " << arr[j] << " appears from "
+                     << i - arr[j].size() + 1 << " to " << i << endl;
+            }
+        }
+    }
+}
+
+
 void Dissector::payLoadRabinKarp(char* packetPointer) {
 	vector<int> mapHash(997,-1);
 	vector<string> tmp;
@@ -203,7 +238,9 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 		hy = 0;
 		minLen = 0;
 	}*/
-
+	//More optimal Rabin karp algorithm
+	//Starting from 0, move for every pattern length, computing the hash values
+	//Time complexity O(N* number of pattern lengths)
 	for(auto it= setlen.begin();it!=setlen.end();it++)
 	{
 	int m = *it;
