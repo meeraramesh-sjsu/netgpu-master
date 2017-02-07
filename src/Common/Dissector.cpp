@@ -114,7 +114,22 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	//Setting pointer to on board protocol
 	onBoardProtocol =(char *)packetPointer+TcpHeader::calcHeaderLengthInBytes(packetPointer);
 
-	payLoadRabinKarp(onBoardProtocol);
+	//payLoadRabinKarp(onBoardProtocol);
+	string packet(onBoardProtocol);
+
+	vector<string> tmp;
+	ifstream myFile ("/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns10.cpp", ios::in);
+	std::string line;
+
+	if (myFile.is_open()) {
+		while (std::getline(myFile, line))
+		{
+			tmp.push_back(line);
+		}
+	}
+	else cout << "Unable to open file";
+
+	searchWords(tmp,tmp.size(),packet);
 }
 
 long hashCal(const char* key, int  m, int offset) {
@@ -133,36 +148,36 @@ bool compare(string a,string b)
 
 // This function finds all occurrences of all array words
 // in text.
-void searchWords(string arr[], int k, string text)
+void searchWords(vector<string> arr, int k, string text)
 {
-    // Preprocess patterns.
-    // Build machine with goto, failure and output functions
-    buildMatchingMachine(arr, k);
+	// Preprocess patterns.
+	// Build machine with goto, failure and output functions
+	buildMatchingMachine(arr, k);
 
-    // Initialize current state
-    int currentState = 0;
+	// Initialize current state
+	int currentState = 0;
 
-    // Traverse the text through the nuilt machine to find
-    // all occurrences of words in arr[]
-    for (int i = 0; i < text.size(); ++i)
-    {
-        currentState = findNextState(currentState, text[i]);
+	// Traverse the text through the nuilt machine to find
+	// all occurrences of words in arr[]
+	for (int i = 0; i < text.size(); ++i)
+	{
+		currentState = findNextState(currentState, text[i]);
 
-        // If match not found, move to next state
-        if (out[currentState] == 0)
-             continue;
+		// If match not found, move to next state
+		if (out[currentState] == 0)
+			continue;
 
-        // Match found, print all matching words of arr[]
-        // using output function.
-        for (int j = 0; j < k; ++j)
-        {
-            if (out[currentState] & (1 << j))
-            {
-                cout << "Word " << arr[j] << " appears from "
-                     << i - arr[j].size() + 1 << " to " << i << endl;
-            }
-        }
-    }
+		// Match found, print all matching words of arr[]
+		// using output function.
+		for (int j = 0; j < k; ++j)
+		{
+			if (out[currentState] & (1 << j))
+			{
+				cout << "Word " << arr[j] << " appears from "
+						<< i - arr[j].size() + 1 << " to " << i << endl;
+			}
+		}
+	}
 }
 
 
@@ -244,29 +259,29 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 	//Time complexity O(N* number of pattern lengths)
 	for(auto it= setlen.begin();it!=setlen.end();it++)
 	{
-	int m = *it;
-	int RM = 1;
-	for (int i = 1; i <= m-1; i++)
-	RM = (256 * RM) % 997;
+		int m = *it;
+		int RM = 1;
+		for (int i = 1; i <= m-1; i++)
+			RM = (256 * RM) % 997;
 
-	if (m > payLoadLength) break;
-	int txtHash = hashCal((char*)packetPointer, m,0);
+		if (m > payLoadLength) break;
+		int txtHash = hashCal((char*)packetPointer, m,0);
 
-	// check for match at offset 0
-	if ((mapHash[txtHash]>0) && memcmp((char*)packetPointer,tmp[mapHash[txtHash]].c_str(),m)==0)
+		// check for match at offset 0
+		if ((mapHash[txtHash]>0) && memcmp((char*)packetPointer,tmp[mapHash[txtHash]].c_str(),m)==0)
 		{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
 
-	// check for hash match; if hash match, check for exact match
-	for (int j = m; j < payLoadLength; j++) {
-		// Remove leading digit, add trailing digit, check for match.
-		txtHash = (txtHash + q - RM*packetPointer[j-m] % q) % q;
-		txtHash = (txtHash*R + packetPointer[j]) % q;
+		// check for hash match; if hash match, check for exact match
+		for (int j = m; j < payLoadLength; j++) {
+			// Remove leading digit, add trailing digit, check for match.
+			txtHash = (txtHash + q - RM*packetPointer[j-m] % q) % q;
+			txtHash = (txtHash*R + packetPointer[j]) % q;
 
-		// match
-		int offset = j - m + 1;
-		if ((mapHash[txtHash]>0) && memcmp((char*) (packetPointer + offset), tmp[mapHash[txtHash]].c_str(),m)==0)
+			// match
+			int offset = j - m + 1;
+			if ((mapHash[txtHash]>0) && memcmp((char*) (packetPointer + offset), tmp[mapHash[txtHash]].c_str(),m)==0)
 			{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
-	}
+		}
 	}
 
 }

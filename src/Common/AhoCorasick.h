@@ -28,7 +28,7 @@ int g[MAXS][MAXC];
 //         in the text.
 // Returns the number of states that the built machine has.
 // States are numbered 0 up to the return value - 1, inclusive.
-int buildMatchingMachine(string arr[], int k)
+int buildMatchingMachine(vector<string> arr, int k)
 {
     // Initialize all values in output function as 0.
     memset(out, 0, sizeof out);
