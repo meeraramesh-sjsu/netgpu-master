@@ -30,6 +30,7 @@ int g[MAXS][MAXC];
 // States are numbered 0 up to the return value - 1, inclusive.
 int buildMatchingMachine(vector<string> arr, int k)
 {
+	cout<<"build Matching machine, no Of Patterns= "<<k<<endl;
     // Initialize all values in output function as 0.
     memset(out, 0, sizeof out);
 
@@ -61,6 +62,8 @@ int buildMatchingMachine(vector<string> arr, int k)
 
         // Add current word in output function
         out[currentState] |= (1 << i);
+
+        cout<<"Completed pattern "<<i<<endl;
     }
 
     // For all characters which don't have an edge from
