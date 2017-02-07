@@ -49,7 +49,7 @@ int buildMatchingMachine(vector<string> arr, int k)
         // Insert all characters of current word in arr[]
         for (int j = 0; j < word.size(); ++j)
         {
-            int ch = word[j] - 'a';
+            int ch = word[j];
 
             // Allocate a new node (create a new state) if a
             // node for ch doesn't exist.
@@ -140,7 +140,7 @@ int buildMatchingMachine(vector<string> arr, int k)
 int findNextState(int currentState, char nextInput)
 {
     int answer = currentState;
-    int ch = nextInput - 'a';
+    int ch = nextInput;
 
     // If goto is not defined, use failure function
     while (g[answer][ch] == -1)

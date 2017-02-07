@@ -128,7 +128,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 		}
 	}
 	else cout << "Unable to open file";
-
+	cout<<"added file contents to vector"<<endl;
 	searchWords(tmp,tmp.size(),packet);
 }
 
