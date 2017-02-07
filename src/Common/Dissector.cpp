@@ -148,7 +148,7 @@ bool compare(string a,string b)
 
 // This function finds all occurrences of all array words
 // in text.
-void searchWords(vector<string> arr, int k, string text)
+void Dissector::searchWords(vector<string> arr, int k, string text)
 {
 	// Preprocess patterns.
 	// Build machine with goto, failure and output functions
