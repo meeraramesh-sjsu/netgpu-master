@@ -153,7 +153,7 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 	// Preprocess patterns.
 	// Build machine with goto, failure and output functions
 	buildMatchingMachine(arr, k);
-
+	cout<<"Completed building machine"<<endl;
 	// Initialize current state
 	int currentState = 0;
 

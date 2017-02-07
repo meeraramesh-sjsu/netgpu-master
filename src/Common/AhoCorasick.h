@@ -6,10 +6,10 @@ using namespace std;
 
 // Max number of states in the matching machine.
 // Should be equal to the sum of the length of all keywords.
-const int MAXS = 500;
+const int MAXS = 3000;
 
 // Maximum number of characters in input alphabet
-const int MAXC = 26;
+const int MAXC = 256;
 
 // OUTPUT FUNCTION IS IMPLEMENTED USING out[]
 // Bit i in this mask is one if the word with index i
