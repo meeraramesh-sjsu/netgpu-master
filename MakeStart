@@ -1,7 +1,5 @@
 #!/bin/bash
-git pull origin Meera
-chmod 777 module-installer.sh
-chmod 777 cudalt.py
+git pull origin WuManber
 make
 make install
 cd Examples/
