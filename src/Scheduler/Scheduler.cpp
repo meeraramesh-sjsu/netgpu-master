@@ -160,7 +160,7 @@ void Scheduler::addFeederToPool(PacketFeeder* feeder,int limit){
 
 /* Adds an analysis to the pool */
 
-void Scheduler::addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int *noOfPatterns)){
+void Scheduler::addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int noOfPatterns)){
 	int i;
 
 	cout << "\n ---- addAnalysisToPool called \n";
@@ -177,7 +177,7 @@ void Scheduler::addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packe
 }
 
 /* Buffer analyze routine */
-void Scheduler::analyzeBuffer(PacketBuffer* packetBuffer){
+void Scheduler::analyzeBuffer(PacketBuffer* packetBuffer, int noOfPatterns){
 	int i;
 	static int counter=0;	
 
@@ -196,7 +196,7 @@ void Scheduler::analyzeBuffer(PacketBuffer* packetBuffer){
 	/*** Throwing Analysis ***/
 	for(i=0;i<SCHEDULER_MAX_ANALYSIS_POOL_SIZE;i++){
 		if(analysisFunctions[i] != NULL){
-			analysisFunctions[i](packetBuffer,GPU_buffer);
+			analysisFunctions[i](packetBuffer,GPU_buffer,noOfPatterns);
 		}else
 			break;
 	}
@@ -211,7 +211,7 @@ void Scheduler::analyzeBuffer(PacketBuffer* packetBuffer){
 
 /* Start routine. Infinite loop that obtains buffer and analyzes it*/
 
-void Scheduler::start(void){
+void Scheduler::start(int noOfPatterns){
 
 	int i;
 	bool hasFeedersLeft;
@@ -232,7 +232,7 @@ void Scheduler::start(void){
 
 				//Analyse it
 				cout<< " \n ---- calling analyze function \n";
-				analyzeBuffer(buffer);
+				analyzeBuffer(buffer,noOfPatterns);
 
 				//Check if(offline) feeder has no more packets to get
 				if(buffer == NULL || buffer->getFlushFlag())

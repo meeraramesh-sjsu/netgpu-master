@@ -35,7 +35,7 @@ int main(int args,char *argv[]) {
 	Scheduler::addFeederToPool(feeder);
 
 	//Starting execution (infinite loop)
-	Scheduler::start();
+	Scheduler::start(noOfPatterns);
 
 	//std::cout<<" \n Ending ......."<<endl;
 

@@ -42,12 +42,12 @@ class Scheduler{
 
 public:
 
-	static void start(void);
+	static void start(int noOfPatterns);
 	static void term(void);
 	static DatabaseManager* dbManager;
 
 	//Add tot analysis Pool
-	static void addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int *noOfPatterns));
+	static void addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int noOfPatterns));
 
 	//Add to feeders pool
 	static void addFeederToPool(PacketFeeder* feeder,int limit=-1);
@@ -56,13 +56,13 @@ public:
 private:	
 	static void init(void);
 	static void programHandler(void);
-	static void analyzeBuffer(PacketBuffer* buffer);
+	static void analyzeBuffer(PacketBuffer* buffer,int noOfPatterns);
 
 	static packet_t* loadBufferToGPU(PacketBuffer* packetBuffer);
 	static void unloadBufferFromGPU(packet_t* GPU_buffer);
 
 	//Analysis Pointers Pool
-	static	void (*analysisFunctions[SCHEDULER_MAX_ANALYSIS_POOL_SIZE])(PacketBuffer* packetBuffer, packet_t* GPU_buffer, int* noOfPatterns);
+	static	void (*analysisFunctions[SCHEDULER_MAX_ANALYSIS_POOL_SIZE])(PacketBuffer* packetBuffer, packet_t* GPU_buffer, int noOfPatterns);
 
 	//Feeders Pool
 	static feeders_t feedersPool[SCHEDULER_MAX_FEEDERS_POOL_SIZE]; 	     
