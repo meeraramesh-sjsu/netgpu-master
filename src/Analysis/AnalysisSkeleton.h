@@ -65,6 +65,16 @@ private:
 
 #ifdef __CUDACC__
 
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
+
 /**** Forward declaration prototypes ****/
 #define statesrow 550000
 
@@ -256,7 +266,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int n = 14;
 		int p_size = 3;
 		int alphabet = 256;
-		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/patterns" + std::to_string(noOfPatterns) + ".cpp";
+		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/patterns" + patch::to_string(noOfPatterns) + ".cpp";
 		vector<string> tmp;
 		string line;
 		std::ifstream myfile(fileName.c_str());
