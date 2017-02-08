@@ -187,8 +187,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		//N is the number of packets, same as number of blocks
 		size_t N = 260;
-		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
-		cudaAssert(cudaThreadSynchronize());
 
 		/*** KERNEL DIMS ***/
 		//dim3 block(ANALYSIS_TPB);		 			//Threads Per Block (1D)
@@ -2034,6 +2032,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		/*New*/	cudaAssert(cudaHostGetDevicePointer(&d_gotofn, array, 0));
 
 		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
+		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
 		cudaAssert(cudaMalloc(&d_output,states * sizeof(int)));
 		cudaAssert(cudaMemcpy(d_output,output,states * sizeof(int),cudaMemcpyHostToDevice));
 
@@ -2043,7 +2042,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert( cudaEventRecord(start, 0) );
 		//cudaEventRecord is aynchronous, to make sure the event is recorded, below command used
 		cudaAssert( cudaEventSynchronize(start));
-
 
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_gotofn,d_result,d_output);
 		cudaAssert(cudaThreadSynchronize());
