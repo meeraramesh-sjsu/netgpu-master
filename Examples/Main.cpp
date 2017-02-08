@@ -16,7 +16,7 @@ int main(int args,char *argv[]) {
 
 	//Capture packets from a pcap capture file (argv[1])
 	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
-	string AnoOfPatterns = argv[2];
+	int AnoOfPatterns = atoi(argv[2]);
 
 	ANALYSIS_NAME::noOfPatterns = AnoOfPatterns;
 	//Capturing from lo
