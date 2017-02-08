@@ -1,5 +1,6 @@
 #include "Dissector.h"
 #include "AhoCorasick.h"
+#include "WuManber.h"
 
 #define _DISSECTOR_CHECK_OVERFLOW(a,b) \
 		do{ \
@@ -8,6 +9,13 @@
 				return; \
 			} \
 		}while(0)
+
+struct length {
+	bool operator() ( const string& a, const string& b )
+	{
+		return a.size() < b.size();
+	}
+};
 
 //TotalPacketLength, used to find the payload
 int packetLength;
@@ -129,7 +137,39 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	}
 	else cout << "Unable to open file";
 	cout<<"added file contents to vector"<<endl;
-	searchWords(tmp,tmp.size(),packet);
+
+	//Aho-Corasick
+	//searchWords(tmp,tmp.size(),packet);
+
+	//WuManber
+	int m = (*min_element(tmp.begin(),tmp.end(),length())).size();
+	int shiftsize = wu_determine_shiftsize(256);
+	int p_size = tmp.size();
+	int *SHIFT = (int *) malloc(shiftsize * sizeof(int)); //shiftsize = maximum hash value of the B-size suffix of the patterns
+
+	//The hash value of the B'-character prefix of a pattern
+	int *PREFIX_value = (int *) malloc(shiftsize * p_size * sizeof(int)); //The possible prefixes for the hash values.
+
+	//The pattern number
+	int *PREFIX_index = (int *) malloc(shiftsize * p_size * sizeof(int));
+
+	//How many patterns with the same prefix hash exist
+	int *PREFIX_size = (int *) malloc(shiftsize * sizeof(int));
+
+	for (int i = 0; i < shiftsize; i++) {
+
+		//*( *SHIFT + i ) = m - B + 1;
+		SHIFT[i] = m - 3 + 1;
+		PREFIX_size[i] = 0;
+	}
+
+	preproc_wu(tmp,m,3,SHIFT,PREFIX_value,PREFIX_index,PREFIX_size);
+
+//	preproc_wu(tmp,  m, 3,
+	//		int *SHIFT, int *PREFIX_value, int *PREFIX_index, int *PREFIX_size);
+
+	search_wu(tmp,m,packet,packet.size(),SHIFT,PREFIX_value,PREFIX_index,PREFIX_size);
+
 }
 
 long hashCal(const char* key, int  m, int offset) {
