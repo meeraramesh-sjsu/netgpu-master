@@ -8,7 +8,7 @@ using namespace std;
 int shiftsize = 0;
 int m_nBitsInShift = 2;
 
-void wu_determine_shiftsize(int alphabet) {
+int wu_determine_shiftsize(int alphabet) {
 
 	//the maximum size of the hash value of the B-size suffix of the patterns for the Wu-Manber algorithm
 	if (alphabet == 2)
@@ -37,6 +37,8 @@ void wu_determine_shiftsize(int alphabet) {
 
 	else
 		cout<<"The alphabet size is not supported by wu-manber\n";
+
+	return shiftsize;
 }
 
 unsigned int search_wu(vector<string> pattern, int m,
@@ -108,7 +110,7 @@ void preproc_wu(vector<string> pattern, int m, int B,
 	int p_size = pattern.size();
 	unsigned int j, q, hash;
 
-	size_t shiftlen, prefixhash;
+	int shiftlen, prefixhash;
 
 	for (j = 0; j < p_size; ++j) {
 
