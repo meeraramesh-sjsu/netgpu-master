@@ -250,7 +250,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int chars = 256;
 		memset(gotofn,0,sizeof(gotofn));
 		int states = buildGoto(tmp);
-		int array[states * 256];
+		int* array;
 
 		//	printf("CUDA HOST ALLOC \n");
 		cudaAssert(cudaHostAlloc((void**) &array, states * 256 * sizeof(int), cudaHostAllocMapped));
