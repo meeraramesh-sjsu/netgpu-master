@@ -27,7 +27,7 @@ class ANALYSIS_NAME:public AnalysisSkeleton{
 public:
 	static void launchAnalysis(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int noOfPatterns);
 	static QueryManager queryManager;
-	int noOfPatterns;
+	static int noOfPatterns;
 private:
 	
 };
