@@ -47,7 +47,7 @@ public:
 	static DatabaseManager* dbManager;
 
 	//Add tot analysis Pool
-	static void addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer));
+	static void addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int *noOfPatterns));
 
 	//Add to feeders pool
 	static void addFeederToPool(PacketFeeder* feeder,int limit=-1);

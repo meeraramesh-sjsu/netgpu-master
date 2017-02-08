@@ -160,7 +160,7 @@ void Scheduler::addFeederToPool(PacketFeeder* feeder,int limit){
 
 /* Adds an analysis to the pool */
 
-void Scheduler::addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer)){
+void Scheduler::addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int *noOfPatterns)){
 	int i;
 
 	cout << "\n ---- addAnalysisToPool called \n";
