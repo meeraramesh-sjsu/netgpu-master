@@ -2008,7 +2008,16 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int chars = 256;
 		memset(gotofn,0,sizeof(gotofn));
 		int states = buildGoto(tmp);
+		/*New*/	int array[states * 256];
+
+		/*New*/	cudaAssert(cudaHostAlloc((void**) &array, states * 256 * sizeof(int), cudaHostAllocMapped));
+
+		for(int i=0;i<states;i++)
+			for(int j=0;j<256;j++)
+		array[i * 256 + j ] = gotofn[i][j];
+
 		cout<<"total packets= "<<state.lastPacket<<endl;
+
 		int *d_gotofn;
 		int *d_output;
 		size_t pitch;
@@ -2016,8 +2025,10 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int * result = (int*)malloc(N *sizeof(int));
 		memset(result,0,N *sizeof(int));
 		int * d_result;
-		cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
-		cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
+		//cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
+		//cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
+
+		/*New*/	cudaAssert(cudaHostGetDevicePointer(&d_gotofn, array, 0));
 
 		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
 
