@@ -259,7 +259,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int alphabet = 256;
 
 		vector<string> tmp;
-
+		string line;
 		 std::ifstream myfile("/home/meera/gpudir/netgpu-master/src/Analysis/patterns100.cpp");
 
 		    if(!myfile) //Always test the file open.
