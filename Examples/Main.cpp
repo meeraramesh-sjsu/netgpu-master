@@ -1,7 +1,12 @@
 #include <cstring>
 #include <iostream>
 
-#include <netgpu/netgpu.h>
+#include "../src/PacketFeeders/LivePacketFeeder.h"
+#include "../src/PacketFeeders/OfflinePacketFeeder.h"
+#include "../src/PreAnalyzer/PreAnalyzer.h"
+#include "../src/Scheduler/Scheduler.h"
+#include "../src/Analysis/Libs/Host/GpuMemoryManagement/BMMS.h"
+
 //#include "Analysis/Rate/Rate.h"
 //#include "Analysis/Anomalies/Anomalies.h"
 //#include "Analysis/Throughput/Throughput.h"
@@ -26,7 +31,6 @@ int main(int args,char *argv[]) {
 	//cout <<"Starting analysis in few minutes...\n";
 
 	//	std::cout <<"Starting analysis now      ...\n";
-
 
 	//Adding analysis to pool
 	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);

@@ -38,15 +38,13 @@ typedef struct{
 using namespace std;
 
 class Scheduler{
-
-
 public:
 
 	static void start(int noOfPatterns);
 	static void term(void);
 	static DatabaseManager* dbManager;
 
-	//Add tot analysis Pool
+	//Add to analysis Pool
 	static void addAnalysisToPool(void (*func)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int noOfPatterns));
 
 	//Add to feeders pool
