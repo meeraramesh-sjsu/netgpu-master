@@ -25,7 +25,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 class ANALYSIS_NAME:public AnalysisSkeleton{
 
 public:
-	static void launchAnalysis(PacketBuffer* packetBuffer, packet_t* GPU_buffer);
+	static void launchAnalysis(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int noOfPatterns);
 	static QueryManager queryManager;
 private:
 	
@@ -37,10 +37,10 @@ private:
 QueryManager ANALYSIS_NAME::queryManager; //Scheduler::dbManager->getManager() );
 
 /* Launch analysis method */
-void ANALYSIS_NAME::launchAnalysis(PacketBuffer* packetBuffer, packet_t* GPU_buffer){	
+void ANALYSIS_NAME::launchAnalysis(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int noOfPatterns){
 
 	//Launch Analysis (wrapper from C++ to C)
-	COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)<ANALYSIS_INPUT_TYPE,ANALYSIS_OUTPUT_TYPE>(packetBuffer, GPU_buffer);
+	COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)<ANALYSIS_INPUT_TYPE,ANALYSIS_OUTPUT_TYPE>(packetBuffer, GPU_buffer, noOfPatterns);
 	
 }
 #endif //ifdef CUDACC
