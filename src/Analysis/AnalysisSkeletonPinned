@@ -246,9 +246,21 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		 tmp.push_back("are");
 		 tmp.push_back("you");*/
 
+
 		int chars = 256;
 		memset(gotofn,0,sizeof(gotofn));
 		int states = buildGoto(tmp);
+		int* array;
+
+		//	printf("CUDA HOST ALLOC \n");
+		cudaAssert(cudaHostAlloc((void**) &array, states * 256 * sizeof(int), cudaHostAllocMapped));
+
+		DEBUG(STR(ANALYSIS_NAME)"> Allocated Host Array in Pinned memory, size = %d Bytes",states * 256 * sizeof(int));
+
+		for(int i=0;i<states;i++)
+			for(int j=0;j<256;j++)
+		array[i * 256 + j ] = gotofn[i][j];
+
 		cout<<"total packets= "<<state.lastPacket<<endl;
 
 		int *d_gotofn;
@@ -259,10 +271,12 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int * result = (int*)malloc(N *sizeof(int));
 		memset(result,0,N *sizeof(int));
 
-		cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
-		cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
+		//cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
+		//cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
 
 		//Getting the device pointer for the pinned memory
+		/*New*/	cudaAssert(cudaHostGetDevicePointer(&d_gotofn, array, 0));
+		DEBUG(STR(ANALYSIS_NAME)"Set a device pointer to point to the array");
 
 		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
 		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
