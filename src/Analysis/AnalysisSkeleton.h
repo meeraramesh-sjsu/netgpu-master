@@ -253,8 +253,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		state.windowState.windowStartTime= packetBuffer->getPacket(0)->timestamp;
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
-		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
-		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
 
 		int n = 14;
 		int p_size = 3;
@@ -282,6 +280,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		int m = (*min_element(tmp.begin(),tmp.end(),length())).size();
 		p_size = tmp.size();
+
+		DEBUG(STR(ANALYSIS_NAME)"> Number of patterns > %d",p_size);
+
 		int B = 3;
 		int stridx[2*p_size];
 		memset(stridx,0,2*p_size);
@@ -367,6 +368,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert( cudaEventCreate(&stop) );
 		cudaAssert( cudaEventRecord(start, 0) );
 		cudaAssert( cudaEventSynchronize(start) );
+
+		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
+		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
 
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_result,d_pattern,d_stridx, d_SHIFT,
 				d_PREFIX_value, d_PREFIX_index, d_PREFIX_size, m, p_size);
