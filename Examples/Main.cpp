@@ -18,7 +18,7 @@ int main(int args,char *argv[]) {
 	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
 	int AnoOfPatterns = atoi(argv[2]);
 
-	ANALYSIS_NAME::noOfPatterns = AnoOfPatterns;
+	//ANALYSIS_NAME::noOfPatterns = AnoOfPatterns;
 	//Capturing from lo
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
 
