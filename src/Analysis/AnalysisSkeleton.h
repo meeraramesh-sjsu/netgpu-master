@@ -202,7 +202,7 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 /**** Launch wrapper ****/
 //default Launch Wrapper for Analysis not using Windows 
 template<typename T,typename R>
-void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer){
+void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int noOfPatterns){
 
 	analysisState_t state;
 	T *GPU_data;
@@ -253,24 +253,23 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		state.windowState.windowStartTime= packetBuffer->getPacket(0)->timestamp;
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
-
 		int n = 14;
 		int p_size = 3;
 		int alphabet = 256;
-
+		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/patterns" + noOfPatterns + ".cpp";
 		vector<string> tmp;
 		string line;
-		 std::ifstream myfile("/home/meera/gpudir/netgpu-master/src/Analysis/patterns100.cpp");
+		std::ifstream myfile(fileName.c_str());
 
-		    if(!myfile) //Always test the file open.
-		    {
-		        std::cout<<"Error opening pattern file"<< std::endl;
-		        return;
-		    }
-		    while (std::getline(myfile, line))
-		    {
-		        tmp.push_back(line);
-		    }
+		if(!myfile) //Always test the file open.
+		{
+			std::cout<<"Error opening pattern file"<< std::endl;
+			return;
+		}
+		while (std::getline(myfile, line))
+		{
+			tmp.push_back(line);
+		}
 
 		int m = (*min_element(tmp.begin(),tmp.end(),length())).size();
 		p_size = tmp.size();
