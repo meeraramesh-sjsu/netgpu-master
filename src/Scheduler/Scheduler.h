@@ -62,7 +62,7 @@ private:
 	static void unloadBufferFromGPU(packet_t* GPU_buffer);
 
 	//Analysis Pointers Pool
-	static	void (*analysisFunctions[SCHEDULER_MAX_ANALYSIS_POOL_SIZE])(PacketBuffer* packetBuffer, packet_t* GPU_buffer);
+	static	void (*analysisFunctions[SCHEDULER_MAX_ANALYSIS_POOL_SIZE])(PacketBuffer* packetBuffer, packet_t* GPU_buffer, int* noOfPatterns);
 
 	//Feeders Pool
 	static feeders_t feedersPool[SCHEDULER_MAX_FEEDERS_POOL_SIZE]; 	     
