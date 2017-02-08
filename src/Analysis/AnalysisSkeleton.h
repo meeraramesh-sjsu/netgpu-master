@@ -184,6 +184,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert(cudaMemset(state.GPU_aux,0,ARRAY_SIZE(T)));	
 		cudaAssert(cudaMemset(state.GPU_auxBlocks,0,2*sizeof(int64_t)*MAX_BUFFER_PACKETS));
 		cudaAssert(cudaMemset(state.GPU_codeRequiresWLR,0,ARRAY_SIZE(uint32_t)));
+
+		//N is the number of packets, same as number of blocks
+		size_t N = 260;
 		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
 		cudaAssert(cudaThreadSynchronize());
 
@@ -194,7 +197,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//dim3 grid(1);
 		dim3 block(256);
 		dim3 grid(260);
-		size_t N = 260;
+
 
 		//Set state number of blocks and last Packet position
 		state.windowState.totalNumberOfBlocks = MAX_BUFFER_PACKETS;
