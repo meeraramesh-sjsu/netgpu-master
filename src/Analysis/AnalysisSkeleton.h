@@ -52,7 +52,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "Libs/Gpu/Macros/Hooks.h"
 #include "Libs/Gpu/Macros/Util.h"
 
-
+using namespace std;
 
 /* Base blank class AnalysisSkeleton definition */
 class AnalysisSkeleton {
