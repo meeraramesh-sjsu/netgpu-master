@@ -8,7 +8,7 @@
 
 DatabaseManager* Scheduler::dbManager = new ODBCDatabaseManager();
 
-void (*Scheduler::analysisFunctions[SCHEDULER_MAX_ANALYSIS_POOL_SIZE])(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int *noOfPatterns);
+void (*Scheduler::analysisFunctions[SCHEDULER_MAX_ANALYSIS_POOL_SIZE])(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int noOfPatterns);
 
 feeders_t Scheduler::feedersPool[SCHEDULER_MAX_FEEDERS_POOL_SIZE];
 
