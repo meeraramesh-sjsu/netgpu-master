@@ -95,35 +95,35 @@ void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, 
 double timeTaken = 0;
 int buildGoto(vector<string> arr)
 {
-struct timeval startTV, endTV;
-gettimeofday(&startTV, NULL);
+	struct timeval startTV, endTV;
+	gettimeofday(&startTV, NULL);
 
-int states = 1;
-memset(gotofn,0,sizeof(gotofn));
-for(int i=0;i<arr.size();i++)
-{
-	string temp = arr[i];
-	int currentState = 0;
-	int ch = 0;
+	int states = 1;
+	memset(gotofn,0,sizeof(gotofn));
+	for(int i=0;i<arr.size();i++)
+	{
+		string temp = arr[i];
+		int currentState = 0;
+		int ch = 0;
 
-	for(int j=0;j<temp.size();j++) {
-	ch = temp[j];
+		for(int j=0;j<temp.size();j++) {
+			ch = temp[j];
 
-	if(gotofn[currentState][ch] == 0)
-	gotofn[currentState][ch] = states++;
+			if(gotofn[currentState][ch] == 0)
+				gotofn[currentState][ch] = states++;
 
-/*	if(j==temp.size()-1) {
+			/*	if(j==temp.size()-1) {
 	gotofn[currentState][ch] |= ((1<<i)<<16);
 	break;*/
-	currentState = gotofn[currentState][ch];
+			currentState = gotofn[currentState][ch];
+		}
+
+		output[currentState] = i;
 	}
 
-	output[currentState] = i;
-	}
-
-gettimeofday(&endTV, NULL);
-timeTaken = endTV.tv_sec * 1e6 + endTV.tv_usec - (startTV.tv_sec * 1e6 + startTV.tv_usec);
-return states;
+	gettimeofday(&endTV, NULL);
+	timeTaken = endTV.tv_sec * 1e6 + endTV.tv_usec - (startTV.tv_sec * 1e6 + startTV.tv_usec);
+	return states;
 }
 
 //default Kernel 
@@ -156,6 +156,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 	T *GPU_data;
 	R *GPU_results, *results;
 	int64_t *auxBlocks;
+	int * d_result;
 
 	if(packetBuffer != NULL){
 
@@ -183,6 +184,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert(cudaMemset(state.GPU_aux,0,ARRAY_SIZE(T)));	
 		cudaAssert(cudaMemset(state.GPU_auxBlocks,0,2*sizeof(int64_t)*MAX_BUFFER_PACKETS));
 		cudaAssert(cudaMemset(state.GPU_codeRequiresWLR,0,ARRAY_SIZE(uint32_t)));
+		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** KERNEL DIMS ***/
@@ -204,12 +206,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
 		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
 
-		float time;
-		cudaEvent_t start, stop;
 
-		cudaAssert( cudaEventCreate(&start) );
-		cudaAssert( cudaEventCreate(&stop) );
-		cudaAssert( cudaEventRecord(start, 0) );
 
 		vector<string> tmp;
 
@@ -1999,43 +1996,51 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		tmp.push_back("you");
 
 		/*Pattern matching starts*/
-	/*	 vector<string> tmp;
+		/*	 vector<string> tmp;
 		 tmp.push_back("Hello");
 		 tmp.push_back("how");
 		 tmp.push_back("are");
 		 tmp.push_back("you");*/
-		
+
 		int chars = 256;
 		memset(gotofn,0,sizeof(gotofn));
 		int states = buildGoto(tmp);
-//		/*New*/	int array[states * 256];
+		int array[states * 256];
 
-	//	printf("CUDA HOST ALLOC \n");
-		///*New*/	cudaAssert(cudaHostAlloc((void**) &array, states * 256 * sizeof(int), cudaHostAllocMapped));
+		//	printf("CUDA HOST ALLOC \n");
+		cudaAssert(cudaHostAlloc((void**) &array, states * 256 * sizeof(int), cudaHostAllocMapped));
 
-		/*for(int i=0;i<states;i++)
+		for(int i=0;i<states;i++)
 			for(int j=0;j<256;j++)
-		array[i * 256 + j ] = gotofn[i][j];*/
+		array[i * 256 + j ] = gotofn[i][j];
 
 		cout<<"total packets= "<<state.lastPacket<<endl;
 
 		int *d_gotofn;
 		int *d_output;
 		size_t pitch;
-
+		float time;
+		cudaEvent_t start, stop;
 		int * result = (int*)malloc(N *sizeof(int));
 		memset(result,0,N *sizeof(int));
-		int * d_result;
-		cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
-		cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
 
-		//*New*/	cudaAssert(cudaHostGetDevicePointer(&d_gotofn, array, 0));
+		//cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
+		//cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
+
+		//Getting the device pointer for the pinned memory
+		/*New*/	cudaAssert(cudaHostGetDevicePointer(&d_gotofn, array, 0));
 
 		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
-
-		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
 		cudaAssert(cudaMalloc(&d_output,states * sizeof(int)));
 		cudaAssert(cudaMemcpy(d_output,output,states * sizeof(int),cudaMemcpyHostToDevice));
+
+		cudaAssert( cudaEventCreate(&start) );
+		cudaAssert( cudaEventCreate(&stop) );
+		//Records an event
+		cudaAssert( cudaEventRecord(start, 0) );
+		//cudaEventRecord is aynchronous, to make sure the event is recorded, below command used
+		cudaAssert( cudaEventSynchronize(start));
+
 
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_gotofn,d_result,d_output);
 		cudaAssert(cudaThreadSynchronize());
