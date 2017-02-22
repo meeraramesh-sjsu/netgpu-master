@@ -57,7 +57,8 @@ unsigned int search_wu(vector<string> pattern, int m,
 
 	const char* textC = text.c_str();
 
-	while (column < n) {
+	#pragma omp parallel for collapse(2)
+	for (;column < n;) {
 
 		hash1 = text[column - 2];
 		hash1 <<= m_nBitsInShift;
@@ -113,8 +114,13 @@ void preproc_wu(vector<string> pattern, int m, int B,
 
 	int shiftlen, prefixhash;
 
+	#pragma omp parallel for
 	for (j = 0; j < p_size; ++j) {
-
+		/* Don't want to add #pragma for the inner loop because
+		 * you may need to use the previous value of SHIFT[hash]
+		 * in the future loops, reduction is used if the data needs to be
+		 * gathered together at the end.
+		 */
 		//add each 3-character subpattern (similar to q-grams)
 		for (q = m; q >= B; --q) {
 

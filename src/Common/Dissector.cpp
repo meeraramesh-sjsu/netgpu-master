@@ -1,7 +1,7 @@
 #include "Dissector.h"
 #include "AhoCorasick.h"
 #include "WuManber.h"
-
+#include <omp.h>
 #define _DISSECTOR_CHECK_OVERFLOW(a,b) \
 		do{ \
 			if(hdr!=NULL){ \
@@ -130,7 +130,8 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	std::string line;
 
 	if (myFile.is_open()) {
-		while (std::getline(myFile, line))
+	#pragma omp parallel for
+		for(;std::getline(myFile, line);)
 		{
 			tmp.push_back(line);
 		}
@@ -156,6 +157,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	//How many patterns with the same prefix hash exist
 	int *PREFIX_size = (int *) malloc(shiftsize * sizeof(int));
 
+	#pragma omp parallel for
 	for (int i = 0; i < shiftsize; i++) {
 
 		//*( *SHIFT + i ) = m - B + 1;

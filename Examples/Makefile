@@ -13,9 +13,9 @@ ANALYSIS_FOLDER:=Analysis
 #OBJS:=$(shell find ./* -name *.o)
 
 #Libs
-LIBS :=  -lnetgpu -lpcap -lpthread -lodbc -lcudart
+LIBS :=  -lnetgpu -lpcap -lpthread -lodbc -lcudart -lgomp
 
-#Compilation flags
+#Compilation flags, -XCompiler adds flags directly to host compiler
 FLAGS = -pg -Xcompiler -fopenmp
 
 .NOTPARALLEL:
