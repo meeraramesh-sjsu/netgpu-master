@@ -20,7 +20,7 @@ FLAGS = -pg -fopenmp
 
 .NOTPARALLEL:
 all:analysis
-	$(NVCC) Main.cpp -I/home/meera/gpudir/netgpu-master/usr/local/include $(shell find ./* -name *.o) $(LIBS) -L/home/meera/gpudir/netgpu-master/usr/local/lib -o $(TARGET) 
+	$(NVCC) $(FLAGS) Main.cpp -I/home/meera/gpudir/netgpu-master/usr/local/include $(shell find ./* -name *.o) $(LIBS) -L/home/meera/gpudir/netgpu-master/usr/local/lib -o $(TARGET) 
 analysis:
 	cd Analysis && make
 
