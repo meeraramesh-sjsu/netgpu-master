@@ -79,7 +79,7 @@ void OfflinePacketFeeder::packetCallback(u_char* sniffer,const struct pcap_pkthd
 
 	//If pushPacket fails (no space) or packetCounter is in the limit-> swap buffers
          //cout<<"call1:In packet Callback";
-	if((((OfflinePacketFeeder*)sniffer)->packetBufferArray[((OfflinePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr,noOfPatterns)<0)
+	if((((OfflinePacketFeeder*)sniffer)->packetBufferArray[((OfflinePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr,OfflinePacketFeeder::noOfPatterns)<0)
 		|| (++((OfflinePacketFeeder*)sniffer)->packetCounter == ((OfflinePacketFeeder*)sniffer)->maxPackets)){
 
 		
@@ -98,7 +98,7 @@ void OfflinePacketFeeder::packetCallback(u_char* sniffer,const struct pcap_pkthd
 		pthread_mutex_lock(&((OfflinePacketFeeder*)sniffer)->mutex);
 		
 		//Retry push packet
-		((OfflinePacketFeeder*)sniffer)->packetBufferArray[((OfflinePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr,noOfPatterns);
+		((OfflinePacketFeeder*)sniffer)->packetBufferArray[((OfflinePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr,OfflinePacketFeeder::noOfPatterns);
 
 	}
 	//UNLOCK		
@@ -175,8 +175,8 @@ pthread_t* OfflinePacketFeeder::start(int limit){
 	
 	//Setting limit
 	//maxPackets = limit;
-	noOfPatterns = limit;
-	
+	OfflinePacketFeeder::noOfPatterns = limit;
+
 	//Creating thread and calling _start routine through wrapper	
 	pthread_create(&thread,NULL,OfflinePacketFeeder::startThreadWrapper,(void*)this);
 	return &thread;
