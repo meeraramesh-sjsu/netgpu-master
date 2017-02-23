@@ -19,7 +19,7 @@ void PreAnalyzer::preAnalyze(PacketBuffer* buffer){
 	static int lostPackets = 0;	
 	int unsigned i, num_of_packets;
 	int deviceDataLink;
-	
+	int num = 0;
 
 	//initializing constants
 	deviceDataLink = buffer->getDeviceDataLinkInfo();	
@@ -30,7 +30,7 @@ void PreAnalyzer::preAnalyze(PacketBuffer* buffer){
 #if DEBUG_LEVEL > 0
 		cout<<endl<<"Packet nº: "<<i<<endl<<"-------------"<<endl;
 #endif
-		preAnalyzerDissector.dissect(buffer->getPacket(i)->packet,NULL,deviceDataLink,NULL);
+		preAnalyzerDissector.dissect(buffer->getPacket(i)->packet,NULL,deviceDataLink,NULL,num);
 //TODO: eliminar		dissect_wrapper_prova(buffer->getPacket(i)+TIMESTAMP_OFFSET,NULL,deviceDataLink,NULL);
 	}
 	
