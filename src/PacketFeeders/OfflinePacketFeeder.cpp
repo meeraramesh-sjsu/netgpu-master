@@ -79,7 +79,7 @@ void OfflinePacketFeeder::packetCallback(u_char* sniffer,const struct pcap_pkthd
 
 	//If pushPacket fails (no space) or packetCounter is in the limit-> swap buffers
          //cout<<"call1:In packet Callback";
-	if((((OfflinePacketFeeder*)sniffer)->packetBufferArray[((OfflinePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr)<0) 
+	if((((OfflinePacketFeeder*)sniffer)->packetBufferArray[((OfflinePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr,noOfPatterns)<0)
 		|| (++((OfflinePacketFeeder*)sniffer)->packetCounter == ((OfflinePacketFeeder*)sniffer)->maxPackets)){
 
 		
