@@ -46,7 +46,7 @@ public:
 	pthread_t* start(int limit);	
 
 	//captured packet callback method	
-	static void packetCallback(u_char *sniffer,const struct pcap_pkthdr* pkthdr,const u_char* packet,int noOfPatterns);
+	static void packetCallback(u_char *sniffer,const struct pcap_pkthdr* pkthdr,const u_char* packet);
 	
 	//Method for the consumer thread to get the sniffed PacketBuffer
 	PacketBuffer* getSniffedPacketBuffer(void);
