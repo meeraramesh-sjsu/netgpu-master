@@ -113,9 +113,11 @@ void preproc_wu(vector<string> pattern, int m, int B,
 	unsigned int j, q, hash;
 
 	int shiftlen, prefixhash;
-
+	cout << "p_size= "<<p_size<<endl;
 	#pragma omp parallel for
 	for (j = 0; j < p_size; ++j) {
+		int threadNum = omp_get_thread_num();
+		cout<<"ThreadNum= "<<threadNum<<endl;
 		/* Don't want to add #pragma for the inner loop because
 		 * you may need to use the previous value of SHIFT[hash]
 		 * in the future loops, reduction is used if the data needs to be
