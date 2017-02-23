@@ -2,6 +2,10 @@
 #include "AhoCorasick.h"
 #include "WuManber.h"
 #include <omp.h>
+#include <string>
+using namespace std;
+
+
 #define _DISSECTOR_CHECK_OVERFLOW(a,b) \
 		do{ \
 			if(hdr!=NULL){ \
@@ -124,7 +128,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	//payLoadRabinKarp(onBoardProtocol);
 	string packet(onBoardProtocol);
-	string fileName = "/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns" + noOfPatterns + ".cpp";
+	string fileName = "/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns" + to_string(noOfPatterns) + ".cpp";
 	vector<string> tmp;
 	ifstream myFile ("fileName", ios::in);
 	std::string line;
