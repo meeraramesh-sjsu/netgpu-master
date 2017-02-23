@@ -1,6 +1,6 @@
 #include <cstring>
 #include <iostream>
-
+     #include <time.h>
 #include <netgpu/netgpu.h>
 //#include "Analysis/Rate/Rate.h"
 //#include "Analysis/Anomalies/Anomalies.h"
@@ -14,6 +14,8 @@
 using namespace std;
  int main(int args,char *argv[]) {
 
+	 clock_t start,stop;
+	 start = clock();
 	//Capture packets from a pcap capture file (argv[1])
 	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
 
@@ -39,6 +41,8 @@ using namespace std;
 	cout<<"Adding feeder to pool"<<endl;
 	//Adding a single feeder
 	Scheduler::addFeederToPool(feeder);
+	stop = clock();
+	cout<<"Time= "<<(stop - start)/CLOCKS_PER_SEC<<endl;
 
 	//Starting execution (infinite loop)
 	Scheduler::start();
