@@ -162,14 +162,17 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	//How many patterns with the same prefix hash exist
 	int *PREFIX_size = (int *) malloc(shiftsize * sizeof(int));
 
+	cout<<"shift_size= "<<shiftsize<<endl;
 	#pragma omp parallel for
 	for (int i = 0; i < shiftsize; i++) {
-
+		int threadNum = omp_get_thread_num();
+		cout<<"ThreadNum= "<<threadNum<<endl;
 		//*( *SHIFT + i ) = m - B + 1;
 		SHIFT[i] = m - 3 + 1;
 		PREFIX_size[i] = 0;
 	}
 
+	cout<<"Completed adding contents by threads"<<endl;
 	preproc_wu(tmp,m,3,SHIFT,PREFIX_value,PREFIX_index,PREFIX_size);
 
 //	preproc_wu(tmp,  m, 3,
