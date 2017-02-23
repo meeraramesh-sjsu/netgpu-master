@@ -44,7 +44,7 @@ packet_t* PacketBuffer::getBuffer(void){
 	return buffer;
 }
 /*Push packet into stack */
-int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr){
+int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr,int noOfPatterns){
 
 	cout<<"call2:in push packet";
 //	SizeDissector sizeDissector;
@@ -64,7 +64,7 @@ int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* h
 	memset(&headers,0,sizeof(headers_t));
 	
 	//get size from packet(headers) & fill headers
-	totalLength = preAnalyzerDissector.dissect(packetPointer,hdr,deviceDataLink,&headers);
+	totalLength = preAnalyzerDissector.dissect(packetPointer,hdr,deviceDataLink,&headers,noOfPatterns);
 	//totalLength = sizeDissector.dissect(packetPointer,hdr,deviceDataLink,&headers);
 	
 	if(totalLength<0){

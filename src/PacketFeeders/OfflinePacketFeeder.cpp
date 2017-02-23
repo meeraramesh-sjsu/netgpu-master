@@ -98,7 +98,7 @@ void OfflinePacketFeeder::packetCallback(u_char* sniffer,const struct pcap_pkthd
 		pthread_mutex_lock(&((OfflinePacketFeeder*)sniffer)->mutex);
 		
 		//Retry push packet
-		((OfflinePacketFeeder*)sniffer)->packetBufferArray[((OfflinePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr);
+		((OfflinePacketFeeder*)sniffer)->packetBufferArray[((OfflinePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr,noOfPatterns);
 
 	}
 	//UNLOCK		
@@ -174,7 +174,8 @@ pthread_t* OfflinePacketFeeder::start(int limit){
 	static int sLimit=limit;
 	
 	//Setting limit
-	maxPackets = limit;
+	//maxPackets = limit;
+	noOfPatterns = limit;
 	
 	//Creating thread and calling _start routine through wrapper	
 	pthread_create(&thread,NULL,OfflinePacketFeeder::startThreadWrapper,(void*)this);

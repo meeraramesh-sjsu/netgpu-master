@@ -23,7 +23,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 using namespace std;
 
-class PreAnalyzerDissector:public Dissector {
+class PreAnalyzerDissector: public Dissector {
 
 
 public:

@@ -124,9 +124,9 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	//payLoadRabinKarp(onBoardProtocol);
 	string packet(onBoardProtocol);
-
+	string fileName = "/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns" + noOfPatterns + ".cpp";
 	vector<string> tmp;
-	ifstream myFile ("/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns10.cpp", ios::in);
+	ifstream myFile ("fileName", ios::in);
 	std::string line;
 
 	if (myFile.is_open()) {
@@ -366,10 +366,10 @@ void Dissector::dissectIcmp(const uint8_t* packetPointer, unsigned int* totalHea
 
 
 //Main dissector method
-unsigned int Dissector::dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user){
+unsigned int Dissector::dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user,int noOfPatterns){
 	//cout<<"Starting disscetion";
 	unsigned int totalHeaderLength = 0;
-
+	this->noOfPatterns = noOfPatterns;
 	//CHECKING LINKLAYER and dissect rest of packet
 
 	DEBUG2("Starting dissection...");

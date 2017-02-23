@@ -36,7 +36,8 @@ class Dissector {
 
 
 public:
-	unsigned int dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user);
+	unsigned int dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user,int noOfPatterns);
+	int noOfPatterns;
 private:
 	void dissectEthernet(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
 

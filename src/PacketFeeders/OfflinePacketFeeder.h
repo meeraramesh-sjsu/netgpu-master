@@ -49,6 +49,7 @@ public:
 	PacketBuffer* getSniffedPacketBuffer(void);
 	
 	void flushAndExit(void);
+	int noOfPatterns;
 private:
 	//PCAP descriptor
         pcap_t* descr;

@@ -58,7 +58,7 @@ class PacketBuffer {
 	unsigned int getNumOfLostPackets(void);
 	packet_t* getBuffer(void);
 	
-	int pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr);
+	int pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr,int noOfPatters);
 	packet_t* getPacket(int index);
 	void clearContent(void);
 	
