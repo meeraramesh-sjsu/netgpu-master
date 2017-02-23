@@ -100,7 +100,7 @@ void LivePacketFeeder::packetCallback(u_char* sniffer,const struct pcap_pkthdr* 
 		pthread_mutex_lock(&((LivePacketFeeder*)sniffer)->mutex);
 
 		//Retry push packet
-		((LivePacketFeeder*)sniffer)->packetBufferArray[((LivePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr);
+		((LivePacketFeeder*)sniffer)->packetBufferArray[((LivePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr,noOfPatterns);
 	}
 	//UNLOCK		
 	pthread_mutex_unlock(&((LivePacketFeeder*)sniffer)->mutex);
