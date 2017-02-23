@@ -129,9 +129,11 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	//payLoadRabinKarp(onBoardProtocol);
 	string packet(onBoardProtocol);
 	string fileName = "/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns" + to_string(noOfPatterns) + ".cpp";
+
 	vector<string> tmp;
-	ifstream myFile ("fileName", ios::in);
+	ifstream myFile (fileName, ios::in);
 	std::string line;
+	cout<<"FileName= "<<fileName<<endl;
 
 	if (myFile.is_open()) {
 		for(;std::getline(myFile, line);)
