@@ -74,13 +74,13 @@ unsigned int search_wu(vector<string> pattern, int m,
 			hash2 = text[column - m + 1];
 			hash2 <<= m_nBitsInShift;
 			hash2 += text[column - m + 2];
-
+			volatile bool flag=false;
 			//printf("hash2 = %i PREFIX[hash1].size = %i\n", hash2, PREFIX[hash1].size);
 
 			//For every pattern with the same suffix as the text
 			#pragma omp parallel for
 			for (i = 0; i < PREFIX_size[hash1]; i++) {
-
+				if(flag) continue;
 				//If the prefix of the pattern matches that of the text
 				if (hash2 == PREFIX_value[hash1 * p_size + i]) {
 
@@ -92,7 +92,7 @@ unsigned int search_wu(vector<string> pattern, int m,
 
 						printf("Match of pattern index %i at %i\n", PREFIX_index[hash1 * p_size + i], column);
 
-						break;
+						flag = true;
 					}
 
 				}
