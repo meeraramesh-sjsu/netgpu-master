@@ -38,15 +38,14 @@ using namespace std;
 //	Scheduler::addAnalysisToPool(Throughput::launchAnalysis);
 //	Scheduler::addAnalysisToPool(AdvancedExample::launchAnalysis);
 
-	cout<<"Adding feeder to pool"<<endl;
+	cout<<"Adding feeder to pool......"<<endl;
 	//Adding a single feeder
 	Scheduler::addFeederToPool(feeder,noOfPatterns);
-	stop = clock();
-	cout<<"Time= "<<(stop - start)/CLOCKS_PER_SEC<<endl;
 
 	//Starting execution (infinite loop)
 	Scheduler::start();
-
+	stop = clock();
+	cout<<"Time=   "<<(stop - start)/CLOCKS_PER_SEC<<endl;
 	//std::cout<<" \n Ending ......."<<endl;
 
 	delete feeder;
