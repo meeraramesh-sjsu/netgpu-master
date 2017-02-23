@@ -72,14 +72,14 @@ PacketBuffer* LivePacketFeeder::getSniffedPacketBuffer(void){
 	return to_return;		
 }
 
-void LivePacketFeeder::packetCallback(u_char* sniffer,const struct pcap_pkthdr* pkthdr,const u_char* packet){
+void LivePacketFeeder::packetCallback(u_char* sniffer,const struct pcap_pkthdr* pkthdr,const u_char* packet,int noOfPatterns){
 	
 	//LOCK
 	pthread_mutex_lock(&((LivePacketFeeder*)sniffer)->mutex);
 
 	//If pushPacket fails (no space) or packetCounter is in the limit -> Swap buffers
 
-	if(((LivePacketFeeder*)sniffer)->packetBufferArray[((LivePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr)<0 
+	if(((LivePacketFeeder*)sniffer)->packetBufferArray[((LivePacketFeeder*)sniffer)->bufferIndex].pushPacket((uint8_t*)packet,pkthdr,noOfPatterns)<0
 		|| ++((LivePacketFeeder*)sniffer)->packetCounter == ((LivePacketFeeder*)sniffer)->maxPackets){
 
 		
