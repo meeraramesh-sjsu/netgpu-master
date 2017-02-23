@@ -125,7 +125,7 @@ void preproc_wu(vector<string> pattern, int m, int B,
 		 */
 		//add each 3-character subpattern (similar to q-grams)
 		for (q = m; q >= B; --q) {
-
+			cout<<j<<" " << q<<" "<<endl;
 			hash = pattern[j][q - 2 - 1]; // bring in offsets of X in pattern j
 			hash <<= m_nBitsInShift;
 			hash += pattern[j][q - 1 - 1];
