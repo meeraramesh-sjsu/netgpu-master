@@ -57,8 +57,8 @@ unsigned int search_wu(vector<string> pattern, int m,
 
 	const char* textC = text.c_str();
 
-	#pragma omp parallel for
-	for (;column < n;) {
+	#pragma omp parallel for collapse(2)
+	for (column = m - 1;column < n;) {
 
 		hash1 = text[column - 2];
 		hash1 <<= m_nBitsInShift;

@@ -134,7 +134,6 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	std::string line;
 
 	if (myFile.is_open()) {
-	#pragma omp parallel for
 		for(;std::getline(myFile, line);)
 		{
 			tmp.push_back(line);
