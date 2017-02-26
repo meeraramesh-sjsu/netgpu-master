@@ -113,11 +113,11 @@ void preproc_wu(vector<string> pattern, int m, int B,
 	unsigned int j, q, hash;
 
 	int shiftlen, prefixhash;
-	cout << "p_size= "<<p_size<<endl;
-	#pragma omp parallel for
+	DEBUG2("p_size= %d",p_size);
+	#pragma omp parallel for private(q)
 	for (j = 0; j < p_size; ++j) {
 		int threadNum = omp_get_thread_num();
-		cout<<"ThreadNum= "<<threadNum<<endl;
+		DEBUG2("ThreadNum= %d",threadNum);
 		/* Don't want to add #pragma for the inner loop because
 		 * you may need to use the previous value of SHIFT[hash]
 		 * in the future loops, reduction is used if the data needs to be
@@ -125,7 +125,7 @@ void preproc_wu(vector<string> pattern, int m, int B,
 		 */
 		//add each 3-character subpattern (similar to q-grams)
 		for (q = m; q >= B; --q) {
-			cout<<j<<" " << q<<" "<<endl;
+			DEBUG2("start j=%d  q=%d",j,q);
 			hash = pattern[j][q - 2 - 1]; // bring in offsets of X in pattern j
 			hash <<= m_nBitsInShift;
 			hash += pattern[j][q - 1 - 1];
@@ -153,5 +153,6 @@ void preproc_wu(vector<string> pattern, int m, int B,
 				//printf("%i) PREFIX[%i].value[%i] = %i PREFIX[%i].index[%i] = %i\n", j, hash, PREFIX[hash].size - 1, PREFIX[hash].value[PREFIX[hash].size - 1], hash, PREFIX[hash].size - 1, hashmap[j].index );
 			}
 		}
+		DEBUG2("stop j=%d",j);
 	}
 }

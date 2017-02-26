@@ -133,7 +133,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	vector<string> tmp;
 	ifstream myFile (fileName, ios::in);
 	std::string line;
-	cout<<"FileName= "<<fileName<<endl;
+	DEBUG2("FileName= %s",fileName);
 
 	if (myFile.is_open()) {
 		for(;std::getline(myFile, line);)
@@ -141,8 +141,8 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 			tmp.push_back(line);
 		}
 	}
-	else cout << "Unable to open file";
-	cout<<"added file contents to vector"<<endl;
+	else DEBUG2("Unable to open file");
+	DEBUG2("added file contents to vector");
 
 	//Aho-Corasick
 	//searchWords(tmp,tmp.size(),packet);
@@ -162,17 +162,17 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	//How many patterns with the same prefix hash exist
 	int *PREFIX_size = (int *) malloc(shiftsize * sizeof(int));
 
-	cout<<"shift_size= "<<shiftsize<<endl;
+	DEBUG2("shift_size= %d",shiftsize);
 	#pragma omp parallel for
 	for (int i = 0; i < shiftsize; i++) {
 		int threadNum = omp_get_thread_num();
-		cout<<"ThreadNum= "<<threadNum<<endl;
+		DEBUG2("ThreadNum= %d",threadNum);
 		//*( *SHIFT + i ) = m - B + 1;
 		SHIFT[i] = m - 3 + 1;
 		PREFIX_size[i] = 0;
 	}
 
-	cout<<"Completed adding contents by threads"<<endl;
+	DEBUG2("Completed adding contents by threads");
 	preproc_wu(tmp,m,3,SHIFT,PREFIX_value,PREFIX_index,PREFIX_size);
 
 //	preproc_wu(tmp,  m, 3,
