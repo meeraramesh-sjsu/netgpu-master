@@ -26,7 +26,6 @@ using namespace std;
 	//Capturing from lo
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
 	
-
 	//cout <<"Starting analysis in few minutes...\n";
 
 //	std::cout <<"Starting analysis now      ...\n";
@@ -50,7 +49,7 @@ using namespace std;
 	Scheduler::start();
 	/* Program code to execute here */
 	gettimeofday(&tv2, NULL);
-	DEBUG("Time taken in execution = %f useconds\n",
+	DEBUG("Time taken in execution = %lf useconds\n",
      (double) (tv2.tv_usec - tv1.tv_usec));
 
 	 /*/ 1000000 + (double) (tv2.tv_sec - tv1.tv_sec));*/
