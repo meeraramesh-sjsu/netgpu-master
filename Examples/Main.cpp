@@ -14,7 +14,7 @@
 using namespace std;
  int main(int args,char *argv[]) {
 
-	 if(args < 4) {
+	 if(args < 3) {
 	printf("Please provide input parameters as Executable pcap_file noOfPAtterns");
 	 return 0;
 	 }

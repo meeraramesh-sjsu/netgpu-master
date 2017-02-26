@@ -23,7 +23,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 using namespace std;
 
-class PreAnalyzerDissector:public Dissector {
+class PreAnalyzerDissector: public Dissector {
 
 
 public:
@@ -32,6 +32,7 @@ private:
 	//Virtual Actions:
 	 void EthernetVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ethernet2Header* header,void* user);
 	 void Ip4VirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ip4Header* header,void* user);
+	 void Ip4VirtualActionnew(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ip4Header16* header,void* user);
 	 void TcpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,TcpHeader* header,void* user);
 	 void UdpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,UdpHeader* header,void* user);
 	 void IcmpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,IcmpHeader* header,void* user);

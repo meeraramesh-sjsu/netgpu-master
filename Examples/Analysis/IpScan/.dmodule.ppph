@@ -4,5 +4,4 @@
 #include "/home/meera/gpudir/netgpu-master/usr/local/share/netgpu/include/netgpu//Analysis/Modules/Analysis/ScanDetectors/IpScanDetector.module"
 #include "/home/meera/gpudir/netgpu-master/usr/local/share/netgpu/include/netgpu//Analysis/Modules/Operations/ScanDetectors/MultiIpScanThreshold.module"
 #include "/home/meera/gpudir/netgpu-master/usr/local/share/netgpu/include/netgpu//Analysis/Modules/Hooks/ScanDetectors/IpScanDump.module"
-#include "/home/meera/gpudir/netgpu-master/usr/local/share/netgpu/include/netgpu//Analysis/Modules/Hooks/ScanDetectors/IpScanDBDump.module"
 #endif //__CUDACC__

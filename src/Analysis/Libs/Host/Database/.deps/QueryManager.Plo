@@ -152,14 +152,26 @@ QueryManager.lo: QueryManager.cpp /usr/include/stdc-predef.h \
  ../../../../Scheduler/../Common/../PacketFeeders/SizeDissector.h \
  ../../../../Scheduler/../Common/../PacketFeeders/../Util.h \
  ../../../../Scheduler/../Common/../PacketFeeders/../Common/Dissector.h \
+ /usr/include/c++/4.8/algorithm /usr/include/c++/4.8/utility \
+ /usr/include/c++/4.8/bits/stl_relops.h \
+ /usr/include/c++/4.8/bits/stl_algo.h \
+ /usr/include/c++/4.8/bits/algorithmfwd.h \
+ /usr/include/c++/4.8/bits/stl_heap.h \
+ /usr/include/c++/4.8/bits/stl_tempbuf.h /usr/include/c++/4.8/set \
+ /usr/include/c++/4.8/bits/stl_tree.h /usr/include/c++/4.8/bits/stl_set.h \
+ /usr/include/c++/4.8/bits/stl_multiset.h \
  ../../../../Scheduler/../Common/../PacketFeeders/../Common/../Util.h \
  ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/Ethernet2Header.h \
  ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/../VirtualHeader.h \
  ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/Ip4Header.h \
+ /usr/include/c++/4.8/sstream /usr/include/c++/4.8/bits/sstream.tcc \
  ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/TcpHeader.h \
  ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/UdpHeader.h \
  ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/IcmpHeader.h \
  ../../../../Scheduler/../Common/../PacketFeeders/../Common/PacketBuffer.h \
+ ../../../../Scheduler/../Common/../PreAnalyzer/PreAnalyzerDissector.h \
+ ../../../../Scheduler/../Common/../PreAnalyzer/../Util.h \
+ ../../../../Scheduler/../Common/../PreAnalyzer/../Common/Dissector.h \
  ../../../../Scheduler/../Common/PacketFeeder.h \
  ../../../../Scheduler/../Common/PacketBuffer.h \
  ../../../../Scheduler/../Analysis/Libs/Host/GpuMemoryManagement/BMMS.h \
@@ -573,6 +585,28 @@ DatabaseManager.h:
 
 ../../../../Scheduler/../Common/../PacketFeeders/../Common/Dissector.h:
 
+/usr/include/c++/4.8/algorithm:
+
+/usr/include/c++/4.8/utility:
+
+/usr/include/c++/4.8/bits/stl_relops.h:
+
+/usr/include/c++/4.8/bits/stl_algo.h:
+
+/usr/include/c++/4.8/bits/algorithmfwd.h:
+
+/usr/include/c++/4.8/bits/stl_heap.h:
+
+/usr/include/c++/4.8/bits/stl_tempbuf.h:
+
+/usr/include/c++/4.8/set:
+
+/usr/include/c++/4.8/bits/stl_tree.h:
+
+/usr/include/c++/4.8/bits/stl_set.h:
+
+/usr/include/c++/4.8/bits/stl_multiset.h:
+
 ../../../../Scheduler/../Common/../PacketFeeders/../Common/../Util.h:
 
 ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/Ethernet2Header.h:
@@ -581,6 +615,10 @@ DatabaseManager.h:
 
 ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/Ip4Header.h:
 
+/usr/include/c++/4.8/sstream:
+
+/usr/include/c++/4.8/bits/sstream.tcc:
+
 ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/TcpHeader.h:
 
 ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/UdpHeader.h:
@@ -588,6 +626,12 @@ DatabaseManager.h:
 ../../../../Scheduler/../Common/../PacketFeeders/../Common/Protocols/IcmpHeader.h:
 
 ../../../../Scheduler/../Common/../PacketFeeders/../Common/PacketBuffer.h:
+
+../../../../Scheduler/../Common/../PreAnalyzer/PreAnalyzerDissector.h:
+
+../../../../Scheduler/../Common/../PreAnalyzer/../Util.h:
+
+../../../../Scheduler/../Common/../PreAnalyzer/../Common/Dissector.h:
 
 ../../../../Scheduler/../Common/PacketFeeder.h:
 

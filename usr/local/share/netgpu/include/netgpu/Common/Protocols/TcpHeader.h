@@ -56,7 +56,6 @@ struct tcp_header{
 	uint16_t	window;			// window 
 	uint16_t	checksum;			// checksum 
 	uint16_t	urp;			// urgent pointer 
-	//unsigned char *data;		//User Data
 };
 
 class TcpHeader : public VirtualHeader {
@@ -69,5 +68,6 @@ public:
 	uint8_t getHeaderLength(void);	 
 	uint32_t getHeaderLengthInBytes(void);	 
 	static uint32_t calcHeaderLengthInBytes(const uint8_t * tcpPointer);
+
 };
 #endif // TcpHeader_h

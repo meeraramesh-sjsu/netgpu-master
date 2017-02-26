@@ -1,14 +1,14 @@
 /*
 
-Copyright 2009 Marc Suñe Clos, Isaac Gelado
+		Copyright 2009 Marc Suñe Clos, Isaac Gelado
 
-This file is part of the NetGPU framework.
+		This file is part of the NetGPU framework.
 
-The NetGPU framework is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+		The NetGPU framework is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-The NetGPU framework is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+		The NetGPU framework is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-*/
+ */
 
 #ifndef AnalysisSkeleton_h
 #define AnalysisSkeleton_h
@@ -36,7 +36,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 //Include ppp syncblocks counters
 #ifdef __CUDACC__
-	#include ".syncblocks_counters.ppph"
+#include ".syncblocks_counters.ppph"
 #endif
 
 //Checkings
@@ -198,21 +198,21 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 	//Setting block iterator to my block by default
 	state.blockIterator = blockIdx.x;
 
-//Commented below parts	
+	//Commented below parts
 	//Looping when array is larger than grid dimensions 
 	while( state.blockIterator < state.windowState.totalNumberOfBlocks ){
 		//If not previously Mined & prefiltered
 		if(state.blockIterator >= state.windowState.blocksPreviouslyMined){	
- 			COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state);
+			COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state);
 			__syncthreads();	
-//
+			//
 			COMPOUND_NAME(ANALYSIS_NAME,filtering)(GPU_buffer, GPU_data, GPU_results, state);
 			__syncthreads();	
 		}
 		state.blockIterator += gridDim.x;
 	}
-//
-//	/*** ANALYSIS OPERATIONS ***/
+	//
+	//	/*** ANALYSIS OPERATIONS ***/
 	state.blockIterator = blockIdx.x;
 
 	//Note that no loop used in here. Loop should be implemented in the Analysis code or used predefined analysis code
@@ -222,9 +222,9 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 	/*** POST ANALYSIS OPERATIONS ***/
 
 	/* If there are SYNCBLOCKS barriers do not put Operations function call here */
-	#if __SYNCBLOCKS_COUNTER == 0 && __SYNCBLOCKS_PRECODED_COUNTER == 0
-		COMPOUND_NAME(ANALYSIS_NAME,operations)(GPU_buffer, GPU_data, GPU_results, state);
-	#endif 
+#if __SYNCBLOCKS_COUNTER == 0 && __SYNCBLOCKS_PRECODED_COUNTER == 0
+	COMPOUND_NAME(ANALYSIS_NAME,operations)(GPU_buffer, GPU_data, GPU_results, state);
+#endif
 }
 
 //default Launch Wrapper for Analysis with Windows
@@ -239,7 +239,7 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 /*   				    Where Nin == Nout									 */
 /* It also assumes that Input type and output type are the same 							 */
 /*************************************************************************************************************************/
- 
+
 template<typename T,typename R>
 void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer){
 
@@ -248,48 +248,48 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 	static bool init=true;
 	static analysisState_t state; //Analysis State
 	static int spreadFactor; //Spread factor
-	
+
 	/* GPU_data static var note that T and R are the same type */
 	static T *GPU_data;
-	
+
 	/* Automatic vars*/
 	R *GPU_results; //Results pointer
-	
+
 	//If a NULL buffer & window is empty return
 	if(packetBuffer == NULL && GPU_data == NULL)
 		return;
-	
-	
-	#if WINDOW_TYPE == PACKET_WINDOW 
-		/* PACKET LIMIT */
-		if(state.windowState.hasReachedWindowLimit || init || GPU_data == NULL){
-			//TODO: uncomment this when CUDA BUG accessing large arrays is solved.
-			//((WINDOW_LIMIT)%MAX_BUFFER_PACKETS == 0)? spreadFactor =(WINDOW_LIMIT)/MAX_BUFFER_PACKETS :spreadFactor =((WINDOW_LIMIT)/MAX_BUFFER_PACKETS)+1;
-			((WINDOW_LIMIT)%MAX_BUFFER_PACKETS == 0)? spreadFactor =(WINDOW_LIMIT)/MAX_BUFFER_PACKETS :spreadFactor =((WINDOW_LIMIT)/MAX_BUFFER_PACKETS)-1;
 
-		}
 
-	#elif WINDOW_TYPE == TIME_WINDOW
-		/* TIME LIMIT */
-		if(state.windowState.hasReachedWindowLimit || init || GPU_data == NULL){
-			spreadFactor = 2; //TODO: File configurable
-		}
-	#else
-		#error Incorrect WINDOW_TYPE value or value not defined.
-	#endif
+#if WINDOW_TYPE == PACKET_WINDOW
+	/* PACKET LIMIT */
+	if(state.windowState.hasReachedWindowLimit || init || GPU_data == NULL){
+		//TODO: uncomment this when CUDA BUG accessing large arrays is solved.
+		//((WINDOW_LIMIT)%MAX_BUFFER_PACKETS == 0)? spreadFactor =(WINDOW_LIMIT)/MAX_BUFFER_PACKETS :spreadFactor =((WINDOW_LIMIT)/MAX_BUFFER_PACKETS)+1;
+		((WINDOW_LIMIT)%MAX_BUFFER_PACKETS == 0)? spreadFactor =(WINDOW_LIMIT)/MAX_BUFFER_PACKETS :spreadFactor =((WINDOW_LIMIT)/MAX_BUFFER_PACKETS)-1;
+
+	}
+
+#elif WINDOW_TYPE == TIME_WINDOW
+	/* TIME LIMIT */
+	if(state.windowState.hasReachedWindowLimit || init || GPU_data == NULL){
+		spreadFactor = 2; //TODO: File configurable
+	}
+#else
+#error Incorrect WINDOW_TYPE value or value not defined.
+#endif
 
 	//TODO: Stupid assignation due NVCC compiler BUG
 	if(init){
 		GPU_data = NULL;
 		init = false;
 	}
-	
+
 	if(GPU_data == NULL){
 		//First time or end of window reached
 		//Init state state
 		memset(&state,0,sizeof(state));
 	}
-		
+
 	//window Start time
 	//TODO: CONDITIONAL PINNED MEMORY && STREAMS
 
@@ -333,21 +333,21 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 	cudaAssert(cudaMemset(state.GPU_codeRequiresWLR,0,ARRAY_SIZE(uint32_t)/ANALYSIS_TPB));
 	cudaAssert(cudaThreadSynchronize());
 
-	
+
 	/*** Set (current) windowEndTime ***/
 	if(packetBuffer != NULL) //Skip NULL buffer
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
 	/*** Check if window limit has been reached & set flag and modify state***/
 	if(packetBuffer == NULL){
-	
+
 		state.windowState.blocksPreviouslyMined = state.windowState.totalNumberOfBlocks;
 		state.windowState.totalNumberOfBlocks = state.windowState.blocksPreviouslyMined;
 
 		//Set WLR flag 
 		state.windowState.hasReachedWindowLimit = true;
 	}else if(packetBuffer->getFlushFlag()){
-		
+
 		/*** Adding new elements info to analysis state ***/
 		state.windowState.blocksPreviouslyMined = state.windowState.totalNumberOfBlocks;
 		state.windowState.totalNumberOfBlocks = state.windowState.blocksPreviouslyMined + BUFFER_BLOCKS;
@@ -356,7 +356,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//Set WLR flag 
 		state.windowState.hasReachedWindowLimit = true;
 	}else{
-	
+
 		/*** Adding new elements info to analysis state ***/
 		state.windowState.blocksPreviouslyMined = state.windowState.totalNumberOfBlocks;
 		state.windowState.totalNumberOfBlocks = state.windowState.blocksPreviouslyMined + BUFFER_BLOCKS;
@@ -364,14 +364,14 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 
 		//Set WLR flag 
-		#if WINDOW_TYPE == PACKET_WINDOW 
-			state.windowState.hasReachedWindowLimit = hasReachedPacketLimitWindow(state.windowState.totalNumberOfBlocks*ANALYSIS_TPB, WINDOW_LIMIT);
-		#elif WINDOW_TYPE == TIME_WINDOW
-			state.windowState.hasReachedWindowLimit = hasReachedTimeLimitWindow(start,packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp,WINDOW_LIMIT);
-	
-		#endif	
+#if WINDOW_TYPE == PACKET_WINDOW
+		state.windowState.hasReachedWindowLimit = hasReachedPacketLimitWindow(state.windowState.totalNumberOfBlocks*ANALYSIS_TPB, WINDOW_LIMIT);
+#elif WINDOW_TYPE == TIME_WINDOW
+		state.windowState.hasReachedWindowLimit = hasReachedTimeLimitWindow(start,packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp,WINDOW_LIMIT);
+
+#endif
 	}
-	
+
 	/*---------------- KERNEL LAUNCHING ----------------*/
 
 	/*** Calculate KERNEL DIMS ***/
@@ -379,7 +379,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 	dim3 grid;		
 
 	if(state.windowState.totalNumberOfBlocks*ANALYSIS_TPB > CUDA_MAX_THREADS ){ 
-	
+
 		//Exceeds limitation of cuda maximum thread number (65536 currently)
 		if((CUDA_MAX_THREADS/ANALYSIS_TPB) <= CUDA_MAX_BLOCKS_PER_DIM){
 			grid.x = (CUDA_MAX_THREADS/ANALYSIS_TPB);
@@ -388,7 +388,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 			DEBUG("--> #thread and #block limitation");
 			grid.x = CUDA_MAX_BLOCKS_PER_DIM;
 		}
-	
+
 	}else if( state.windowState.totalNumberOfBlocks > CUDA_MAX_BLOCKS_PER_DIM){
 		//Exceeds limitation of cuda "maximum blocks per dimension"
 		grid.x = CUDA_MAX_BLOCKS_PER_DIM;
@@ -405,110 +405,110 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 	cudaAssert(cudaThreadSynchronize());
 
 	/*EXTRA KERNEL CALLS */
-	
+
 	/*Predefined Analysis Extra Kernels calls*/
-	#define ITERATOR__ 0
-	#include "PredefinedExtraKernelCall.def"
-	
-	#define ITERATOR__ 1
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 0
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 2
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 1
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 3
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 2
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 4
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 3
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 5
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 4
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 6
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 5
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 7
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 6
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 8
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 7
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 9
+#define ITERATOR__ 8
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 8
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 9
 
-	#define ITERATOR__ 9
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 8
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 10
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 9
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 11
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 10
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 12
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 11
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 13
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 12
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 14
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 13
+#include "PredefinedExtraKernelCall.def"
 
-	#define ITERATOR__ 15
-	#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 14
+#include "PredefinedExtraKernelCall.def"
+
+#define ITERATOR__ 15
+#include "PredefinedExtraKernelCall.def"
 
 
 	/*Userdefined Extra Kernels calls*/
-	#define ITERATOR__ 0
-	#include "UserExtraKernelCall.def"
-	
-	#define ITERATOR__ 1
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 0
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 2
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 1
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 3
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 2
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 4
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 3
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 5
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 4
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 6
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 5
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 7
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 6
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 8
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 7
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 9
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 8
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 10
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 9
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 11
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 10
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 12
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 11
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 13
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 12
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 14
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 13
+#include "UserExtraKernelCall.def"
 
-	#define ITERATOR__ 15
-	#include "UserExtraKernelCall.def"
+#define ITERATOR__ 14
+#include "UserExtraKernelCall.def"
+
+#define ITERATOR__ 15
+#include "UserExtraKernelCall.def"
 
 
 	/*** END OF EXTRA KERNEL CALLS ***/
@@ -525,17 +525,17 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		R *results;
 		int64_t *auxBlocks;
 		//results = (R*)malloc(ARRAY_SIZE(R)*spreadFactor);
-        	cudaAssert(cudaHostAlloc((void**)&results,ARRAY_SIZE(R)*spreadFactor,0));
+		cudaAssert(cudaHostAlloc((void**)&results,ARRAY_SIZE(R)*spreadFactor,0));
 		//auxBlocks = (int64_t*)malloc(ARRAY_SIZE(int64_t)*spreadFactor/ANALYSIS_TPB);
-        	cudaAssert(cudaHostAlloc((void**)&auxBlocks,ARRAY_SIZE(uint64_t)*spreadFactor,0));
+		cudaAssert(cudaHostAlloc((void**)&auxBlocks,ARRAY_SIZE(uint64_t)*spreadFactor,0));
 
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,ARRAY_SIZE(T)*spreadFactor,cudaMemcpyDeviceToHost));
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,ARRAY_SIZE(int64_t)*spreadFactor/ANALYSIS_TPB,cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
-		
+
 		/*** LAUNCH HOOK (Host function) ***/		
-		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks);
+		//COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks);
 
 		//Frees host results arrays
 		//free(results);
@@ -559,7 +559,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 //default Kernel 
 template<typename T,typename R>
-	__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state){
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state){
 	state.blockIterator = blockIdx.x;
 	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state);
 	__syncthreads();	
@@ -572,9 +572,9 @@ template<typename T,typename R>
 	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state);
 
 	/* If there are SYNCBLOCKS barriers do not put Operations function call here */
-	#if __SYNCBLOCKS_COUNTER == 0 && __SYNCBLOCKS_PRECODED_COUNTER == 0
-		COMPOUND_NAME(ANALYSIS_NAME,operations)(GPU_buffer, GPU_data, GPU_results, state);
-	#endif
+#if __SYNCBLOCKS_COUNTER == 0 && __SYNCBLOCKS_PRECODED_COUNTER == 0
+	COMPOUND_NAME(ANALYSIS_NAME,operations)(GPU_buffer, GPU_data, GPU_results, state);
+#endif
 
 }
 
@@ -592,16 +592,16 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 
 	if(packetBuffer != NULL){
-	
+
 		memset(&state,0,sizeof(state));
 		//TODO: CONDITIONAL PINNED MEMORY && STREAMS
 
 		/*** Host memory allocation***/
 		//results = (R*)malloc(sizeof(R)*MAX_BUFFER_PACKETS);	
-        	cudaAssert(cudaHostAlloc((void**)&results,sizeof(R)*MAX_BUFFER_PACKETS,0));
+		cudaAssert(cudaHostAlloc((void**)&results,sizeof(R)*MAX_BUFFER_PACKETS,0));
 
 		//auxBlocks = (int64_t*)malloc(sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB);	
-        	cudaAssert(cudaHostAlloc((void**)&auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB,0));
+		cudaAssert(cudaHostAlloc((void**)&auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB,0));
 
 
 		/*** GPU memory allocation***/
@@ -619,13 +619,13 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert(cudaMemset(state.GPU_auxBlocks,0,2*sizeof(int64_t)*MAX_BUFFER_PACKETS/ANALYSIS_TPB));	
 		cudaAssert(cudaMemset(state.GPU_codeRequiresWLR,0,ARRAY_SIZE(uint32_t)/ANALYSIS_TPB));
 		cudaAssert(cudaThreadSynchronize());
-		
+
 		/*** KERNEL DIMS ***/
 		dim3 block(ANALYSIS_TPB);		 			//Threads Per Block (1D)
 		dim3 grid(MAX_BUFFER_PACKETS/ANALYSIS_TPB);		 	//Grid size (1D)
 		//dim3  block(10);
 		//dim3 grid(1);
-		
+
 		//Set state number of blocks and last Packet position
 		state.windowState.totalNumberOfBlocks = MAX_BUFFER_PACKETS/ANALYSIS_TPB;
 		state.windowState.hasReachedWindowLimit = true;
@@ -635,111 +635,110 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
 		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
-	
-		/*** KERNEL CALLS ***/
+
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state);
 		cudaAssert(cudaThreadSynchronize());
 
 		/*EXTRA KERNEL CALLS */
-	
+
 		/*Predefined Analysis Extra Kernels calls*/
-		#define ITERATOR__ 0
-		#include "PredefinedExtraKernelCall.def"
-	
-		#define ITERATOR__ 1
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 0
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 2
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 1
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 3
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 2
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 4
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 3
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 5
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 4
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 6
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 5
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 7
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 6
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 8
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 7
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 9
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 8
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 10
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 9
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 11
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 10
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 12
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 11
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 13
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 12
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 14
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 13
+#include "PredefinedExtraKernelCall.def"
 
-		#define ITERATOR__ 15
-		#include "PredefinedExtraKernelCall.def"
+#define ITERATOR__ 14
+#include "PredefinedExtraKernelCall.def"
+
+#define ITERATOR__ 15
+#include "PredefinedExtraKernelCall.def"
 
 
 		/*Userdefined Extra Kernels calls*/
-		#define ITERATOR__ 0
-		#include "UserExtraKernelCall.def"
-	
-		#define ITERATOR__ 1
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 0
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 2
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 1
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 3
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 2
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 4
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 3
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 5
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 4
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 6
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 5
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 7
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 6
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 8
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 7
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 9
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 8
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 10
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 9
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 11
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 10
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 12
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 11
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 13
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 12
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 14
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 13
+#include "UserExtraKernelCall.def"
 
-		#define ITERATOR__ 15
-		#include "UserExtraKernelCall.def"
+#define ITERATOR__ 14
+#include "UserExtraKernelCall.def"
+
+#define ITERATOR__ 15
+#include "UserExtraKernelCall.def"
 
 
 		/*** END OF EXTRA KERNEL CALLS ***/
@@ -749,7 +748,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,MAX_BUFFER_PACKETS/ANALYSIS_TPB*sizeof(int64_t),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
-	
+
 		/*** FREE GPU DYNAMIC MEMORY ***/
 		BMMS::freeBMMS(GPU_data);
 		BMMS::freeBMMS(GPU_results);
@@ -757,12 +756,13 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		BMMS::freeBMMS(state.GPU_auxBlocks);
 		BMMS::freeBMMS(state.inputs.GPU_extendedParameters);
 		BMMS::freeBMMS(state.GPU_codeRequiresWLR);
-	
+
 		/*** LAUNCH HOOK (Host function) ***/
-	
+
 		//Launch hook (or preHook if window is set)
 		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks);
-		
+
+
 		//Frees results
 		cudaAssert(cudaFreeHost(results));
 		//free(results);

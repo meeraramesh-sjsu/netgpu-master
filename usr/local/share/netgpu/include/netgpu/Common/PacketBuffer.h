@@ -25,7 +25,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
  
 #include "../Util.h"
 #include "../PacketFeeders/SizeDissector.h"
-
+#include "../PreAnalyzer/PreAnalyzerDissector.h"
 #define MAX_BUFFER_PACKETS 3840 //Max number of packets
 #define MAX_BUFFER_PACKET_SIZE 94 //Packet max size
 #define TIMESTAMP_OFFSET sizeof(int)
@@ -35,11 +35,11 @@ typedef struct{
 	int offset[7];		
 }headers_t;
 
-
 typedef struct{
 	timeval timestamp;
 	headers_t headers;
 	uint8_t packet[MAX_BUFFER_PACKET_SIZE];
+	//uint8_t *packet;
 }packet_t;
 
 using namespace std;
@@ -58,7 +58,7 @@ class PacketBuffer {
 	unsigned int getNumOfLostPackets(void);
 	packet_t* getBuffer(void);
 	
-	int pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr);
+	int pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr,int noOfPatters);
 	packet_t* getPacket(int index);
 	void clearContent(void);
 	

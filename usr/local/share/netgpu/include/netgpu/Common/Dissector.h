@@ -17,7 +17,11 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <inttypes.h>
 #include <iostream>
 #include <arpa/inet.h>
-
+#include <algorithm>
+#include <fstream>
+#include <vector>
+#include <string>
+#include <set>
 #include "../Util.h"
 
 //Protocols
@@ -26,14 +30,14 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "Protocols/TcpHeader.h"
 #include "Protocols/UdpHeader.h"
 #include "Protocols/IcmpHeader.h"
-
 using namespace std;
 
 class Dissector {
 
 
 public:
-	unsigned int dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user);
+	unsigned int dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user,int noOfPatterns);
+	int noOfPatterns;
 private:
 	void dissectEthernet(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
 
@@ -41,13 +45,14 @@ private:
 	void dissectTcp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
 	void dissectUdp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
 	void dissectIcmp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
-
+	void payLoadRabinKarp(char* packetPointer);
+	void searchWords(vector<string> arr, int k, string text);
 //Virtual Actions:
 
 	 virtual void EthernetVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ethernet2Header* header,void* user)=0;
 	 virtual void Ip4VirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ip4Header* header,void* user)=0;
-	 virtual void TcpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,TcpHeader* header,void* user)=0;
-	 virtual void UdpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,UdpHeader* header,void* user)=0;
+	 virtual void Ip4VirtualActionnew(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ip4Header16* header,void* user)=0;
+	 virtual void TcpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,TcpHeader* header,void* user)=0;virtual void UdpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,UdpHeader* header,void* user)=0;
 	 virtual void IcmpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,IcmpHeader* header,void* user)=0;
 	
 	 virtual void EndOfDissectionVirtualAction(unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user)=0;
