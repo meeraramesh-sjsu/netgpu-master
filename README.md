@@ -10,7 +10,7 @@ detection systems and in other systems that involve signature matching algorithm
 
 The evaluations have been carried out by comparing CUDA version, C++ version and OpenMP version.
 
-There are three Main branches: master branch, openMP branch, CUDA branch
+There are three Main branches: master branch, openMP branch, Meera branch
 
 The master branch contains the CPU version Header checking and pattern matching algorithms used for Deep packet inspection written in C++. 
 
@@ -22,7 +22,7 @@ The pattern matching algorithms are:
 
 The openMp branch contains the above pattern matching algorithms writtern in OpenMP
 
-The CUDA branch contains the above pattern matching algorithms writtern in CUDA
+The Meera branch contains the above pattern matching algorithms writtern in CUDA
 
 
 
