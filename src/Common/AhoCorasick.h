@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <omp.h>
 
 using namespace std;
 #include <bits/stdc++.h>
@@ -43,7 +42,7 @@ int buildMatchingMachine(vector<string> arr, int k)
 
     // Construct values for goto function, i.e., fill g[][]
     // This is same as building a Trie for arr[]
-    #pragma omp parallel for
+
     for (int i = 0; i < k; ++i)
     {
         const string &word = arr[i];

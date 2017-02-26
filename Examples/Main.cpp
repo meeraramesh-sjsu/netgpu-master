@@ -1,6 +1,6 @@
 #include <cstring>
 #include <iostream>
-#include <time.h>
+#include <sys/time.h>
 #include <netgpu/netgpu.h>
 //#include "Analysis/Rate/Rate.h"
 //#include "Analysis/Anomalies/Anomalies.h"
@@ -18,8 +18,8 @@ using namespace std;
 	printf("Please provide input parameters as Executable pcap_file noOfPAtterns");
 	 return 0;
 	 }
-	 clock_t start,stop;
-	 start = clock();
+	 struct timeval  tv1, tv2;
+	 gettimeofday(&tv1, NULL);
 	//Capture packets from a pcap capture file (argv[1])
 	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
 	int noOfPatterns = atoi(argv[2]);
@@ -48,8 +48,11 @@ using namespace std;
 
 	//Starting execution (infinite loop)
 	Scheduler::start();
-	stop = clock();
-	cout<<"Time=   "<<(stop - start)/CLOCKS_PER_SEC<<endl;
+	/* Program code to execute here */
+	gettimeofday(&tv2, NULL);
+	DEBUG("Time taken in execution = %f seconds\n",
+     (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
+     (double) (tv2.tv_sec - tv1.tv_sec));
 	//std::cout<<" \n Ending ......."<<endl;
 
 	delete feeder;

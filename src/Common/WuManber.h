@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <vector>
 #include <string>
-#include <omp.h>
 
 using namespace std;
 
@@ -78,7 +77,6 @@ unsigned int search_wu(vector<string> pattern, int m,
 			//printf("hash2 = %i PREFIX[hash1].size = %i\n", hash2, PREFIX[hash1].size);
 
 			//For every pattern with the same suffix as the text
-			#pragma omp parallel for
 			for (i = 0; i < PREFIX_size[hash1]; i++) {
 				if(flag) continue;
 				//If the prefix of the pattern matches that of the text
@@ -114,15 +112,9 @@ void preproc_wu(vector<string> pattern, int m, int B,
 
 	int shiftlen, prefixhash;
 	DEBUG2("p_size= %d",p_size);
-	#pragma omp parallel for private(q)
+
 	for (j = 0; j < p_size; ++j) {
-		int threadNum = omp_get_thread_num();
 		DEBUG2("ThreadNum= %d",threadNum);
-		/* Don't want to add #pragma for the inner loop because
-		 * you may need to use the previous value of SHIFT[hash]
-		 * in the future loops, reduction is used if the data needs to be
-		 * gathered together at the end.
-		 */
 		//add each 3-character subpattern (similar to q-grams)
 		for (q = m; q >= B; --q) {
 			DEBUG2("start j=%d  q=%d",j,q);

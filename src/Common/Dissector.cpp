@@ -1,7 +1,6 @@
 #include "Dissector.h"
 #include "AhoCorasick.h"
 #include "WuManber.h"
-#include <omp.h>
 #include <string>
 using namespace std;
 
@@ -163,9 +162,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	int *PREFIX_size = (int *) malloc(shiftsize * sizeof(int));
 
 	DEBUG2("shift_size= %d",shiftsize);
-	#pragma omp parallel for
 	for (int i = 0; i < shiftsize; i++) {
-		int threadNum = omp_get_thread_num();
 		DEBUG2("ThreadNum= %d",threadNum);
 		//*( *SHIFT + i ) = m - B + 1;
 		SHIFT[i] = m - 3 + 1;
