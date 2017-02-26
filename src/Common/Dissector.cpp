@@ -133,7 +133,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	vector<string> tmp;
 	ifstream myFile (fileName, ios::in);
 	std::string line;
-	DEBUG2("FileName= %s",fileName);
+	DEBUG2("FileName= %s",fileName.c_str());
 
 	if (myFile.is_open()) {
 		for(;std::getline(myFile, line);)
