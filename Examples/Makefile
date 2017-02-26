@@ -16,7 +16,7 @@ ANALYSIS_FOLDER:=Analysis
 LIBS :=  -lnetgpu -lpcap -lpthread -lodbc -lcudart -lgomp
 
 #Compilation flags, -XCompiler adds flags directly to host compiler
-FLAGS = -pg -Xcompiler -fopenmp
+FLAGS = -pg -Xcompiler -fopenmp -g
 
 .NOTPARALLEL:
 all:analysis
