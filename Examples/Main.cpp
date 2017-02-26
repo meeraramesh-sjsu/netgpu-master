@@ -50,9 +50,10 @@ using namespace std;
 	Scheduler::start();
 	/* Program code to execute here */
 	gettimeofday(&tv2, NULL);
-	DEBUG("Time taken in execution = %f seconds\n",
-     (double) (tv2.tv_usec - tv1.tv_usec) / 1000000 +
-     (double) (tv2.tv_sec - tv1.tv_sec));
+	DEBUG("Time taken in execution = %f useconds\n",
+     (double) (tv2.tv_usec - tv1.tv_usec));
+
+	 /*/ 1000000 + (double) (tv2.tv_sec - tv1.tv_sec));*/
 	//std::cout<<" \n Ending ......."<<endl;
 
 	delete feeder;
