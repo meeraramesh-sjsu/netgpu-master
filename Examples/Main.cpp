@@ -14,6 +14,10 @@
 using namespace std;
  int main(int args,char *argv[]) {
 
+	 if(args < 4) {
+	printf("Please provide input parameters as Executable pcap_file noOfPAtterns");
+	 return 0;
+	 }
 	 clock_t start,stop;
 	 start = clock();
 	//Capture packets from a pcap capture file (argv[1])
