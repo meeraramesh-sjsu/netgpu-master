@@ -144,12 +144,17 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	DEBUG2("added file contents to vector");
 
 	//Aho-Corasick
-	//searchWords(tmp,tmp.size(),packet);
+	DEBUG2("Aho-Corasick Pattern matching!");
+	searchWords(tmp,tmp.size(),packet);
 
 	//WuManber
-	int m = (*min_element(tmp.begin(),tmp.end(),length())).size();
-	int shiftsize = wu_determine_shiftsize(256);
-	int p_size = tmp.size();
+
+	/*
+	 * Wu-Manber Payload Matching
+	 * int m = (*min_element(tmp.begin(),tmp.end(),length())).size();
+	 * int shiftsize = wu_determine_shiftsize(256);
+	 * DEBUG2("Wu-Manber Pattern matching!");
+	 int p_size = tmp.size();
 	int *SHIFT = (int *) malloc(shiftsize * sizeof(int)); //shiftsize = maximum hash value of the B-size suffix of the patterns
 
 	//The hash value of the B'-character prefix of a pattern
@@ -170,12 +175,13 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	}
 
 	DEBUG2("Completed adding contents by threads");
-	preproc_wu(tmp,m,3,SHIFT,PREFIX_value,PREFIX_index,PREFIX_size);
-
-//	preproc_wu(tmp,  m, 3,
-	//		int *SHIFT, int *PREFIX_value, int *PREFIX_index, int *PREFIX_size);
-
-	search_wu(tmp,m,packet,packet.size(),SHIFT,PREFIX_value,PREFIX_index,PREFIX_size);
+	 *
+	 * preproc_wu(tmp,m,3,SHIFT,PREFIX_value,PREFIX_index,PREFIX_size);
+	 *
+	 * search_wu(tmp,m,packet,packet.size(),SHIFT,PREFIX_value,PREFIX_index,PREFIX_size);
+	 *
+	 *
+	 */
 
 }
 
@@ -241,6 +247,7 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 			tmp.push_back(line);
 		}
 	}
+
 	else cout << "Unable to open file";
 
 	for(int i=0;i<tmp.size();i++)
@@ -256,16 +263,6 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 	}
 
 	int payLoadLength = packetLength - 40;
-	/*int m = 5;
-	char* pattern = "Hello";
-	cout<<"payLoadLength= "<<payLoadLength<<endl;
-	/*while(payLoadLength-- > 0)
-	{
-		cout<<*(char*) packetPointer;
-		packetPointer++;
-	}*/
-
-
 	int minLen = tmp[0].length();
 
 	int q = 997;
