@@ -49,8 +49,10 @@ using namespace std;
 	Scheduler::start();
 	/* Program code to execute here */
 	gettimeofday(&tv2, NULL);
-	DEBUG("Time taken in execution = %lf useconds\n",
-     (double) (tv2.tv_usec - tv1.tv_usec));
+
+	std::cout << "Total Time Taken: " << 1000000 * (tv2.tv_sec - tv1.tv_sec) + (tv2.tv_usec - tv1.tv_usec) << std::endl;
+	//DEBUG("Time taken in execution = %lf useconds\n",
+    // (double) (tv2.tv_usec - tv1.tv_usec));
 
 	 /*/ 1000000 + (double) (tv2.tv_sec - tv1.tv_sec));*/
 	//std::cout<<" \n Ending ......."<<endl;
