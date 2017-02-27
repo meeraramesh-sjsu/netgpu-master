@@ -226,8 +226,10 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 		{
 			if (out[currentState] & (1 << j))
 			{
+				long start = (long) i - arr[j].size() + 1;
+				if(start >= text.size()) continue;
 				cout << "Word " << arr[j] << " appears from "
-						<< i - arr[j].size() + 1 << " to " << i << endl;
+						<< start << " to " << i << endl;
 			}
 		}
 	}
