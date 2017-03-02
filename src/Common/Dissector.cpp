@@ -205,8 +205,8 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 {
 	// Preprocess patterns.
 	// Build machine with goto, failure and output functions
-	buildMatchingMachine(arr, k);
-	cout<<"Completed building machine"<<endl;
+	int states = buildMatchingMachine(arr, k);
+	DEBUG2("Completed building machine, No Of States = %d",states);
 	// Initialize current state
 	int currentState = 0;
 
@@ -228,13 +228,12 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 			{
 				long start = (long) i - arr[j].size() + 1;
 				if(start >= text.size()) continue;
-				cout << "Word " << arr[j] << " appears from "
-						<< start << " to " << i << endl;
+				//cout << "Word " << arr[j] << " appears from "
+					//	<< start << " to " << i << endl;
 			}
 		}
 	}
 }
-
 
 void Dissector::payLoadRabinKarp(char* packetPointer) {
 	vector<int> mapHash(997,-1);
