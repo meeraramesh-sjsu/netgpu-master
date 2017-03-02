@@ -144,7 +144,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	DEBUG2("added file contents to vector");
 
 	//Aho-Corasick
-	DEBUG2("Aho-Corasick Pattern matching!");
+	DEBUG2("Aho-Corasick Pattern matchingMAc!");
 	searchWords(tmp,tmp.size(),packet);
 
 	//WuManber

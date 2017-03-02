@@ -63,7 +63,7 @@ int buildMatchingMachine(vector<string> arr, int k)
 
         // Add current word in output function
         out[currentState] |= (1 << i);
-
+        DEBUG2("patternIndex=%d currentState=%d out[currentState]=%d",i,currentState,out[currentState]);
     }
 
     // For all characters which don't have an edge from
