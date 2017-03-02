@@ -5,7 +5,7 @@
 void Ethernet2Header::dump(void){
 	
 	cout <<"Ethernet 2 Header ; ";
-	cout <<"Ethernet type (onboard): "<<getType()<<endl<<endl;
+	cout <<"Ethernet type (onboard): "<<getType()<<endl;
 }
 uint16_t Ethernet2Header::getType(void){
 	

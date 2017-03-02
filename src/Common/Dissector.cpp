@@ -115,9 +115,10 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	//ACTIONS::VIRTUAL ACTION
 	TcpVirtualAction(packetPointer,totalHeaderLength,hdr,new TcpHeader(packetPointer),user);
 
+	DEBUG2("After TCP Virtual Action");
 	//Adding size of this header	
-	*totalHeaderLength +=TcpHeader::calcHeaderLengthInBytes(packetPointer);
-	DEBUG2("TCP packet");
+	(*totalHeaderLength) +=TcpHeader::calcHeaderLengthInBytes(packetPointer);
+	DEBUG2("TCP packet header length calculated");
 
 	//Setting pointer to Payload
 	char* onBoardProtocol;
@@ -146,7 +147,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	//Aho-Corasick
 	DEBUG2("Aho-Corasick Pattern matchingMAc!");
 	searchWords(tmp,tmp.size(),packet);
-
+	cout<<endl;
 	//WuManber
 
 	/*
