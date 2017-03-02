@@ -267,7 +267,7 @@ CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inline --compiler-bindir=/usr/bin/g++ -fopenmp -g
 CPP = gcc -E
-CPPFLAGS = -std=c++11  -std=c++0x -fopenmp -g
+CPPFLAGS = -std=c++11  -std=c++0x -fopenmp 
 CUDA_DIR = /usr/local/cuda/bin/..
 CXX = g++  -std=c++11  -std=c++0x
 CXXCPP = g++  -std=c++11  -std=c++0x -E
