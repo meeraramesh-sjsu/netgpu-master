@@ -227,8 +227,10 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 		{
 			if (out[currentState] & (1 << j))
 			{
+			    DEBUG2("In searchWords patternIndex=%d currentState=%d out[currentState]=%d",j,currentState,out[currentState]);
 				long start = (long) i - arr[j].size() + 1;
 				if(start >= text.size()) continue;
+				DEBUG2("Word %s appears from %d to %d",arr[j],start,i);
 				//cout << "Word " << arr[j] << " appears from "
 					//	<< start << " to " << i << endl;
 			}
