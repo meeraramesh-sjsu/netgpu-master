@@ -15,7 +15,7 @@ const int MAXC = 256;
 // OUTPUT FUNCTION IS IMPLEMENTED USING out[]
 // Bit i in this mask is one if the word with index i
 // appears when the machine enters this state.
-int out[MAXS];
+int** out;
 
 // FAILURE FUNCTION IS IMPLEMENTED USING f[]
 int f[MAXS];
@@ -43,6 +43,8 @@ int buildMatchingMachine(vector<string> arr, int k)
     // Construct values for goto function, i.e., fill g[][]
     // This is same as building a Trie for arr[]
 
+    out = new int[MAXS][k+1];
+    memset(out,0,sizeof(int));
     for (int i = 0; i < k; ++i)
     {
         const string &word = arr[i];
@@ -62,8 +64,10 @@ int buildMatchingMachine(vector<string> arr, int k)
         }
 
         // Add current word in output function
-        out[currentState] |= (1 << i);
-        DEBUG2("patternIndex=%d currentState=%d out[currentState]=%d",i,currentState,out[currentState]);
+        int outSize = out[currentState][0];
+        out[currentState][outSize+1] = i;
+        out[currentState][0]++;
+        DEBUG2("Out currentState=%d patIndex=%d",currentState,out[currentState][outSize+1]);
     }
 
     // For all characters which don't have an edge from

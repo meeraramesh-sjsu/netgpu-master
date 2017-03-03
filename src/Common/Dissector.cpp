@@ -218,24 +218,23 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 		currentState = findNextState(currentState, text[i]);
 
 		// If match not found, move to next state
-		if (out[currentState] == 0)
+		if (out[currentState][0] == 0)
 			continue;
 
 		// Match found, print all matching words of arr[]
 		// using output function.
-		for (int j = 0; j < k; ++j)
+		int outSize = out[currentState][0];
+		for (int j = 1; j <= outSize; ++j)
 		{
-			if (out[currentState] & (1 << j))
-			{
-			    DEBUG2("In searchWords patternIndex=%d currentState=%d out[currentState]=%d",j,currentState,out[currentState]);
-				long start = (long) i - arr[j].size() + 1;
+			int patIndex = out[currentState][j];
+			    DEBUG2("In searchWords outIndex=%d currentState=%d patIndex=%d",j,currentState,out[currentState][j]);
+				long start = (long) i - arr[patIndex].size() + 1;
 				if(start >= text.size()) continue;
-				DEBUG2("Word %s appears from %d to %d",arr[j].c_str(),start,i);
+				DEBUG2("Word %s appears from %d to %d",arr[patIndex].c_str(),start,i);
 				//cout << "Word " << arr[j] << " appears from "
 					//	<< start << " to " << i << endl;
-			}
 		}
-	}
+		}
 }
 
 void Dissector::payLoadRabinKarp(char* packetPointer) {
