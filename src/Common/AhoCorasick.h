@@ -48,7 +48,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
 
     DEBUG2("MAX = %d, k=%d, Size of out= %d",MAXS, k, sizeof(out));
 
-    memset(out,0,MAXS * k * sizeof(int));
+    memset(out,0, (MAXS * k * sizeof(int)));
     memset(g, -1, sizeof(g));
 
     for (int i = 0; i < k; ++i)
