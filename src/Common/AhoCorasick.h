@@ -32,7 +32,6 @@ int g[MAXS][MAXC];
 int buildMatchingMachine(vector<string> arr,  int  k)
 {
   // Initialize all values in output function as 0.
-    memset(out, 0, sizeof out);
 
     // Initialize all values in goto function as -1.
     memset(g, -1, sizeof g);
@@ -47,7 +46,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
     for(int i=0;i<MAXS;i++)
     out[i] = new int[k+1];
 
-    memset(out,0,sizeof(int));
+    memset(out,0,sizeof(out));
     for (int i = 0; i < k; ++i)
     {
         const string &word = arr[i];
