@@ -130,7 +130,9 @@ int buildMatchingMachine(vector<string> arr,  int  k)
                 f[g[state][ch]] = failure;
 
                 // Merge output values
-                int outSize = out[g[state][ch]][0];
+               if(failure!=0)
+               {
+            	int outSize = out[g[state][ch]][0];
                 int failureOutSize = out[failure][0];
                 for(int i=1;i<=failureOutSize;i++)
                 {
@@ -138,6 +140,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
                 out[g[state][ch]][0]++;
                 outSize++;
                 }
+               }
                 // Insert the next level node (of Trie) in Queue
                 q.push(g[state][ch]);
             }
