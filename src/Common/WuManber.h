@@ -114,7 +114,7 @@ void preproc_wu(vector<string> pattern, int m, int B,
 	DEBUG2("p_size= %d",p_size);
 
 	for (j = 0; j < p_size; ++j) {
-		DEBUG2("ThreadNum= %d",threadNum);
+		//DEBUG2("ThreadNum= %d",threadNum);
 		//add each 3-character subpattern (similar to q-grams)
 		for (q = m; q >= B; --q) {
 			DEBUG2("start j=%d  q=%d",j,q);
