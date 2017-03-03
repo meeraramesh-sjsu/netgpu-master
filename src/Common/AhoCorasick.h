@@ -46,6 +46,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
     for(int i=0;i<MAXS;i++)
     out[i] = new int[k+1];
 
+    DEBUG2("MAX = %d, k=%d, Size of out= %d",MAXS, k, sizeof(out));
     memset(out,0,sizeof(out));
     for (int i = 0; i < k; ++i)
     {
@@ -65,6 +66,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
             currentState = g[currentState][ch];
         }
 
+        DEBUG2("CurrentState = %d", currentState);
         // Add current word in output function
         int outSize = out[currentState][0];
         out[currentState][outSize+1] = i;
