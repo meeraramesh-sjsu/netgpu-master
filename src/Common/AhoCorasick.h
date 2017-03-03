@@ -64,15 +64,18 @@ int buildMatchingMachine(vector<string> arr,  int  k)
                 g[currentState][ch] = states++;
 
             currentState = g[currentState][ch];
+            DEBUG2("pattern=%d CurrentState = %d",i, g[currentState][ch]);
         }
 
         DEBUG2("CurrentState = %d", currentState);
         // Add current word in output function
+        if(currentState!=0) {
         int outSize = out[currentState][0];
         out[currentState][outSize+1] = i;
         out[currentState][0]++;
         DEBUG2("Out currentState=%d patIndex=%d",currentState,out[currentState][outSize+1]);
-    }
+        }
+        }
 
     // For all characters which don't have an edge from
     // root (or state 0) in Trie, add a goto edge to state
