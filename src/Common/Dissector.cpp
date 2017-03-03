@@ -101,7 +101,7 @@ void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeade
 		break;
 
 	}
-	*totalHeaderLength += Ip4Header::totalPacketLength(packetPointer);
+	*totalHeaderLength = Ip4Header::totalPacketLength(packetPointer);
 	packetLength = ntohs(((struct ip4_header*)packetPointer)->totalLength) & 0x0000FFFF;
 }
 
@@ -117,7 +117,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	DEBUG2("After TCP Virtual Action");
 	//Adding size of this header	
-	*totalHeaderLength += TcpHeader::calcHeaderLengthInBytes(packetPointer);
+	//*totalHeaderLength += TcpHeader::calcHeaderLengthInBytes(packetPointer);
 	DEBUG2("TCP packet header length calculated");
 
 	//Setting pointer to Payload
