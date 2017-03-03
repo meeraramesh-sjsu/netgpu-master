@@ -226,12 +226,11 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 		int outSize = out[currentState][0];
 		for (int j = 1; j <= outSize; ++j)
 		{
-			DEBUG2("In searchWords outIndex=%d currentState=%d patIndex=%d",j,currentState,out[currentState][j]);
-
 			int patIndex = out[currentState][j];
 			//The size of the output is fixed to the pattern size, but the current State value
 			//can exceed the pattern size
 			if(patIndex>=k || patIndex<0) continue;
+			DEBUG2("In searchWords outIndex=%d currentState=%d patIndex=%d",j,currentState,out[currentState][j]);
 				long start = (long) i - arr[patIndex].size() + 1;
 				if(start >= text.size()) continue;
 				DEBUG2("Word %s appears from %d to %d",arr[patIndex].c_str(),start,i);
