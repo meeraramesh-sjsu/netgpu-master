@@ -218,7 +218,7 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 		currentState = findNextState(currentState, text[i]);
 
 		// If match not found, move to next state
-		if (out[currentState][0] == 0)
+		if (currentState==0 || out[currentState][0] == 0)
 			continue;
 
 		// Match found, print all matching words of arr[]
