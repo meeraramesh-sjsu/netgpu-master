@@ -7,7 +7,7 @@ using namespace std;
 
 // Max number of states in the matching machine.
 // Should be equal to the sum of the length of all keywords.
-const int MAXS = 30000;
+const int MAXS = 300000;
 
 // Maximum number of characters in input alphabet
 const int MAXC = 256;
@@ -34,7 +34,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
   // Initialize all values in output function as 0.
 
     // Initialize all values in goto function as -1.
-    memset(g, -1, sizeof g);
+    memset(g, -1, sizeof(g));
 
     // Initially, we just have the 0 state
     int states = 1;
