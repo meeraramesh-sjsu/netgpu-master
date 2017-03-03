@@ -7,7 +7,7 @@ using namespace std;
 
 // Max number of states in the matching machine.
 // Should be equal to the sum of the length of all keywords.
-const int MAXS = 300000;
+const int MAXS = 30000000;
 
 // Maximum number of characters in input alphabet
 const int MAXC = 256;
