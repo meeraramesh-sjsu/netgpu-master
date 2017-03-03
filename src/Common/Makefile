@@ -265,9 +265,9 @@ AUTOMAKE = ${SHELL} /home/meera/gpudir/netgpu-master/missing automake-1.14
 AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inline --compiler-bindir=/usr/bin/g++ -fopenmp -g
+CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inline --compiler-bindir=/usr/bin/g++ -fopenmp -g -O0 
 CPP = gcc -E
-CPPFLAGS = -std=c++11  -std=c++0x -fopenmp -g
+CPPFLAGS = -std=c++11  -std=c++0x -fopenmp -g -O0 
 CUDA_DIR = /usr/local/cuda/bin/..
 CXX = g++  -std=c++11  -std=c++0x
 CXXCPP = g++  -std=c++11  -std=c++0x -E
