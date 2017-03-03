@@ -7,7 +7,7 @@ using namespace std;
 
 // Max number of states in the matching machine.
 // Should be equal to the sum of the length of all keywords.
-const int MAXS = 30000000;
+const int MAXS = 550000;
 
 // Maximum number of characters in input alphabet
 const int MAXC = 256;
@@ -21,7 +21,7 @@ int** out;
 int f[MAXS];
 
 // GOTO FUNCTION (OR TRIE) IS IMPLEMENTED USING g[][]
-int *g[MAXS];
+int g[MAXS][MAXC];
 
 // Builds the string matching machine.
 // arr -   array of words. The index of each keyword is important:
@@ -48,12 +48,8 @@ int buildMatchingMachine(vector<string> arr,  int  k)
 
     DEBUG2("MAX = %d, k=%d, Size of out= %d",MAXS, k, sizeof(out));
     memset(out,0,sizeof(out));
-
-        for(int i=0;i<MAXS;i++)
-        g[i] = new int[MAXC];
-        memset(g,-1,sizeof(out));
-
     memset(g, -1, sizeof(g));
+
     for (int i = 0; i < k; ++i)
     {
         const string &word = arr[i];
