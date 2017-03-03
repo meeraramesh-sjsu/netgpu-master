@@ -41,14 +41,14 @@ int buildMatchingMachine(vector<string> arr,  int  k)
 
     // Construct values for goto function, i.e., fill g[][]
     // This is same as building a Trie for arr[]
-
+    //When using the () along with new, implies the place allotted by new, is assigned a value
+    //of 0 by default
     out = new int*[MAXS];
     for(int i=0;i<MAXS;i++)
-    out[i] = new int[k+1];
+    out[i] = new int[k+1]();
 
     DEBUG2("MAX = %d, k=%d, Size of out= %d",MAXS, k, sizeof(out));
 
-    memset(out,0, (MAXS * k * sizeof(int)));
     memset(g, -1, sizeof(g));
 
     for (int i = 0; i < k; ++i)
