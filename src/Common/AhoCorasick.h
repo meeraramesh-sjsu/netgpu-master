@@ -21,7 +21,7 @@ int** out;
 int f[MAXS];
 
 // GOTO FUNCTION (OR TRIE) IS IMPLEMENTED USING g[][]
-int **g;
+int *g[MAXS];
 
 // Builds the string matching machine.
 // arr -   array of words. The index of each keyword is important:
@@ -49,10 +49,8 @@ int buildMatchingMachine(vector<string> arr,  int  k)
     DEBUG2("MAX = %d, k=%d, Size of out= %d",MAXS, k, sizeof(out));
     memset(out,0,sizeof(out));
 
-    	g = new int*[MAXS];
         for(int i=0;i<MAXS;i++)
         g[i] = new int[MAXC];
-
         memset(g,-1,sizeof(out));
 
     memset(g, -1, sizeof(g));
