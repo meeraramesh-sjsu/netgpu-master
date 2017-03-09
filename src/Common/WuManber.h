@@ -92,9 +92,9 @@ unsigned int search_wu(vector<string> pattern, int m,
 						#pragma omp critical
 						{
 						matches++;
-						printf("Match of pattern index %i at %i\n", PREFIX_index[hash1 * p_size + i], column-m+1);
 						}
 						//flag = true;
+						printf("Match of pattern index %i at %i\n", PREFIX_index[hash1 * p_size + i], column-m+1);
 					}
 
 				}
