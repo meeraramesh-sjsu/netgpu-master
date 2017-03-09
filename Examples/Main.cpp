@@ -56,4 +56,3 @@ using namespace std;
 	exit(EXIT_SUCCESS);
         //sample 
 }
-
