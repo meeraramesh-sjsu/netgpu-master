@@ -103,6 +103,7 @@ void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	}
 	*totalHeaderLength = Ip4Header::totalPacketLength(packetPointer);
+	printf("total HEader length = %d",*totalHeaderLength);
 	packetLength = ntohs(((struct ip4_header*)packetPointer)->totalLength) & 0x0000FFFF;
 }
 
@@ -174,7 +175,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	DEBUG2("Completed adding contents by threads");
 	preproc_wu(tmp,m,3,SHIFT,PREFIX_value,PREFIX_index,PREFIX_size);
-
+	printf("payload first char = %c, m=%d",packet[0],m);
 //	preproc_wu(tmp,  m, 3,
 	//		int *SHIFT, int *PREFIX_value, int *PREFIX_index, int *PREFIX_size);
 
