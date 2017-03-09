@@ -12,10 +12,10 @@
 //#include "Analysis/Advanced/Advanced.h"
 
 using namespace std;
- int main(int args,char *argv[]) {
+int main(int args,char *argv[]) {
 
 	 if(args < 3) {
-	printf("Please provide input parameters as Executable pcap_file noOfPAtterns");
+	 printf("Please provide input parameters as Executable pcap_file noOfPAtterns");
 	 return 0;
 	 }
 	 clock_t start,stop;
