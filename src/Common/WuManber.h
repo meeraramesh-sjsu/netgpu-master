@@ -115,7 +115,7 @@ void preproc_wu(vector<string> pattern, int m, int B,
 
 	int shiftlen, prefixhash;
 	DEBUG2("p_size= %d",p_size);
-	#pragma omp parallel for private(q)
+	//#pragma omp parallel for private(q)
 	for (j = 0; j < p_size; ++j) {
 		int threadNum = omp_get_thread_num();
 		printf("ThreadNum= %d",threadNum);
