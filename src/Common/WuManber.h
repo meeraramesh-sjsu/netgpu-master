@@ -111,12 +111,9 @@ void preproc_wu(vector<string> pattern, int m, int B,
 		int *SHIFT, int *PREFIX_value, int *PREFIX_index, int *PREFIX_size) {
 
 	int p_size = pattern.size();
-	unsigned int j, q, hash;
-
-	int shiftlen, prefixhash;
-	DEBUG2("p_size= %d",p_size);
-	//#pragma omp parallel for private(q)
-	for (j = 0; j < p_size; ++j) {
+	printf("p_size= %d",p_size);
+	#pragma omp parallel for
+	for (int j = 0; j < p_size; ++j) {
 		int threadNum = omp_get_thread_num();
 		printf("ThreadNum= %d",threadNum);
 		/* Don't want to add #pragma for the inner loop because
@@ -125,7 +122,8 @@ void preproc_wu(vector<string> pattern, int m, int B,
 		 * gathered together at the end.
 		 */
 		//add each 3-character subpattern (similar to q-grams)
-		for (q = m; q >= B; --q) {
+		for (int q = m; q >= B; --q) {
+			int shiftlen,hash,prefixhash;
 			printf("start j=%d  q=%d",j,q);
 			hash = pattern[j][q - 2 - 1]; // bring in offsets of X in pattern j
 			hash <<= m_nBitsInShift;
