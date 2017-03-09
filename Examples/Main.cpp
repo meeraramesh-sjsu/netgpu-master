@@ -18,11 +18,12 @@ int main(int args,char *argv[]) {
 	 printf("Please provide input parameters as Executable pcap_file noOfPAtterns");
 	 return 0;
 	 }
-	 clock_t start,stop;
-	 start = clock();
 	//Capture packets from a pcap capture file (argv[1])
 	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
 	int noOfPatterns = atoi(argv[2]);
+	struct timeval  tv1, tv2;
+	gettimeofday(&tv1, NULL);
+
 	//Capturing from lo
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
 	
@@ -48,8 +49,10 @@ int main(int args,char *argv[]) {
 
 	//Starting execution (infinite loop)
 	Scheduler::start();
-	stop = clock();
-	cout<<"Time=   "<<(stop - start)/CLOCKS_PER_SEC<<endl;
+
+	gettimeofday(&tv2, NULL);
+	std::cout << "Total Time Taken: " << 1000000 * (tv2.tv_sec - tv1.tv_sec) + (tv2.tv_usec - tv1.tv_usec) << std::endl;
+
 	//std::cout<<" \n Ending ......."<<endl;
 
 	delete feeder;
