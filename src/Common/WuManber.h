@@ -88,11 +88,11 @@ unsigned int search_wu(vector<string> pattern, int m,
 					if (memcmp(pattern[PREFIX_index[hash1 * p_size + i]].c_str(),
 							textC + column - m + 1, m) == 0) {
 
-						matches++;
-
 						#pragma omp critical
+						{
+						matches++;
 						printf("Match of pattern index %i at %i\n", PREFIX_index[hash1 * p_size + i], column);
-
+						}
 						//flag = true;
 					}
 
@@ -118,7 +118,7 @@ void preproc_wu(vector<string> pattern, int m, int B,
 	#pragma omp parallel for private(q)
 	for (j = 0; j < p_size; ++j) {
 		int threadNum = omp_get_thread_num();
-		DEBUG2("ThreadNum= %d",threadNum);
+		printf("ThreadNum= %d",threadNum);
 		/* Don't want to add #pragma for the inner loop because
 		 * you may need to use the previous value of SHIFT[hash]
 		 * in the future loops, reduction is used if the data needs to be
@@ -126,7 +126,7 @@ void preproc_wu(vector<string> pattern, int m, int B,
 		 */
 		//add each 3-character subpattern (similar to q-grams)
 		for (q = m; q >= B; --q) {
-			DEBUG2("start j=%d  q=%d",j,q);
+			printf("start j=%d  q=%d",j,q);
 			hash = pattern[j][q - 2 - 1]; // bring in offsets of X in pattern j
 			hash <<= m_nBitsInShift;
 			hash += pattern[j][q - 1 - 1];
@@ -154,6 +154,6 @@ void preproc_wu(vector<string> pattern, int m, int B,
 				//printf("%i) PREFIX[%i].value[%i] = %i PREFIX[%i].index[%i] = %i\n", j, hash, PREFIX[hash].size - 1, PREFIX[hash].value[PREFIX[hash].size - 1], hash, PREFIX[hash].size - 1, hashmap[j].index );
 			}
 		}
-		DEBUG2("stop j=%d",j);
+		printf("stop j=%d",j);
 	}
 }
