@@ -213,6 +213,7 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 
 	// Traverse the text through the nuilt machine to find
 	// all occurrences of words in arr[]
+	#pragma omp parallel for
 	for (int i = 0; i < text.size(); ++i)
 	{
 		currentState = findNextState(currentState, text[i]);
@@ -224,6 +225,8 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 		// Match found, print all matching words of arr[]
 		// using output function.
 		int outSize = out[currentState][0];
+
+		#pragma omp parallel for
 		for (int j = 1; j <= outSize; ++j)
 		{
 			int patIndex = out[currentState][j];
