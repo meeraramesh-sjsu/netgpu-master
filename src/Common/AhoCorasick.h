@@ -103,7 +103,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
     queue<int> q;
 
      // Iterate over every possible input
-	#pragma omp parallel for
+
     for (int ch = 0; ch < MAXC; ++ch)
     {
         // All nodes of depth 1 have failure function value
@@ -122,9 +122,12 @@ int buildMatchingMachine(vector<string> arr,  int  k)
     {
     	 if (!q.empty()) {
         // Remove the front state from queue
-        int state = q.front();
-        q.pop();
-
+    		 int state = 0;
+		#pragma omp critical
+    		 {
+         state = q.front();
+         q.pop();
+    		 }
         // For the removed state, find failure function for
         // all those characters for which goto function is
         // not defined.
@@ -169,9 +172,10 @@ int buildMatchingMachine(vector<string> arr,  int  k)
                 outSize++;
                 }
                 }
+               q.push(g[state][ch]);
                }
                 // Insert the next level node (of Trie) in Queue
-                q.push(g[state][ch]);
+
             }
         }
     	 }
