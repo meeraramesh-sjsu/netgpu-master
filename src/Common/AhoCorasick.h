@@ -118,8 +118,9 @@ int buildMatchingMachine(vector<string> arr,  int  k)
 
     // Now queue has states 1 and 3
 	#pragma omp parallel for
-    for(int i=0;(i<q.size()) && (!q.empty());i++)
+    for(int i=0;i<q.size();i++)
     {
+    	 if (!q.empty()) {
         // Remove the front state from queue
         int state = q.front();
         q.pop();
@@ -173,7 +174,8 @@ int buildMatchingMachine(vector<string> arr,  int  k)
                 q.push(g[state][ch]);
             }
         }
-    }
+    	 }
+   }
 
     return states;
 }
