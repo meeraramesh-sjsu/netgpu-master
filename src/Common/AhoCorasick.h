@@ -52,7 +52,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
 
     memset(g, -1, sizeof(g));
 
-	#pragma omp parallel for
+	//#pragma omp parallel for
     for (int i = 0; i < k; ++i)
     {
         const string &word = arr[i];
@@ -117,22 +117,23 @@ int buildMatchingMachine(vector<string> arr,  int  k)
     }
 
     // Now queue has states 1 and 3
-	#pragma omp parallel for
+	//#pragma omp parallel for
     for(int i=0;i<q.size();i++)
     {
     	 if (!q.empty()) {
         // Remove the front state from queue
     		 int state = 0;
-		#pragma omp critical
-    		 {
+
+    	#pragma omp critical
+    	{
          state = q.front();
          q.pop();
-    		 }
+    	}
         // For the removed state, find failure function for
         // all those characters for which goto function is
         // not defined.
 
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int ch = 0; ch < MAXC; ++ch)
         {
             // If goto function is defined for character 'ch'
