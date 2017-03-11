@@ -59,8 +59,8 @@ int buildMatchingMachine(vector<string> arr,  int  k)
         int currentState = 0;
 
         // Insert all characters of current word in arr[]
-	#pragma omp critical
-    {
+	//#pragma omp critical
+    //{
         for (int j = 0; j < word.size(); ++j)
         {
             int ch = word[j];
@@ -75,7 +75,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
             currentState = g[currentState][ch];
             DEBUG2("pattern=%d CurrentState = %d",i, g[currentState][ch]);
         }
-    }
+    //}
         DEBUG2("CurrentState = %d", currentState);
         // Add current word in output function
         if(currentState!=0) {
@@ -124,11 +124,11 @@ int buildMatchingMachine(vector<string> arr,  int  k)
         // Remove the front state from queue
     		 int state = 0;
 
-    	#pragma omp critical
-    	{
+    	//#pragma omp critical
+    	//{
          state = q.front();
          q.pop();
-    	}
+    	//}
         // For the removed state, find failure function for
         // all those characters for which goto function is
         // not defined.
@@ -159,8 +159,8 @@ int buildMatchingMachine(vector<string> arr,  int  k)
                  * which can be changed by the individual threads
                  *
                  */
-				#pragma omp critical
-                {
+				//#pragma omp critical
+                //{
                if(failure!=0)
                {
             	int outSize = out[g[state][ch]][0];
@@ -174,7 +174,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
                 }
                 }
                q.push(g[state][ch]);
-               }
+               //}
                 // Insert the next level node (of Trie) in Queue
 
             }
@@ -201,4 +201,3 @@ int findNextState(int currentState, char nextInput)
 
     return g[answer][ch];
 }
-
