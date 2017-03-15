@@ -1,0 +1,57 @@
+
+ ---- addAnalysisToPool called 
+ 
+ ---- calling analyze function 
+
+ ---- calling loadBufferToGPU 
+
+ ---- buffer from CPU to GPU 
+
+
+ ---- ******************************************************************
+total packets= 5
+Time to generate:  0.2 ms 
+
+hooks
+*********************CPU SECTION***********************************
+*************Crafted Packets***************
+Alarm!! Src address or Destination address is in private Address range:Source IP = 192.168.2.8 Destination IP = 192.168.2.1 
+Alarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Alarm!! Src address or Destination address is in private Address range:Source IP = 192.168.2.8 Destination IP = 192.168.2.1 
+Alarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Alarm!! Src address or Destination address is in private Address range:Source IP = 192.168.2.8 Destination IP = 192.168.2.1 
+Alarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+Alarm!! Src address or Destination address is in private Address range:Source IP = 192.168.2.8 Destination IP = 192.168.2.1 
+Alarm!! Reserved bits are set, the packet is from src Address:192.168.2.8
+Alarm!! TCP Packet from src Address 192.168.2.8has source Port set to zero!
+************************************************Virus pattern found: 28 
+************************************************Virus pattern found: 28 
+************************************************Virus pattern found: 28 
+************************************************Virus pattern found: 28 
+Traffic from the following source IPs should be blocked
+192.168.2.8
+192.168.2.8
+192.168.2.8
+192.168.2.8
+192.168.2.8
+Clock Frequency = 259 us
+Alarm!! There are 0 packets Which have incorrect version Number! 
+Time taken for GOTO 61746 us
+Unloading Buffer From GPU calledFeeder has more packets to get
+5
+ 
+ ---- calling analyze function 
+
+ ---- calling loadBufferToGPU 
+
+ ---- buffer from CPU to GPU 
+
+
+ ---- ******************************************************************
+
+ ---- packet buffer is NULL 
+
+Unloading Buffer From GPU called

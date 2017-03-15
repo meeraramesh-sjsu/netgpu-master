@@ -210,7 +210,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		vector<string> tmp;
 
 		string line;
-		  ifstream myfile( "Pattern/patterns10.cpp" );
+		  ifstream myfile("/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns10.cpp");
 		  if (myfile)  // same as: if (myfile.good())
 		    {
 		    while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())

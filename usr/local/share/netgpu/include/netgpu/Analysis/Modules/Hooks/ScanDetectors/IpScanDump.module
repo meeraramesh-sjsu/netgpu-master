@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include<string>
 #include<vector>
+#include<sys/time.h>
 using namespace std;
 #include "../hostTimeUtils.h"
 

@@ -1,0 +1,105 @@
+==21957== NVPROF is profiling process 21957, command: ./example outputAck.pcap
+==21957== Profiling application: ./example outputAck.pcap
+==21957== Profiling result:
+"Time(%)","Time","Calls","Avg","Min","Max","Name"
+%,ms,,ms,us,ms,
+76.090922,4.259722,3,1.419907,2.848000,3.946574,"[CUDA memcpy HtoD]"
+19.323675,1.081778,3,0.360592,3.744000,0.984499,"[CUDA memcpy DtoH]"
+2.709407,0.151678,6,0.025279,6.720000,0.042656,"[CUDA memset]"
+1.875996,0.105022,1,0.105022,105.022000,0.105022,"void IpScan_KernelAnalysis<IpScan_ipScanAnalysis_t, IpScan_ipScanAnalysis_t>(packet_t*, IpScan_ipScanAnalysis_t*, IpScan_ipScanAnalysis_t*, analysisState_t, int*, int*, int*)"
+
+==21957== API calls:
+"Time(%)","Time","Calls","Avg","Min","Max","Name"
+%,ms,,ms,ms,ms,
+65.991593,207.529442,4,51.882360,0.480578,196.450651,"cudaHostAlloc"
+28.963543,91.084145,1,91.084145,91.084145,91.084145,"cudaDeviceReset"
+2.061742,6.483737,3,2.161245,1.064287,2.734936,"cudaFreeHost"
+1.631578,5.130964,5,1.026192,0.013498,3.985420,"cudaMemcpy"
+0.479471,1.507834,10,0.150783,0.125762,0.262434,"cudaMalloc"
+0.285755,0.898639,166,5.413000e-03,1.140000e-04,0.206654,"cuDeviceGetAttribute"
+0.253034,0.795738,7,0.113676,0.101078,0.143347,"cudaFree"
+0.093324,0.293483,1,0.293483,0.293483,0.293483,"cudaMallocPitch"
+0.087559,0.275353,1,0.275353,0.275353,0.275353,"cudaMemcpy2D"
+0.043827,0.137825,5,0.027565,2.834000e-03,0.109833,"cudaThreadSynchronize"
+0.034931,0.109851,2,0.054925,0.054574,0.055277,"cuDeviceTotalMem"
+0.030156,0.094835,6,0.015805,4.600000e-03,0.037111,"cudaMemset"
+0.025730,0.080914,2,0.040457,0.039448,0.041466,"cuDeviceGetName"
+0.007557,0.023764,1,0.023764,0.023764,0.023764,"cudaLaunch"
+0.003797,0.011942,2,5.971000e-03,5.863000e-03,6.079000e-03,"cudaEventSynchronize"
+0.001618,5.088000e-03,2,2.544000e-03,2.147000e-03,2.941000e-03,"cudaEventRecord"
+0.001495,4.703000e-03,2,2.351000e-03,8.980000e-04,3.805000e-03,"cudaEventCreate"
+0.001237,3.891000e-03,7,5.550000e-04,1.410000e-04,2.464000e-03,"cudaSetupArgument"
+0.000804,2.528000e-03,1,2.528000e-03,2.528000e-03,2.528000e-03,"cudaEventElapsedTime"
+0.000521,1.640000e-03,1,1.640000e-03,1.640000e-03,1.640000e-03,"cudaConfigureCall"
+0.000452,1.423000e-03,2,7.110000e-04,5.690000e-04,8.540000e-04,"cuDeviceGetCount"
+0.000275,8.660000e-04,4,2.160000e-04,1.190000e-04,3.450000e-04,"cuDeviceGet"
+
+======== CPU profiling result (bottom up):
+44.74% cudbgGetAPIVersion
+| 44.74% start_thread
+|   44.74% clone
+16.67% memset
+| 11.40% void IpScan_launchAnalysis_wrapper<IpScan_ipScanAnalysis_t, IpScan_ipScanAnalysis_t>(PacketBuffer*, packet_t*)
+| | 11.40% IpScan::launchAnalysis(PacketBuffer*, packet_t*)
+| |   11.40% Scheduler::analyzeBuffer(PacketBuffer*)
+| |     11.40% Scheduler::start(void)
+| |       11.40% main
+| 5.26% buildGoto(std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char>>, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char>>>>)
+|   5.26% void IpScan_launchAnalysis_wrapper<IpScan_ipScanAnalysis_t, IpScan_ipScanAnalysis_t>(PacketBuffer*, packet_t*)
+|     5.26% IpScan::launchAnalysis(PacketBuffer*, packet_t*)
+|       5.26% Scheduler::analyzeBuffer(PacketBuffer*)
+|         5.26% Scheduler::start(void)
+|           5.26% main
+16.67% cuDevicePrimaryCtxRetain
+| 16.67% cudaGetExportTable
+|   16.67% cudaGetExportTable
+|     16.67% cudaGetExportTable
+|       16.67% cudaGetExportTable
+|         16.67% cudaGetExportTable
+|           16.67% cudaGetExportTable
+|             16.67% cudaHostAlloc
+|               16.67% PacketBuffer::__base_object_constructor__(void)
+|                 16.67% OfflinePacketFeeder::__complete_object_constructor__(char const *)
+|                   16.67% main
+10.53% cuInit
+| 10.53% cudaGetExportTable
+|   10.53% cudaGetExportTable
+|     10.53% __pthread_once
+|       10.53% cudaVDPAUSetVDPAUDevice
+|         10.53% cudaGetExportTable
+|           10.53% cudaGetExportTable
+|             10.53% cudaHostAlloc
+|               10.53% PacketBuffer::__base_object_constructor__(void)
+|                 10.53% OfflinePacketFeeder::__complete_object_constructor__(char const *)
+|                   10.53% main
+7.89% cuDevicePrimaryCtxReset
+| 7.89% cudaGetExportTable
+|   7.89% cudaGetExportTable
+|     7.89% cudaDeviceReset
+|       7.89% main
+1.75% cuMemHostAlloc
+| 1.75% cudaGetExportTable
+|   1.75% cudaGetExportTable
+|     1.75% cudaHostAlloc
+|       1.75% PacketBuffer::__base_object_constructor__(void)
+|         1.75% OfflinePacketFeeder::__complete_object_constructor__(char const *)
+|           1.75% main
+0.88% cuMemcpyHtoD_v2
+| 0.88% cudaGetExportTable
+|   0.88% cudaGetExportTable
+|     0.88% cudaMemcpy
+|       0.88% Scheduler::loadBufferToGPU(PacketBuffer*)
+|         0.88% Scheduler::analyzeBuffer(PacketBuffer*)
+|           0.88% Scheduler::start(void)
+|             0.88% main
+0.88% cuMemFreeHost
+  0.88% cudaGetExportTable
+    0.88% cudaGetExportTable
+      0.88% cudaFreeHost
+        0.88% void IpScan_launchAnalysis_wrapper<IpScan_ipScanAnalysis_t, IpScan_ipScanAnalysis_t>(PacketBuffer*, packet_t*)
+          0.88% IpScan::launchAnalysis(PacketBuffer*, packet_t*)
+            0.88% Scheduler::analyzeBuffer(PacketBuffer*)
+              0.88% Scheduler::start(void)
+                0.88% main
+
+======== Data collected at 100Hz frequency
