@@ -18,6 +18,9 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <vector>
 #include <string>
 #include <ctime>
+#include <fstream>
+
+using namespace std;
 //#include <cuda.h>
 //#include <cuda_runtime.h>
 #include "/usr/local/cuda/include/cuda.h"
@@ -206,7 +209,19 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		vector<string> tmp;
 
-		tmp.push_back("ebf55eb499cd2180fc21750458eb5190");
+		string line;
+		  ifstream myfile( "Pattern/patterns10.cpp" );
+		  if (myfile)  // same as: if (myfile.good())
+		    {
+		    while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())
+		      {
+		    	tmp.push_back(line);
+		      }
+		    myfile.close();
+		    }
+		  else cout << "fooey\n";
+		  cout<<"Number of patterns = "<<tmp.size()<<endl;
+		/*tmp.push_back("ebf55eb499cd2180fc21750458eb5190");
 		tmp.push_back("2421b44ee90600b43ecd21b44fbacc01cd21726eb8023dba9e00cd218bd8b80057cd2183f90074dfb8024233d233c9cd21a3d401b8004233c933d2cd21b43f8b0ed4018b167a02cd21");
 		tmp.push_back("eb2b905a45cd602ec606250601902e803e2606008d3e08060e07755e2ec606260605902ec6062b06ff90eb4e902ec6062b060090b435b060cd21bb000126817f");
 		tmp.push_back("5a45cd602ec606250601902e803e2606");
@@ -237,7 +252,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		tmp.push_back("Hello");
 		tmp.push_back("how");
 		tmp.push_back("are");
-		tmp.push_back("you");
+		tmp.push_back("you");*/
 
 		/*Pattern matching starts*/
 		/*	 vector<string> tmp;

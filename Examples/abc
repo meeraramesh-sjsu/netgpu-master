@@ -1,0 +1,63 @@
+int main(int args,char *argv[]) {
+	
+	//Define the Packet feeder
+	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
+
+	//Adding analysis to perform analysis on the packets
+	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);
+
+	//Adding a single feeder
+	Scheduler::addFeederToPool(feeder,noOfPatterns);
+
+	//Starting execution (infinite loop)
+	Scheduler::start();
+
+}
+
+
+packet_t* buffer;
+
+cudaAssert(cudaHostAlloc((void**)&buffer,sizeof(packet_t)*MAX_BUFFER_PACKETS,\
+cudaHostAllocPortable));
+
+
+
+typedef struct{
+	int proto[7];
+	int offset[7];		
+}headers_t;
+
+typedef struct{
+	timeval timestamp;
+	headers_t headers;
+	uint8_t packet[MAX_BUFFER_PACKET_SIZE];
+	//uint8_t *packet;
+}packet_t;
+
+
+PacketBuffer* OfflinePacketFeeder::getSniffedPacketBuffer(void){
+	
+	PacketBuffer* fillBuffer;
+	
+	//Set to return actual buffer
+	fillBuffer = &packetBufferArray[bufferIndex];
+	
+	//Swaps  buffers and clean new one
+	bufferIndex = (bufferIndex+1)%SNIFFER_NUM_OF_BUFFERS;
+
+	DEBUG2("Swapped to buffer: %d",bufferIndex);
+	
+	packetBufferArray[bufferIndex].clearContent();	
+
+	//Signals sniffer thread
+	sem_post(waitForSwap);
+	
+	if(state == OFFLINE_SNIFFER_LASTBUFFER_STATE){
+		state = OFFLINE_SNIFFER_END_STATE; 
+	}
+
+	//UNLOCK
+	pthread_mutex_unlock(&mutex);
+	
+	return to_return;		
+}
