@@ -19,6 +19,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <string>
 #include <ctime>
 #include <fstream>
+#include <stdio.h>
 
 using namespace std;
 //#include <cuda.h>
@@ -208,7 +209,10 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
 		vector<string> tmp;
-		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + to_string(numberOfPatterns) + ".cpp";
+		char* str;
+		sprintf(str,"%d",numberOfPatterns);
+		string temp(str);
+		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + temp + ".cpp";
 		string line;
 
 		  ifstream myfile("");
