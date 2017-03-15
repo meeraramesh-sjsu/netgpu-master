@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <omp.h>
 
 using namespace std;
 #include <bits/stdc++.h>
@@ -51,25 +52,30 @@ int buildMatchingMachine(vector<string> arr,  int  k)
 
     memset(g, -1, sizeof(g));
 
+	//#pragma omp parallel for
     for (int i = 0; i < k; ++i)
     {
         const string &word = arr[i];
         int currentState = 0;
 
         // Insert all characters of current word in arr[]
+	//#pragma omp critical
+    //{
         for (int j = 0; j < word.size(); ++j)
         {
             int ch = word[j];
 
             // Allocate a new node (create a new state) if a
             // node for ch doesn't exist.
+
+
             if (g[currentState][ch] == -1)
                 g[currentState][ch] = states++;
 
             currentState = g[currentState][ch];
             DEBUG2("pattern=%d CurrentState = %d",i, g[currentState][ch]);
         }
-
+    //}
         DEBUG2("CurrentState = %d", currentState);
         // Add current word in output function
         if(currentState!=0) {
@@ -97,6 +103,7 @@ int buildMatchingMachine(vector<string> arr,  int  k)
     queue<int> q;
 
      // Iterate over every possible input
+
     for (int ch = 0; ch < MAXC; ++ch)
     {
         // All nodes of depth 1 have failure function value
@@ -110,15 +117,23 @@ int buildMatchingMachine(vector<string> arr,  int  k)
     }
 
     // Now queue has states 1 and 3
-    while (q.size())
+	//#pragma omp parallel for
+    for(int i=0;i<q.size();i++)
     {
+    	 if (!q.empty()) {
         // Remove the front state from queue
-        int state = q.front();
-        q.pop();
+    		 int state = 0;
 
+    	//#pragma omp critical
+    	//{
+         state = q.front();
+         q.pop();
+    	//}
         // For the removed state, find failure function for
         // all those characters for which goto function is
         // not defined.
+
+        //#pragma omp parallel for
         for (int ch = 0; ch < MAXC; ++ch)
         {
             // If goto function is defined for character 'ch'
@@ -138,22 +153,34 @@ int buildMatchingMachine(vector<string> arr,  int  k)
                 f[g[state][ch]] = failure;
 
                 // Merge output values
+                /*
+                 * Here a critical section is essential because,
+                 * failureoutsize depends on the value of out[failure[0]]
+                 * which can be changed by the individual threads
+                 *
+                 */
+				//#pragma omp critical
+                //{
                if(failure!=0)
                {
             	int outSize = out[g[state][ch]][0];
                 int failureOutSize = out[failure][0];
-                for(int i=1;i<=failureOutSize;i++)
+
+				for(int i=1;i<=failureOutSize;i++)
                 {
                 out[g[state][ch]][outSize+1] = out[failure][i];
                 out[g[state][ch]][0]++;
                 outSize++;
                 }
-               }
+                }
+               q.push(g[state][ch]);
+               //}
                 // Insert the next level node (of Trie) in Queue
-                q.push(g[state][ch]);
+
             }
         }
-    }
+    	 }
+   }
 
     return states;
 }
@@ -174,4 +201,3 @@ int findNextState(int currentState, char nextInput)
 
     return g[answer][ch];
 }
-

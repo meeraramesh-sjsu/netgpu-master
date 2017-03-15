@@ -213,6 +213,7 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 	// Initialize current state
 
 	// Traverse the text through the nuilt machine to find
+//<<<<<<< HEAD
 	// all occurences of words in arr[]
 	int currentState = 0;
 		
@@ -222,17 +223,34 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 		{
 			printf("ThreadID = %d, currentState = %d",omp_get_thread_num(),currentState);
 			currentState = findNextState(currentState, text[i]);
+//=======
+	// all occurrences of words in arr[]
+	//#pragma omp parallel for
+	for (int i = 0; i < text.size(); ++i)
+	{
+		currentState = findNextState(currentState, text[i]);
+//>>>>>>> 1c83716fa7cbf75584f5582afedc626a366a55ee
 
 			printf("out[currentState][0] = %d \n",out[currentState][0]);
 			// If match not found, move to next state
 			if (out[currentState][0] == 0)
 			continue;
 
+<<<<<<< HEAD
 			// Match found, print all matching words of arr[]
 			// using output function.
 			int outSize = out[currentState][0];
 			for (int j = 1; j <= outSize; ++j)
 			{
+=======
+		// Match found, print all matching words of arr[]
+		// using output function.
+		int outSize = out[currentState][0];
+
+		//#pragma omp parallel for
+		for (int j = 1; j <= outSize; ++j)
+		{
+>>>>>>> 1c83716fa7cbf75584f5582afedc626a366a55ee
 			int patIndex = out[currentState][j];
 			//The size of the output is fixed to the pattern size, but the current State value
 			//can exceed the pattern size
