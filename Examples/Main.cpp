@@ -19,13 +19,17 @@ int main(int args,char *argv[]) {
 
 	//Capturing from lo
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
-
+	if(args < 4)
+		cout<<"Requires 4 arguments: fileName, pcapFile, numPatterns"<<endl;
+	if(atoi(argv[3]) < 0)
+		cout<<"Invalid pattern number";
+	else cout<<"Number of Patterns = "<<atoi(argv[3])<<endl;
 
 	//cout <<"Starting analysis in few minutes...\n";
 
 	//	std::cout <<"Starting analysis now      ...\n";
 
-
+	IpScan::numOfPatterns = atoi(argv[3]);
 	//Adding analysis to pool
 	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);
 

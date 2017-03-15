@@ -153,7 +153,7 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 /**** Launch wrapper ****/
 //default Launch Wrapper for Analysis not using Windows 
 template<typename T,typename R>
-void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer){
+void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int numberOfPatterns){
 
 	analysisState_t state;
 	T *GPU_data;
@@ -208,9 +208,11 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
 		vector<string> tmp;
-
+		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + numberOfPatterns + ".cpp";
 		string line;
-		  ifstream myfile("/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns10.cpp");
+
+		  ifstream myfile("");
+
 		  if (myfile)  // same as: if (myfile.good())
 		    {
 		    while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())
