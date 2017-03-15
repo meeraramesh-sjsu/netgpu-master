@@ -218,7 +218,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + temp + ".cpp";
 		string line;
 
-		  ifstream myfile(fileName);
+		  ifstream myfile(fileName.c_str());
 
 		  if (myfile)  // same as: if (myfile.good())
 		    {
