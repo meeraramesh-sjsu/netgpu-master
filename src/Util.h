@@ -18,7 +18,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 /* Define debug level 0,1,2 */
 /* less verbose <---> more verbose */
-#define DEBUG_LEVEL 3
+#define DEBUG_LEVEL 0
 
 /* GENERAL CONSTANTS */
 #define APP_NAME NetGpu
@@ -74,8 +74,8 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 	#define DEBUG2(msg,...) do {	\
 		fprintf(stderr,"DEBUG2: %s:%d:" msg "\n",__FILE__,__LINE__,##__VA_ARGS__);\
 	} while(0)
-//#else
-	//#define DEBUG2(a,...)	do{}while(0)
+#else
+	#define DEBUG2(a,...)	do{}while(0)
 #endif
 
 #endif //Util_h

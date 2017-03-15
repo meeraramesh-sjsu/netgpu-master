@@ -45,8 +45,8 @@ CCDEPMODE	Makefile	/^CCDEPMODE = depmode=gcc3$/;"	m
 CCDEPMODE	Protocols/Makefile	/^CCDEPMODE = depmode=gcc3$/;"	m
 CCLD	Makefile	/^CCLD = $(CC)$/;"	m
 CCLD	Protocols/Makefile	/^CCLD = $(CC)$/;"	m
-CFLAGS	Makefile	/^CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inline --compiler-bindir=\/usr\/bin\/g++$/;"	m
-CFLAGS	Protocols/Makefile	/^CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inline --compiler-bindir=\/usr\/bin\/g++$/;"	m
+CFLAGS	Makefile	/^CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inline --compiler-bindir=\/usr\/bin\/g++ -fopenmp -g -O0 $/;"	m
+CFLAGS	Protocols/Makefile	/^CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inline --compiler-bindir=\/usr\/bin\/g++ -g$/;"	m
 COMPILE	Makefile	/^COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \\$/;"	m
 COMPILE	Protocols/Makefile	/^COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \\$/;"	m
 CONFIG_CLEAN_FILES	Makefile	/^CONFIG_CLEAN_FILES =$/;"	m
@@ -55,17 +55,17 @@ CONFIG_CLEAN_VPATH_FILES	Makefile	/^CONFIG_CLEAN_VPATH_FILES =$/;"	m
 CONFIG_CLEAN_VPATH_FILES	Protocols/Makefile	/^CONFIG_CLEAN_VPATH_FILES =$/;"	m
 CPP	Makefile	/^CPP = gcc -E$/;"	m
 CPP	Protocols/Makefile	/^CPP = gcc -E$/;"	m
-CPPFLAGS	Makefile	/^CPPFLAGS = $/;"	m
-CPPFLAGS	Protocols/Makefile	/^CPPFLAGS = $/;"	m
+CPPFLAGS	Makefile	/^CPPFLAGS = -std=c++11  -std=c++0x -fopenmp -g -O0 $/;"	m
+CPPFLAGS	Protocols/Makefile	/^CPPFLAGS = -std=c++11$/;"	m
 CTAGS	Makefile	/^CTAGS = ctags$/;"	m
 CTAGS	Protocols/Makefile	/^CTAGS = ctags$/;"	m
 CUDA_DIR	Makefile	/^CUDA_DIR = \/usr\/local\/cuda\/bin\/..$/;"	m
 CUDA_DIR	Protocols/Makefile	/^CUDA_DIR = \/usr\/local\/cuda\/bin\/..$/;"	m
-CXX	Makefile	/^CXX = g++$/;"	m
+CXX	Makefile	/^CXX = g++  -std=c++11  -std=c++0x$/;"	m
 CXX	Protocols/Makefile	/^CXX = g++$/;"	m
 CXXCOMPILE	Makefile	/^CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \\$/;"	m
 CXXCOMPILE	Protocols/Makefile	/^CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \\$/;"	m
-CXXCPP	Makefile	/^CXXCPP = g++ -E$/;"	m
+CXXCPP	Makefile	/^CXXCPP = g++  -std=c++11  -std=c++0x -E$/;"	m
 CXXCPP	Protocols/Makefile	/^CXXCPP = g++ -E$/;"	m
 CXXDEPMODE	Makefile	/^CXXDEPMODE = depmode=gcc3$/;"	m
 CXXDEPMODE	Protocols/Makefile	/^CXXDEPMODE = depmode=gcc3$/;"	m
@@ -156,7 +156,7 @@ HEADER_ETHERNET_HEXVALUE	Protocols/usr/local/share/netgpu/include/netgpu/Common/
 HEADER_ICMP_HEXVALUE	Protocols/IcmpHeader.h	29;"	d
 HEADER_ICMP_HEXVALUE	Protocols/usr/local/include/netgpu/Common/Protocols/IcmpHeader.h	29;"	d
 HEADER_ICMP_HEXVALUE	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/IcmpHeader.h	29;"	d
-HEADER_IP4_HEXVALUE	Protocols/Ip4Header.h	26;"	d
+HEADER_IP4_HEXVALUE	Protocols/Ip4Header.h	28;"	d
 HEADER_IP4_HEXVALUE	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	26;"	d
 HEADER_IP4_HEXVALUE	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	26;"	d
 HEADER_IP6_HEXVALUE	Protocols/Ip6Header.h	22;"	d
@@ -181,7 +181,7 @@ INSERT_HEADER_ETHERNET	Protocols/usr/local/share/netgpu/include/netgpu/Common/Pr
 INSERT_HEADER_ICMP	Protocols/IcmpHeader.h	34;"	d
 INSERT_HEADER_ICMP	Protocols/usr/local/include/netgpu/Common/Protocols/IcmpHeader.h	34;"	d
 INSERT_HEADER_ICMP	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/IcmpHeader.h	34;"	d
-INSERT_HEADER_IP4	Protocols/Ip4Header.h	31;"	d
+INSERT_HEADER_IP4	Protocols/Ip4Header.h	34;"	d
 INSERT_HEADER_IP4	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	31;"	d
 INSERT_HEADER_IP4	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	31;"	d
 INSERT_HEADER_IP6	Protocols/Ip6Header.h	28;"	d
@@ -207,28 +207,30 @@ INSTALL_STRIP_PROGRAM	Makefile	/^INSTALL_STRIP_PROGRAM = $(install_sh) -c -s$/;"
 INSTALL_STRIP_PROGRAM	Protocols/Makefile	/^INSTALL_STRIP_PROGRAM = $(install_sh) -c -s$/;"	m
 INSTALL_TOP_DIR	Makefile	/^INSTALL_TOP_DIR=\/home\/meera\/gpudir\/netgpu-master$/;"	m
 INSTALL_TOP_DIR	Protocols/Makefile	/^INSTALL_TOP_DIR=\/home\/meera\/gpudir\/netgpu-master$/;"	m
-IP4_HEADER_TYPENAME	Protocols/Ip4Header.h	29;"	d
+IP4_HEADER_TYPENAME	Protocols/Ip4Header.h	31;"	d
 IP4_HEADER_TYPENAME	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	29;"	d
 IP4_HEADER_TYPENAME	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	29;"	d
-IP4_NO_OPTIONS_HEADER_SIZE	Protocols/Ip4Header.h	25;"	d
+IP4_HEADER_TYPENAME_16Byte	Protocols/Ip4Header.h	32;"	d
+IP4_NO_OPTIONS_HEADER_SIZE	Protocols/Ip4Header.h	27;"	d
 IP4_NO_OPTIONS_HEADER_SIZE	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	25;"	d
 IP4_NO_OPTIONS_HEADER_SIZE	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	25;"	d
 IP6_HEADER_TYPENAME	Protocols/Ip6Header.h	26;"	d
 IP6_HEADER_TYPENAME	Protocols/usr/local/include/netgpu/Common/Protocols/Ip6Header.h	26;"	d
 IP6_HEADER_TYPENAME	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip6Header.h	26;"	d
-IP_PROT_ICMP	Protocols/Ip4Header.h	40;"	d
+IP_HL	Protocols/Ip4Header.h	71;"	d
+IP_PROT_ICMP	Protocols/Ip4Header.h	41;"	d
 IP_PROT_ICMP	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	40;"	d
 IP_PROT_ICMP	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	40;"	d
-IP_PROT_IP4	Protocols/Ip4Header.h	41;"	d
+IP_PROT_IP4	Protocols/Ip4Header.h	42;"	d
 IP_PROT_IP4	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	41;"	d
 IP_PROT_IP4	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	41;"	d
-IP_PROT_IP6	Protocols/Ip4Header.h	44;"	d
+IP_PROT_IP6	Protocols/Ip4Header.h	45;"	d
 IP_PROT_IP6	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	44;"	d
 IP_PROT_IP6	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	44;"	d
-IP_PROT_TCP	Protocols/Ip4Header.h	42;"	d
+IP_PROT_TCP	Protocols/Ip4Header.h	43;"	d
 IP_PROT_TCP	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	42;"	d
 IP_PROT_TCP	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	42;"	d
-IP_PROT_UDP	Protocols/Ip4Header.h	43;"	d
+IP_PROT_UDP	Protocols/Ip4Header.h	44;"	d
 IP_PROT_UDP	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	43;"	d
 IP_PROT_UDP	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	43;"	d
 IS_HEADER_TYPE	VirtualHeader.h	22;"	d
@@ -238,7 +240,7 @@ IS_HEADER_TYPE_ETHERNET	Protocols/usr/local/share/netgpu/include/netgpu/Common/P
 IS_HEADER_TYPE_ICMP	Protocols/IcmpHeader.h	35;"	d
 IS_HEADER_TYPE_ICMP	Protocols/usr/local/include/netgpu/Common/Protocols/IcmpHeader.h	35;"	d
 IS_HEADER_TYPE_ICMP	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/IcmpHeader.h	35;"	d
-IS_HEADER_TYPE_IP4	Protocols/Ip4Header.h	32;"	d
+IS_HEADER_TYPE_IP4	Protocols/Ip4Header.h	35;"	d
 IS_HEADER_TYPE_IP4	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	32;"	d
 IS_HEADER_TYPE_IP4	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	32;"	d
 IS_HEADER_TYPE_IP6	Protocols/Ip6Header.h	29;"	d
@@ -265,6 +267,8 @@ Ip4Header	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	inl
 Ip4Header	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^class Ip4Header : public VirtualHeader {$/;"	c
 Ip4Header	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^	inline Ip4Header(const uint8_t* ip4Pointer){ip4=(struct ip4_header*)ip4Pointer;};$/;"	f	class:Ip4Header
 Ip4Header	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^class Ip4Header : public VirtualHeader {$/;"	c
+Ip4Header16	Protocols/Ip4Header.h	/^	inline Ip4Header16(const uint8_t* ip4Pointer){ip4=(struct ip4_header16Byte*)ip4Pointer;};$/;"	f	class:Ip4Header16
+Ip4Header16	Protocols/Ip4Header.h	/^class Ip4Header16 : public VirtualHeader {$/;"	c
 Ip4Header_h	Protocols/Ip4Header.h	14;"	d
 Ip4Header_h	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	14;"	d
 Ip4Header_h	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	14;"	d
@@ -307,6 +311,8 @@ MAKEINFO	Makefile	/^MAKEINFO = ${SHELL} \/home\/meera\/gpudir\/netgpu-master\/mi
 MAKEINFO	Protocols/Makefile	/^MAKEINFO = ${SHELL} \/home\/meera\/gpudir\/netgpu-master\/missing makeinfo$/;"	m
 MANIFEST_TOOL	Makefile	/^MANIFEST_TOOL = :$/;"	m
 MANIFEST_TOOL	Protocols/Makefile	/^MANIFEST_TOOL = :$/;"	m
+MAXC	AhoCorasick.h	/^const int MAXC = 256;$/;"	v
+MAXS	AhoCorasick.h	/^const int MAXS = 550000;$/;"	v
 MAX_BUFFER_PACKETS	PacketBuffer.h	29;"	d
 MAX_BUFFER_PACKET_SIZE	PacketBuffer.h	30;"	d
 MKDIR_P	Makefile	/^MKDIR_P = \/bin\/mkdir -p$/;"	m
@@ -408,7 +414,7 @@ VERSION	Makefile	/^VERSION = 0.1$/;"	m
 VERSION	Protocols/Makefile	/^VERSION = 0.1$/;"	m
 VirtualHeader	VirtualHeader.h	/^class VirtualHeader { \/\/Abstract base class$/;"	c
 VirtualHeader_h	VirtualHeader.h	14;"	d
-_DISSECTOR_CHECK_OVERFLOW	Dissector.cpp	3;"	d	file:
+_DISSECTOR_CHECK_OVERFLOW	Dissector.cpp	9;"	d	file:
 abs_builddir	Makefile	/^abs_builddir = \/home\/meera\/gpudir\/netgpu-master\/src\/Common$/;"	m
 abs_builddir	Protocols/Makefile	/^abs_builddir = \/home\/meera\/gpudir\/netgpu-master\/src\/Common\/Protocols$/;"	m
 abs_srcdir	Makefile	/^abs_srcdir = \/home\/meera\/gpudir\/netgpu-master\/src\/Common$/;"	m
@@ -541,6 +547,7 @@ bindir	Protocols/Makefile	/^bindir = ${exec_prefix}\/bin$/;"	m
 buffer	PacketBuffer.h	/^	packet_t* buffer;$/;"	m	class:PacketBuffer
 build	Makefile	/^build = x86_64-unknown-linux-gnu$/;"	m
 build	Protocols/Makefile	/^build = x86_64-unknown-linux-gnu$/;"	m
+buildMatchingMachine	AhoCorasick.h	/^int buildMatchingMachine(vector<string> arr,  int  k)$/;"	f
 build_alias	Makefile	/^build_alias = $/;"	m
 build_alias	Protocols/Makefile	/^build_alias = $/;"	m
 build_cpu	Makefile	/^build_cpu = x86_64$/;"	m
@@ -557,6 +564,7 @@ calcHeaderLengthInBytes	Protocols/Ip4Header.cpp	/^uint32_t Ip4Header::calcHeader
 calcHeaderLengthInBytes	Protocols/TcpHeader.cpp	/^uint32_t TcpHeader::calcHeaderLengthInBytes(const uint8_t * tcpPointer){$/;"	f	class:TcpHeader
 checksum	Protocols/IcmpHeader.h	/^	uint16_t checksum; $/;"	m	struct:icmp_header
 checksum	Protocols/Ip4Header.h	/^	uint16_t checksum;			$/;"	m	struct:ip4_header
+checksum	Protocols/Ip4Header.h	/^	uint16_t checksum;$/;"	m	struct:ip4_header16Byte
 checksum	Protocols/TcpHeader.h	/^	uint16_t	checksum;			\/\/ checksum $/;"	m	struct:tcp_header
 checksum	Protocols/usr/local/include/netgpu/Common/Protocols/IcmpHeader.h	/^	uint16_t checksum; $/;"	m	struct:icmp_header
 checksum	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint16_t checksum;			$/;"	m	struct:ip4_header
@@ -570,6 +578,7 @@ code	Protocols/usr/local/include/netgpu/Common/Protocols/IcmpHeader.h	/^	uint8_t
 code	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/IcmpHeader.h	/^	uint8_t	 code; $/;"	m	struct:icmp_header
 common_DATA	Makefile	/^common_DATA = Dissector.h\\$/;"	m
 commondir	Makefile	/^commondir = $(datadir)\/netgpu\/include\/netgpu\/Common$/;"	m
+compare	Dissector.cpp	/^bool compare(string a,string b)$/;"	f
 datadir	Makefile	/^datadir = ${datarootdir}$/;"	m
 datadir	Protocols/Makefile	/^datadir = ${datarootdir}$/;"	m
 datarootdir	Makefile	/^datarootdir = ${prefix}\/share$/;"	m
@@ -577,7 +586,7 @@ datarootdir	Protocols/Makefile	/^datarootdir = ${prefix}\/share$/;"	m
 depcomp	Makefile	/^depcomp = $(SHELL) $(top_srcdir)\/depcomp$/;"	m
 depcomp	Protocols/Makefile	/^depcomp = $(SHELL) $(top_srcdir)\/depcomp$/;"	m
 deviceDataLink	PacketBuffer.h	/^	int deviceDataLink;$/;"	m	class:PacketBuffer
-dissect	Dissector.cpp	/^unsigned int Dissector::dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user){$/;"	f	class:Dissector
+dissect	Dissector.cpp	/^unsigned int Dissector::dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user,int noOfPatterns){$/;"	f	class:Dissector
 dissectEthernet	Dissector.cpp	/^void Dissector::dissectEthernet(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){$/;"	f	class:Dissector
 dissectIcmp	Dissector.cpp	/^void Dissector::dissectIcmp(const uint8_t* packetPointer, unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){$/;"	f	class:Dissector
 dissectIp4	Dissector.cpp	/^void Dissector::dissectIp4(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user){$/;"	f	class:Dissector
@@ -596,6 +605,7 @@ dst	Protocols/usr/local/include/netgpu/Common/Protocols/Ethernet2Header.h	/^	uin
 dst	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ethernet2Header.h	/^	uint8_t dst[6];$/;"	m	struct:ether_header
 dump	Protocols/Ethernet2Header.cpp	/^void Ethernet2Header::dump(void){$/;"	f	class:Ethernet2Header
 dump	Protocols/IcmpHeader.cpp	/^void IcmpHeader::dump(void){$/;"	f	class:IcmpHeader
+dump	Protocols/Ip4Header.cpp	/^void Ip4Header16::dump(void){$/;"	f	class:Ip4Header16
 dump	Protocols/Ip4Header.cpp	/^void Ip4Header::dump(void){$/;"	f	class:Ip4Header
 dump	Protocols/Ip6Header.cpp	/^void Ip6Header::dump(void){$/;"	f	class:Ip6Header
 dump	Protocols/TcpHeader.cpp	/^void TcpHeader::dump(void){$/;"	f	class:TcpHeader
@@ -610,16 +620,20 @@ ether_header	Protocols/usr/local/include/netgpu/Common/Protocols/Ethernet2Header
 ether_header	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ethernet2Header.h	/^struct ether_header{$/;"	s
 exec_prefix	Makefile	/^exec_prefix = ${prefix}$/;"	m
 exec_prefix	Protocols/Makefile	/^exec_prefix = ${prefix}$/;"	m
+f	AhoCorasick.h	/^int f[MAXS];$/;"	v
+findNextState	AhoCorasick.h	/^int findNextState(int currentState, char nextInput)$/;"	f
 flags	Protocols/TcpHeader.h	/^	uint8_t		flags;$/;"	m	struct:tcp_header
 flags	Protocols/usr/local/include/netgpu/Common/Protocols/TcpHeader.h	/^	uint8_t		flags;$/;"	m	struct:tcp_header
 flags	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/TcpHeader.h	/^	uint8_t		flags;$/;"	m	struct:tcp_header
 flagsAndOffset	Protocols/Ip4Header.h	/^	uint16_t flagsAndOffset;$/;"	m	struct:ip4_header
+flagsAndOffset	Protocols/Ip4Header.h	/^	uint16_t flagsAndOffset;$/;"	m	struct:ip4_header16Byte
 flagsAndOffset	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint16_t flagsAndOffset;$/;"	m	struct:ip4_header
 flagsAndOffset	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint16_t flagsAndOffset;$/;"	m	struct:ip4_header
 flow_lbl	Protocols/Ip6Header.h	/^        uint8_t  flow_lbl[3];$/;"	m	struct:ip6_header
 flow_lbl	Protocols/usr/local/include/netgpu/Common/Protocols/Ip6Header.h	/^        uint8_t  flow_lbl[3];$/;"	m	struct:ip6_header
 flow_lbl	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip6Header.h	/^        uint8_t  flow_lbl[3];$/;"	m	struct:ip6_header
 flushWindows	PacketBuffer.h	/^	bool flushWindows;$/;"	m	class:PacketBuffer
+g	AhoCorasick.h	/^int g[MAXS][MAXC];$/;"	v
 getBuffer	PacketBuffer.cpp	/^packet_t* PacketBuffer::getBuffer(void){$/;"	f	class:PacketBuffer
 getDeviceDataLinkInfo	PacketBuffer.cpp	/^int PacketBuffer::getDeviceDataLinkInfo(void){$/;"	f	class:PacketBuffer
 getFlushFlag	PacketBuffer.h	/^	bool inline getFlushFlag(void){return flushWindows;}$/;"	f	class:PacketBuffer
@@ -632,9 +646,11 @@ getNumOfPackets	PacketBuffer.cpp	/^unsigned int PacketBuffer::getNumOfPackets(vo
 getPacket	PacketBuffer.cpp	/^packet_t* PacketBuffer::getPacket(int index){$/;"	f	class:PacketBuffer
 getProtocol	Protocols/Ip4Header.cpp	/^uint8_t Ip4Header::getProtocol(void){$/;"	f	class:Ip4Header
 getType	Protocols/Ethernet2Header.cpp	/^uint16_t Ethernet2Header::getType(void){$/;"	f	class:Ethernet2Header
+hashCal	Dissector.cpp	/^long hashCal(const char* key, int  m, int offset) {$/;"	f
 headerLength	Protocols/Ip4Header.h	/^        uint8_t   headerLength:4,    \/* header length *\/$/;"	m	struct:ip4_header
 headerLength	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^        uint8_t   headerLength:4,    \/* header length *\/$/;"	m	struct:ip4_header
 headerLength	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^        uint8_t   headerLength:4,    \/* header length *\/$/;"	m	struct:ip4_header
+headerVertos	Protocols/Ip4Header.h	/^    uint16_t headerVertos;$/;"	m	struct:ip4_header16Byte
 headers	PacketBuffer.h	/^	headers_t headers;$/;"	m	struct:__anon2
 headers_t	PacketBuffer.h	/^}headers_t;$/;"	t	typeref:struct:__anon1
 hop_limit	Protocols/Ip6Header.h	/^	uint8_t  hop_limit;$/;"	m	struct:ip6_header
@@ -664,6 +680,7 @@ id	Protocols/IcmpHeader.h	/^	uint16_t id;$/;"	m	struct:icmp_header
 id	Protocols/usr/local/include/netgpu/Common/Protocols/IcmpHeader.h	/^	uint16_t id;$/;"	m	struct:icmp_header
 id	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/IcmpHeader.h	/^	uint16_t id;$/;"	m	struct:icmp_header
 identification	Protocols/Ip4Header.h	/^	uint16_t identification;			$/;"	m	struct:ip4_header
+identification	Protocols/Ip4Header.h	/^	uint16_t identification;$/;"	m	struct:ip4_header16Byte
 identification	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint16_t identification;			$/;"	m	struct:ip4_header
 identification	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint16_t identification;			$/;"	m	struct:ip4_header
 includedir	Makefile	/^includedir = ${prefix}\/include$/;"	m
@@ -679,11 +696,13 @@ install_sh_PROGRAM	Protocols/Makefile	/^install_sh_PROGRAM = $(install_sh) -c$/;
 install_sh_SCRIPT	Makefile	/^install_sh_SCRIPT = $(install_sh) -c$/;"	m
 install_sh_SCRIPT	Protocols/Makefile	/^install_sh_SCRIPT = $(install_sh) -c$/;"	m
 ip4	Protocols/Ip4Header.h	/^	struct ip4_header* ip4;$/;"	m	class:Ip4Header	typeref:struct:Ip4Header::ip4_header
+ip4	Protocols/Ip4Header.h	/^	struct ip4_header16Byte* ip4;$/;"	m	class:Ip4Header16	typeref:struct:Ip4Header16::ip4_header16Byte
 ip4	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	struct ip4_header* ip4;$/;"	m	class:Ip4Header	typeref:struct:Ip4Header::ip4_header
 ip4	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^	struct ip4_header* ip4;$/;"	m	class:Ip4Header	typeref:struct:Ip4Header::ip4_header
 ip4_header	Protocols/Ip4Header.h	/^struct ip4_header{ $/;"	s
 ip4_header	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^struct ip4_header{ $/;"	s
 ip4_header	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^struct ip4_header{ $/;"	s
+ip4_header16Byte	Protocols/Ip4Header.h	/^struct ip4_header16Byte{$/;"	s
 ip6	Protocols/Ip6Header.h	/^	struct ip6_header* ip6;$/;"	m	class:Ip6Header	typeref:struct:Ip6Header::ip6_header
 ip6	Protocols/usr/local/include/netgpu/Common/Protocols/Ip6Header.h	/^	struct ip6_header* ip6;$/;"	m	class:Ip6Header	typeref:struct:Ip6Header::ip6_header
 ip6	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip6Header.h	/^	struct ip6_header* ip6;$/;"	m	class:Ip6Header	typeref:struct:Ip6Header::ip6_header
@@ -696,13 +715,18 @@ ip_dst	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint32
 ip_dst	Protocols/usr/local/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint8_t  ip_dst[16];$/;"	m	struct:ip6_header
 ip_dst	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint32_t ip_dst;$/;"	m	struct:ip4_header
 ip_dst	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint8_t  ip_dst[16];$/;"	m	struct:ip6_header
+ip_dstFirstHalf	Protocols/Ip4Header.h	/^	uint16_t ip_dstFirstHalf;$/;"	m	struct:ip4_header16Byte
+ip_dstSecHalf	Protocols/Ip4Header.h	/^	uint16_t ip_dstSecHalf;$/;"	m	struct:ip4_header16Byte
 ip_src	Protocols/Ip4Header.h	/^	uint32_t ip_src;$/;"	m	struct:ip4_header
 ip_src	Protocols/Ip6Header.h	/^	uint8_t  ip_src[16];$/;"	m	struct:ip6_header
 ip_src	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint32_t ip_src;$/;"	m	struct:ip4_header
 ip_src	Protocols/usr/local/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint8_t  ip_src[16];$/;"	m	struct:ip6_header
 ip_src	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint32_t ip_src;$/;"	m	struct:ip4_header
 ip_src	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint8_t  ip_src[16];$/;"	m	struct:ip6_header
+ip_srcFirstHalf	Protocols/Ip4Header.h	/^	uint16_t ip_srcFirstHalf;$/;"	m	struct:ip4_header16Byte
+ip_srcSecHalf	Protocols/Ip4Header.h	/^	uint16_t ip_srcSecHalf;$/;"	m	struct:ip4_header16Byte
 lastPacketIndex	PacketBuffer.h	/^	unsigned int lastPacketIndex;$/;"	m	class:PacketBuffer
+length	Dissector.cpp	/^struct length {$/;"	s	file:
 libcommon_la_LIBADD	Makefile	/^libcommon_la_LIBADD =$/;"	m
 libcommon_la_OBJECTS	Makefile	/^libcommon_la_OBJECTS = $(am_libcommon_la_OBJECTS)$/;"	m
 libcommon_la_SOURCES	Makefile	/^libcommon_la_SOURCES = \\$/;"	m
@@ -722,6 +746,7 @@ localedir	Protocols/Makefile	/^localedir = ${datarootdir}\/locale$/;"	m
 localstatedir	Makefile	/^localstatedir = ${prefix}\/var$/;"	m
 localstatedir	Protocols/Makefile	/^localstatedir = ${prefix}\/var$/;"	m
 lostPackets	PacketBuffer.h	/^	unsigned int lostPackets;$/;"	m	class:PacketBuffer
+m_nBitsInShift	WuManber.h	/^int m_nBitsInShift = 2;$/;"	v
 mandir	Makefile	/^mandir = ${datarootdir}\/man$/;"	m
 mandir	Protocols/Makefile	/^mandir = ${datarootdir}\/man$/;"	m
 mkdir_p	Makefile	/^mkdir_p = $(MKDIR_P)$/;"	m
@@ -731,6 +756,7 @@ mkinstalldirs	Protocols/Makefile	/^mkinstalldirs = $(install_sh) -d$/;"	m
 next_header	Protocols/Ip6Header.h	/^	uint8_t  next_header;$/;"	m	struct:ip6_header
 next_header	Protocols/usr/local/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint8_t  next_header;$/;"	m	struct:ip6_header
 next_header	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint8_t  next_header;$/;"	m	struct:ip6_header
+noOfPatterns	Dissector.h	/^	int noOfPatterns;$/;"	m	class:Dissector
 noinst_LTLIBRARIES	Makefile	/^noinst_LTLIBRARIES = libcommon.la$/;"	m
 noinst_LTLIBRARIES	Protocols/Makefile	/^noinst_LTLIBRARIES = libcommon-protocols.la$/;"	m
 offset	PacketBuffer.h	/^	int offset[7];		$/;"	m	struct:__anon1
@@ -742,8 +768,12 @@ offset	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/TcpHeade
 offset	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/TcpHeader.h	/^	uint8_t		offset:4,		\/\/ data offset $/;"	m	struct:tcp_header
 oldincludedir	Makefile	/^oldincludedir = \/usr\/include$/;"	m
 oldincludedir	Protocols/Makefile	/^oldincludedir = \/usr\/include$/;"	m
+operator ()	Dissector.cpp	/^	bool operator() ( const string& a, const string& b )$/;"	f	struct:length
+out	AhoCorasick.h	/^int** out;$/;"	v
 packet	PacketBuffer.h	/^	uint8_t packet[MAX_BUFFER_PACKET_SIZE];$/;"	m	struct:__anon2
+packetLength	Dissector.cpp	/^int packetLength;$/;"	v
 packet_t	PacketBuffer.h	/^}packet_t;$/;"	t	typeref:struct:__anon2
+payLoadRabinKarp	Dissector.cpp	/^void Dissector::payLoadRabinKarp(char* packetPointer) {$/;"	f	class:Dissector
 payload_length	Protocols/Ip6Header.h	/^	uint16_t payload_length;$/;"	m	struct:ip6_header
 payload_length	Protocols/usr/local/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint16_t payload_length;$/;"	m	struct:ip6_header
 payload_length	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint16_t payload_length;$/;"	m	struct:ip6_header
@@ -759,6 +789,7 @@ pkglibexecdir	Makefile	/^pkglibexecdir = $(libexecdir)\/netgpu$/;"	m
 pkglibexecdir	Protocols/Makefile	/^pkglibexecdir = $(libexecdir)\/netgpu$/;"	m
 prefix	Makefile	/^prefix = ${INSTALL_TOP_DIR}\/usr\/local$/;"	m
 prefix	Protocols/Makefile	/^prefix = ${INSTALL_TOP_DIR}\/usr\/local$/;"	m
+preproc_wu	WuManber.h	/^void preproc_wu(vector<string> pattern, int m, int B,$/;"	f
 priority	Protocols/Ip6Header.h	/^	uint8_t	 priority:4,$/;"	m	struct:ip6_header
 priority	Protocols/usr/local/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint8_t	 priority:4,$/;"	m	struct:ip6_header
 priority	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip6Header.h	/^	uint8_t	 priority:4,$/;"	m	struct:ip6_header
@@ -772,9 +803,11 @@ protocols_DATA	Protocols/Makefile	/^protocols_DATA = \\$/;"	m
 protocolsdir	Protocols/Makefile	/^protocolsdir = $(datadir)\/netgpu\/include\/netgpu\/Common\/Protocols$/;"	m
 psdir	Makefile	/^psdir = ${docdir}$/;"	m
 psdir	Protocols/Makefile	/^psdir = ${docdir}$/;"	m
-pushPacket	PacketBuffer.cpp	/^int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr){$/;"	f	class:PacketBuffer
+pushPacket	PacketBuffer.cpp	/^int PacketBuffer::pushPacket(uint8_t* packetPointer, const struct pcap_pkthdr* hdr,int noOfPatterns){$/;"	f	class:PacketBuffer
 sbindir	Makefile	/^sbindir = ${exec_prefix}\/sbin$/;"	m
 sbindir	Protocols/Makefile	/^sbindir = ${exec_prefix}\/sbin$/;"	m
+searchWords	Dissector.cpp	/^void Dissector::searchWords(vector<string> arr, int k, string text)$/;"	f	class:Dissector
+search_wu	WuManber.h	/^unsigned int search_wu(vector<string> pattern, int m,$/;"	f
 seq	Protocols/IcmpHeader.h	/^	uint16_t seq; $/;"	m	struct:icmp_header
 seq	Protocols/TcpHeader.h	/^	uint32_t 	seq;			\/\/ sequence number $/;"	m	struct:tcp_header
 seq	Protocols/usr/local/include/netgpu/Common/Protocols/IcmpHeader.h	/^	uint16_t seq; $/;"	m	struct:icmp_header
@@ -785,6 +818,7 @@ setDeviceDataLinkInfo	PacketBuffer.cpp	/^void PacketBuffer::setDeviceDataLinkInf
 setFlushFlag	PacketBuffer.h	/^	void inline setFlushFlag(bool value){flushWindows = value;}$/;"	f	class:PacketBuffer
 sharedstatedir	Makefile	/^sharedstatedir = ${prefix}\/com$/;"	m
 sharedstatedir	Protocols/Makefile	/^sharedstatedir = ${prefix}\/com$/;"	m
+shiftsize	WuManber.h	/^int shiftsize = 0;$/;"	v
 sport	Protocols/TcpHeader.h	/^	uint16_t 	sport;		\/\/ source port $/;"	m	struct:tcp_header
 sport	Protocols/UdpHeader.h	/^	uint16_t sport;           \/\/ source port $/;"	m	struct:udp_header
 sport	Protocols/usr/local/include/netgpu/Common/Protocols/TcpHeader.h	/^	uint16_t 	sport;		\/\/ source port $/;"	m	struct:tcp_header
@@ -822,13 +856,16 @@ tos	Protocols/Ip4Header.h	/^	uint8_t	 tos;			$/;"	m	struct:ip4_header
 tos	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint8_t	 tos;			$/;"	m	struct:ip4_header
 tos	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint8_t	 tos;			$/;"	m	struct:ip4_header
 totalLength	Protocols/Ip4Header.h	/^	uint16_t totalLength;			$/;"	m	struct:ip4_header
+totalLength	Protocols/Ip4Header.h	/^	uint16_t totalLength;$/;"	m	struct:ip4_header16Byte
 totalLength	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint16_t totalLength;			$/;"	m	struct:ip4_header
 totalLength	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint16_t totalLength;			$/;"	m	struct:ip4_header
+totalPacketLength	Protocols/Ip4Header.cpp	/^uint32_t Ip4Header::totalPacketLength(const uint8_t * ipPointer)$/;"	f	class:Ip4Header
 transform	Makefile	/^transform = $(program_transform_name)$/;"	m
 transform	Protocols/Makefile	/^transform = $(program_transform_name)$/;"	m
 ttl	Protocols/Ip4Header.h	/^	uint8_t  ttl;			$/;"	m	struct:ip4_header
 ttl	Protocols/usr/local/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint8_t  ttl;			$/;"	m	struct:ip4_header
 ttl	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip4Header.h	/^	uint8_t  ttl;			$/;"	m	struct:ip4_header
+ttlprotocol	Protocols/Ip4Header.h	/^	uint16_t ttlprotocol;$/;"	m	struct:ip4_header16Byte
 type	Protocols/Ethernet2Header.h	/^	uint16_t type;$/;"	m	struct:ether_header
 type	Protocols/IcmpHeader.h	/^	uint8_t	 type;$/;"	m	struct:icmp_header
 type	Protocols/usr/local/include/netgpu/Common/Protocols/Ethernet2Header.h	/^	uint16_t type;$/;"	m	struct:ether_header
@@ -862,4 +899,5 @@ version	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/Ip6Head
 window	Protocols/TcpHeader.h	/^	uint16_t	window;			\/\/ window $/;"	m	struct:tcp_header
 window	Protocols/usr/local/include/netgpu/Common/Protocols/TcpHeader.h	/^	uint16_t	window;			\/\/ window $/;"	m	struct:tcp_header
 window	Protocols/usr/local/share/netgpu/include/netgpu/Common/Protocols/TcpHeader.h	/^	uint16_t	window;			\/\/ window $/;"	m	struct:tcp_header
+wu_determine_shiftsize	WuManber.h	/^int wu_determine_shiftsize(int alphabet) {$/;"	f
 ~PacketBuffer	PacketBuffer.cpp	/^PacketBuffer::~PacketBuffer(void){$/;"	f	class:PacketBuffer

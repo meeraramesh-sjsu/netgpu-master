@@ -2,6 +2,8 @@
 #include "AhoCorasick.h"
 #include "WuManber.h"
 #include <string>
+#include "../Util.h"
+#include <omp.h>
 using namespace std;
 
 
@@ -209,23 +211,28 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 	int states = buildMatchingMachine(arr, k);
 	DEBUG2("Completed building machine, No Of States = %d",states);
 	// Initialize current state
-	int currentState = 0;
 
 	// Traverse the text through the nuilt machine to find
-	// all occurrences of words in arr[]
-	for (int i = 0; i < text.size(); ++i)
-	{
-		currentState = findNextState(currentState, text[i]);
+	// all occurences of words in arr[]
+	int currentState = 0;
+		
+	printf("Text Size = %d", text.size());
+		#pragma omp parallel for firstprivate(currentState)
+		for (int i = 0; i < text.size(); ++i)
+		{
+			printf("ThreadID = %d, currentState = %d",omp_get_thread_num(),currentState);
+			currentState = findNextState(currentState, text[i]);
 
-		// If match not found, move to next state
-		if (out[currentState][0] == 0)
+			printf("out[currentState][0] = %d \n",out[currentState][0]);
+			// If match not found, move to next state
+			if (out[currentState][0] == 0)
 			continue;
 
-		// Match found, print all matching words of arr[]
-		// using output function.
-		int outSize = out[currentState][0];
-		for (int j = 1; j <= outSize; ++j)
-		{
+			// Match found, print all matching words of arr[]
+			// using output function.
+			int outSize = out[currentState][0];
+			for (int j = 1; j <= outSize; ++j)
+			{
 			int patIndex = out[currentState][j];
 			//The size of the output is fixed to the pattern size, but the current State value
 			//can exceed the pattern size
@@ -236,8 +243,8 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 				printf("Word %s appears from %d to %d",arr[patIndex].c_str(),start,i);
 				//cout << "Word " << arr[j] << " appears from "
 					//	<< start << " to " << i << endl;
-		}
-	}
+			}
+		}		
 }
 
 void Dissector::payLoadRabinKarp(char* packetPointer) {

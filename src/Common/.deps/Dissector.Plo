@@ -168,7 +168,6 @@ Dissector.lo: Dissector.cpp /usr/include/stdc-predef.h Dissector.h \
  /usr/include/c++/4.8/bits/stl_deque.h \
  /usr/include/c++/4.8/bits/deque.tcc \
  /usr/include/c++/4.8/bits/stl_queue.h \
- /usr/lib/gcc/x86_64-linux-gnu/4.8/include/omp.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/stdc++.h \
  /usr/include/c++/4.8/cassert /usr/include/assert.h \
  /usr/include/c++/4.8/cfloat \
@@ -250,7 +249,8 @@ Dissector.lo: Dissector.cpp /usr/include/stdc-predef.h Dissector.h \
  /usr/include/c++/4.8/bits/hashtable_policy.h \
  /usr/include/c++/4.8/bits/unordered_map.h \
  /usr/include/c++/4.8/unordered_set \
- /usr/include/c++/4.8/bits/unordered_set.h WuManber.h
+ /usr/include/c++/4.8/bits/unordered_set.h WuManber.h \
+ /usr/lib/gcc/x86_64-linux-gnu/4.8/include/omp.h
 
 /usr/include/stdc-predef.h:
 
@@ -704,8 +704,6 @@ AhoCorasick.h:
 
 /usr/include/c++/4.8/bits/stl_queue.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/4.8/include/omp.h:
-
 /usr/include/x86_64-linux-gnu/c++/4.8/bits/stdc++.h:
 
 /usr/include/c++/4.8/cassert:
@@ -927,3 +925,5 @@ AhoCorasick.h:
 /usr/include/c++/4.8/bits/unordered_set.h:
 
 WuManber.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/4.8/include/omp.h:
