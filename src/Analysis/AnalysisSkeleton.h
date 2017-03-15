@@ -75,22 +75,22 @@ int gotofn[550000][256];
 int output[statesrow];
 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(IpScan,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *gotofn,int *d_result,int *d_output);
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *gotofn,int *d_result,int *d_output);
 
 template<typename T,typename R>
-__device__  void COMPOUND_NAME(IpScan,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
+__device__  void COMPOUND_NAME(ANALYSIS_NAME,mining)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
 
 template<typename T,typename R>
-__device__  void COMPOUND_NAME(IpScan,filtering)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
+__device__  void COMPOUND_NAME(ANALYSIS_NAME,filtering)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state);
 
 template<typename T,typename R>
-__device__  void COMPOUND_NAME(IpScan,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *gotofn, int *d_result);
+__device__  void COMPOUND_NAME(ANALYSIS_NAME,analysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *gotofn, int *d_result);
 
 template<typename T,typename R>
-__device__  void COMPOUND_NAME(IpScan,operations)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state);
+__device__  void COMPOUND_NAME(ANALYSIS_NAME,operations)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state);
 
 template<typename R>
-void COMPOUND_NAME(IpScan,hooks)(PacketBuffer *packetBuffer, R* results, analysisState_t state, int64_t* auxBlocks,int *d_result);
+void COMPOUND_NAME(ANALYSIS_NAME,hooks)(PacketBuffer *packetBuffer, R* results, analysisState_t state, int64_t* auxBlocks,int *d_result);
 
 /**** Module loader ****/
 #include ".dmodule.ppph"
@@ -132,21 +132,21 @@ int buildGoto(vector<string> arr)
 
 //default Kernel 
 template<typename T,typename R>
-__global__ void COMPOUND_NAME(IpScan,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state, int* gotofn, int *result,int *d_output){
+__global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state, int* gotofn, int *result,int *d_output){
 	state.blockIterator = blockIdx.x;
-	COMPOUND_NAME(IpScan,mining)(GPU_buffer, GPU_data, GPU_results, state);
+	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state);
 	__syncthreads();	
 
 	state.blockIterator = blockIdx.x;
-	COMPOUND_NAME(IpScan,filtering)(GPU_buffer, GPU_data, GPU_results, state);
+	COMPOUND_NAME(ANALYSIS_NAME,filtering)(GPU_buffer, GPU_data, GPU_results, state);
 	__syncthreads();	
 
 	/* Analysis implementation*/
-	COMPOUND_NAME(IpScan,analysis)(GPU_buffer, GPU_data, GPU_results, state, gotofn, result, d_output);
+	COMPOUND_NAME(ANALYSIS_NAME,analysis)(GPU_buffer, GPU_data, GPU_results, state, gotofn, result, d_output);
 
 	/* If there are SYNCBLOCKS barriers do not put Operations function call here */
 #if __SYNCBLOCKS_COUNTER == 0 && __SYNCBLOCKS_PRECODED_COUNTER == 0
-	COMPOUND_NAME(IpScan,operations)(GPU_buffer, GPU_data, GPU_results, state);
+	COMPOUND_NAME(ANALYSIS_NAME,operations)(GPU_buffer, GPU_data, GPU_results, state);
 #endif
 
 }
@@ -154,7 +154,7 @@ __global__ void COMPOUND_NAME(IpScan,KernelAnalysis)(packet_t* GPU_buffer, T* GP
 /**** Launch wrapper ****/
 //default Launch Wrapper for Analysis not using Windows 
 template<typename T,typename R>
-void COMPOUND_NAME(IpScan,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int numberOfPatterns){
+void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int numberOfPatterns){
 
 	analysisState_t state;
 	T *GPU_data;
@@ -209,6 +209,7 @@ void COMPOUND_NAME(IpScan,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, pa
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
 		vector<string> tmp;
+		printf("%d numberOfPatterns= ",numberOfPatterns);
 		char* str;
 		sprintf(str,"%d",numberOfPatterns);
 		string temp(str);
@@ -297,10 +298,10 @@ void COMPOUND_NAME(IpScan,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, pa
 		//cudaEventRecord is aynchronous, to make sure the event is recorded, below command used
 		cudaAssert( cudaEventSynchronize(start));
 
-		DEBUG(STR(IpScan)"> Throwing Kernel with default implementation.");
-		DEBUG(STR(IpScan)"> Parameters -> gridDim:%d",grid.x);
+		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
+		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
 
-		COMPOUND_NAME(IpScan,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_gotofn,d_result,d_output);
+		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_gotofn,d_result,d_output);
 		cudaAssert(cudaThreadSynchronize());
 
 		cudaAssert( cudaEventRecord(stop, 0) );
@@ -331,7 +332,7 @@ void COMPOUND_NAME(IpScan,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, pa
 
 		cout<<endl;
 		//Launch hook (or preHook if window is set)
-		COMPOUND_NAME(IpScan,hooks)(packetBuffer, results, state,auxBlocks,result);
+		COMPOUND_NAME(ANALYSIS_NAME,hooks)(packetBuffer, results, state,auxBlocks,result);
 		//Frees results
 		cudaAssert(cudaFreeHost(results));
 		//free(results);

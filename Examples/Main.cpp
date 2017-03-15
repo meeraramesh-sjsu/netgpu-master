@@ -11,12 +11,12 @@
 //#include "Analysis/IpScan/kernel.h"
 //#include "Analysis/Advanced/Advanced.h"
 
+int IpScan::numOfPatterns = 0;
 using namespace std;
 int main(int args,char *argv[]) {
 
 	//Capture packets from a pcap capture file (argv[1])
 	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
-	int IpScan::numberOfPatterns = 0;
 
 	//Capturing from lo
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
@@ -24,13 +24,13 @@ int main(int args,char *argv[]) {
 		cout<<"Requires 4 arguments: fileName, pcapFile, numPatterns"<<endl;
 	if(atoi(argv[3]) < 0)
 		cout<<"Invalid pattern number";
-	else cout<<"Number of Patterns = "<<atoi(argv[3])<<endl;
+	else cout<<"Number of Patterns = "<<atoi(argv[2])<<endl;
 
 	//cout <<"Starting analysis in few minutes...\n";
 
 	//	std::cout <<"Starting analysis now      ...\n";
 
-	IpScan::numOfPatterns = atoi(argv[3]);
+	IpScan::numOfPatterns = atoi(argv[2]);
 	//Adding analysis to pool
 	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);
 
