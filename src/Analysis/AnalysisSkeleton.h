@@ -208,7 +208,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
 		vector<string> tmp;
-		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + numberOfPatterns + ".cpp";
+		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + to_string(numberOfPatterns) + ".cpp";
 		string line;
 
 		  ifstream myfile("");
