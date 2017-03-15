@@ -40,7 +40,7 @@ QueryManager ANALYSIS_NAME::queryManager; //Scheduler::dbManager->getManager() )
 void IpScan::launchAnalysis(PacketBuffer* packetBuffer, packet_t* GPU_buffer){
 
 	//Launch Analysis (wrapper from C++ to C)
-	COMPOUND_NAME(IpScan,launchAnalysis_wrapper)<ANALYSIS_INPUT_TYPE,ANALYSIS_OUTPUT_TYPE>(packetBuffer, GPU_buffer,numOfPatterns);
+	COMPOUND_NAME(IpScan,launchAnalysis_wrapper)<ANALYSIS_INPUT_TYPE,ANALYSIS_OUTPUT_TYPE>(packetBuffer, GPU_buffer,IpScan::numOfPatterns);
 	
 }
 #endif //ifdef CUDACC
