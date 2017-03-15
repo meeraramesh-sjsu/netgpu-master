@@ -19,6 +19,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <string>
 #include <ctime>
 #include <fstream>
+#include <stdio.h>
 
 using namespace std;
 //#include <cuda.h>
@@ -132,6 +133,7 @@ int buildGoto(vector<string> arr)
 //default Kernel 
 template<typename T,typename R>
 __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state, int* gotofn, int *result,int *d_output){
+
 	state.blockIterator = blockIdx.x;
 	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state);
 	__syncthreads();	
@@ -153,8 +155,8 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 /**** Launch wrapper ****/
 //default Launch Wrapper for Analysis not using Windows 
 template<typename T,typename R>
-void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer){
-
+void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int numberOfPatterns){
+	printf("In Kernel");
 	analysisState_t state;
 	T *GPU_data;
 	R *GPU_results, *results;
@@ -208,9 +210,16 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
 		vector<string> tmp;
-
+		printf("%d numberOfPatterns= ",numberOfPatterns);
+		char* str = (char* ) malloc(sizeof(int));
+		sprintf(str,"%d",numberOfPatterns);
+		printf("%s",str);
+		string temp(str);
+		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + temp + ".cpp";
 		string line;
-		  ifstream myfile("/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns50.cpp");
+
+		  ifstream myfile(fileName.c_str());
+
 		  if (myfile)  // same as: if (myfile.good())
 		    {
 		    while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())

@@ -22,7 +22,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 	#define ANALYSIS_OUTPUT_TYPE ANALYSIS_INPUT_TYPE
 #endif
 
-class IpScan:public AnalysisSkeleton{
+class ANALYSIS_NAME:public AnalysisSkeleton{
 
 public:
 	static void launchAnalysis(PacketBuffer* packetBuffer, packet_t* GPU_buffer);
@@ -37,10 +37,10 @@ private:
 QueryManager ANALYSIS_NAME::queryManager; //Scheduler::dbManager->getManager() );
 
 /* Launch analysis method */
-void IpScan::launchAnalysis(PacketBuffer* packetBuffer, packet_t* GPU_buffer){
+void ANALYSIS_NAME::launchAnalysis(PacketBuffer* packetBuffer, packet_t* GPU_buffer){
 
 	//Launch Analysis (wrapper from C++ to C)
-	COMPOUND_NAME(IpScan,launchAnalysis_wrapper)<ANALYSIS_INPUT_TYPE,ANALYSIS_OUTPUT_TYPE>(packetBuffer, GPU_buffer, numOfPatterns);
+	COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)<ANALYSIS_INPUT_TYPE,ANALYSIS_OUTPUT_TYPE>(packetBuffer, GPU_buffer,numOfPatterns);
 	
 }
 #endif //ifdef CUDACC
