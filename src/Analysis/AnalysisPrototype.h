@@ -31,7 +31,7 @@ public:
 private:
 };
 
-int IpScan::numberOfPatterns = 0;
+int IpScan::numOfPatterns = 0;
 #ifdef __CUDACC__ /* Don't erase this */
 
 QueryManager ANALYSIS_NAME::queryManager; //Scheduler::dbManager->getManager() );
