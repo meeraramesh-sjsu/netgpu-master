@@ -20,9 +20,9 @@ int main(int args,char *argv[]) {
 
 	//Capturing from lo
 	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
-	if(args < 4)
+	if(args < 3)
 		cout<<"Requires 4 arguments: fileName, pcapFile, numPatterns"<<endl;
-	if(atoi(argv[3]) < 0)
+	if(atoi(argv[2]) < 0)
 		cout<<"Invalid pattern number";
 	else cout<<"Number of Patterns = "<<atoi(argv[2])<<endl;
 
