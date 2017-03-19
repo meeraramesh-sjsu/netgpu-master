@@ -314,6 +314,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			if(threadIdx.x<=256-patLen) {
 				int hy,j;
 				for(hy=j=0;j<patLen;j++) {
+					if((j+threadIdx.x) >= 256) goto B;
 					hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
 				}
 				if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this 
@@ -322,7 +323,11 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 				GPU_results[blockIdx.x].signatureNumber = i; 
 				d_result[i]=1;
 			} 
-		} } }
+		}
+		B:
+		} }
+	
+	printf("Completed payload threadId = %d blockId = %d\n",threadIdx.x,blockIdx.x);
 
 
 __syncthreads();
