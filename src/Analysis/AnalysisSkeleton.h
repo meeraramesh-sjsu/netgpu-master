@@ -309,9 +309,13 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		 int num_str = tmp.size();
 
-		 patHash = (int*) calloc(num_str,sizeof(int));
+		 //patHash = (int*) calloc(num_str,sizeof(int));
+		 cudaAssert(cudaHostAlloc((void**) &patHash, num_str * sizeof(int), cudaHostAllocMapped));
+		 memset(patHash,0,num_str);
 
-		 int stridx[2*num_str];
+		 int* stridx;
+		 cudaAssert(cudaHostAlloc((void**) &stridx, 2*num_str * sizeof(int), cudaHostAllocMapped));
+
 		 memset(stridx,0,2*num_str);
 		 int *d_stridx;
 
@@ -324,7 +328,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		 char *a, *d_a;
 		 int *d_result;
-		 a = (char *)malloc(stridx[2*num_str - 1]*sizeof(char));
+		 //a = (char *)malloc(stridx[2*num_str - 1]*sizeof(char));
+		 cudaAssert(cudaHostAlloc((void**) &a, stridx[2*num_str - 1] * sizeof(char), cudaHostAllocMapped));
+
 		 //flatten
 		 int subidx = 0;
 		 for(int i=0;i<num_str;i++)
@@ -337,17 +343,24 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		}
 
 		calcPatHash(tmp,patHash,num_str);
-		cudaMalloc((void**)&d_a,stridx[2*num_str - 1]*sizeof(char));
-		cudaMemcpy(d_a, a, stridx[2*num_str - 1]*sizeof(char),cudaMemcpyHostToDevice);
-		cudaMalloc((void**)&d_stridx,num_str*2*sizeof(int));
-		cudaMemcpy(d_stridx, stridx,2*num_str*sizeof(int),cudaMemcpyHostToDevice);
-		cudaMalloc((void **)&d_patHash, num_str * sizeof(int));
-		cudaMemcpy(d_patHash,patHash,num_str * sizeof(int), cudaMemcpyHostToDevice);
-		cudaMalloc((void**)&d_result,num_str * sizeof(int));
-		cudaMemset(d_result,0,num_str*sizeof(int));
+		//cudaMalloc((void**)&d_a,stridx[2*num_str - 1]*sizeof(char));
+		//cudaMemcpy(d_a, a, stridx[2*num_str - 1]*sizeof(char),cudaMemcpyHostToDevice);
+		//cudaMalloc((void**)&d_stridx,num_str*2*sizeof(int));
+		//cudaMemcpy(d_stridx, stridx,2*num_str*sizeof(int),cudaMemcpyHostToDevice);
+		//cudaMalloc((void **)&d_patHash, num_str * sizeof(int));
+		//cudaMemcpy(d_patHash,patHash,num_str * sizeof(int), cudaMemcpyHostToDevice);
+		//cudaMalloc((void**)&d_result,num_str * sizeof(int));
+		//cudaMemset(d_result,0,num_str*sizeof(int));
+		cudaAssert(cudaHostGetDevicePointer(&d_a, a, 0));
+		cudaAssert(cudaHostGetDevicePointer(&d_stridx, stridx, 0));
+		cudaAssert(cudaHostGetDevicePointer(&d_patHash, patHash, 0));
+
 		int *result;
-		result = (int*)malloc(num_str * sizeof(int));
+		//result = (int*)malloc(num_str * sizeof(int));
+		 cudaAssert(cudaHostAlloc((void**) &result,num_str * sizeof(int), cudaHostAllocMapped));
+
 		memset(result,0,num_str*sizeof(int));
+		cudaAssert(cudaHostGetDevicePointer(&d_result, result, 0));
 		//char* pattern,int * indexes,int num_strings,int * patHash add to kernel
 		/*Pattern matching ends*/
 
@@ -363,7 +376,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,MAX_BUFFER_PACKETS*sizeof(R),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS,cudaMemcpyDeviceToHost));
-		cudaAssert(cudaMemcpy(result,d_result,num_str*sizeof(int),cudaMemcpyDeviceToHost));
+		//cudaAssert(cudaMemcpy(result,d_result,num_str*sizeof(int),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/
