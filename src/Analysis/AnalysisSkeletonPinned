@@ -19,6 +19,8 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <string>
 #include <ctime>
 #include<algorithm>
+#include <sstream>
+
 //#include <cuda.h>
 //#include <cuda_runtime.h>
 #include "/usr/local/cuda/include/cuda.h"
@@ -52,7 +54,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "Libs/Gpu/Macros/Hooks.h"
 #include "Libs/Gpu/Macros/Util.h"
 
-
+using namespace std;
 
 /* Base blank class AnalysisSkeleton definition */
 class AnalysisSkeleton {
@@ -64,6 +66,16 @@ private:
 };
 
 #ifdef __CUDACC__
+
+namespace patch
+{
+    template <typename T> std::string to_string( const T& n )
+    {
+        std::ostringstream stm;
+        stm << n ;
+        return stm.str() ;
+    }
+}
 
 /**** Forward declaration prototypes ****/
 #define statesrow 550000
@@ -202,7 +214,7 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 /**** Launch wrapper ****/
 //default Launch Wrapper for Analysis not using Windows 
 template<typename T,typename R>
-void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer){
+void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int noOfPatterns){
 
 	analysisState_t state;
 	T *GPU_data;
@@ -253,37 +265,32 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		state.windowState.windowStartTime= packetBuffer->getPacket(0)->timestamp;
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
-		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
-		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
-
 		int n = 14;
 		int p_size = 3;
 		int alphabet = 256;
-
+		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + patch::to_string(noOfPatterns) + ".cpp";
 		vector<string> tmp;
+		string line;
+		std::ifstream myfile(fileName.c_str());
 
-		tmp.push_back("b9a5008d960000cd21b440b944028d969303cd21b8004233c933d2cd21b4408d96cf02b91a00cd21");
-		tmp.push_back("b8004233c933d2cd21b4408d96cf02b91a00cd21b43ecd21c3b003cfb82435cd215306b4258d96f0");
-		tmp.push_back("be9303b94402e867feb440b9a5008d960000cd21b440b944028d969303cd21b8004233c933d2cd21");
-		tmp.push_back("21b8024233c999cd21b4408d960301b92202cd21b801578b8e80038b968203cd21b43ecd21b5008a");
-		tmp.push_back("5133c9e85200b002e84300b4408d96960359cd21b8024233c999cd21b4408d960301b92202cd21b8");
-		tmp.push_back("33f6bb0c00b905008a0704148842f64346e2f5c642f600c7");
-		tmp.push_back("680001501e06ba44008ec226ah13b0600017423be000189f7b96701f3a4061fb82135cd213e891e48013e8c064a01b82125ba5901cd21071fbf00febe4c01");
-		tmp.push_back("Hello");
-		tmp.push_back("how");
-		tmp.push_back("are");
-		tmp.push_back("you");
-		/*Pattern matching starts*/
-		/*	 vector<string> tmp;
-		 tmp.push_back("Hello");
-		 tmp.push_back("how");
-		 tmp.push_back("are");
-		 tmp.push_back("you");*/
+		if(!myfile) //Always test the file open.
+		{
+			std::cout<<"Error opening pattern file"<< std::endl;
+			return;
+		}
+		while (std::getline(myfile, line))
+		{
+			tmp.push_back(line);
+		}
 
 		int m = (*min_element(tmp.begin(),tmp.end(),length())).size();
 		p_size = tmp.size();
+
+
 		int B = 3;
-		int stridx[2*p_size];
+		int* stridx;
+	    cudaAssert(cudaHostAlloc((void**) &stridx, (2*p_size)*sizeof(int), cudaHostAllocMapped));
+
 		memset(stridx,0,2*p_size);
 
 		//Giving value for stride
@@ -294,7 +301,8 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 			k=stridx[i+1];
 		}
 
-		char* pattern2 =  (char *)malloc(stridx[2*p_size - 1]*sizeof(char));
+		char* pattern2;
+		cudaAssert(cudaHostAlloc((void**) &pattern2, stridx[2*p_size - 1]*sizeof(char), cudaHostAllocMapped));
 
 		//flatten
 		int subidx = 0;
@@ -309,18 +317,21 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		int shiftsize = determine_shiftsize(alphabet);
 
-
-
-		int *SHIFT = (int *) malloc(shiftsize * sizeof(int)); //shiftsize = maximum hash value of the B-size suffix of the patterns
+		//int *SHIFT = (int *) malloc(shiftsize * sizeof(int)); //shiftsize = maximum hash value of the B-size suffix of the patterns
+		int *SHIFT;
+		cudaAssert(cudaHostAlloc((void**) &SHIFT, shiftsize *  sizeof(int), cudaHostAllocMapped));
 
 		//The hash value of the B'-character prefix of a pattern
-		int *PREFIX_value = (int *) malloc(shiftsize * p_size * sizeof(int)); //The possible prefixes for the hash values.
+		int *PREFIX_value;
+		cudaAssert(cudaHostAlloc((void**) &PREFIX_value, shiftsize * p_size * sizeof(int), cudaHostAllocMapped));
 
 		//The pattern number
-		int *PREFIX_index = (int *) malloc(shiftsize * p_size * sizeof(int));
+		int *PREFIX_index;
+		cudaAssert(cudaHostAlloc((void**) &PREFIX_index, shiftsize * p_size * sizeof(int), cudaHostAllocMapped));
 
 		//How many patterns with the same prefix hash exist
-		int *PREFIX_size = (int *) malloc(shiftsize * sizeof(int));
+		int *PREFIX_size;
+		cudaAssert(cudaHostAlloc((void**) &PREFIX_size, shiftsize *  sizeof(int), cudaHostAllocMapped));
 
 		for (int i = 0; i < shiftsize; i++) {
 
@@ -328,8 +339,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 			SHIFT[i] = m - B + 1;
 			PREFIX_size[i] = 0;
 		}
-
-
 
 		preprocessing(tmp,SHIFT,shiftsize,PREFIX_value,PREFIX_index,PREFIX_size,m);
 		char *d_pattern;
@@ -340,50 +349,56 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int *d_PREFIX_index;
 		int *d_PREFIX_size;
 
-		int * result = (int*)malloc(N *sizeof(int));
-		memset(result,0,N *sizeof(int));
+		int * result; //= (int*)malloc(N *sizeof(int));
 		int * d_result;
-		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
-		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
+		cudaAssert(cudaHostAlloc((void**) &result, N *  sizeof(int), cudaHostAllocMapped));
+		memset(result,0,N *sizeof(int));
+
+		//cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
+		//cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
 
 		//Allocating device memory
-		cudaAssert(cudaMalloc((void **)&d_SHIFT,shiftsize * sizeof(int)));
-		//cudaAssert(cudaMalloc((void **)&d_PREFIX_value,shiftsize * p_size * sizeof(int)));
-		//cudaAssert(cudaMalloc((void **)&d_PREFIX_index,shiftsize * p_size * sizeof(int)));
-		//cudaAssert(cudaMalloc((void **)&d_PREFIX_size,shiftsize * sizeof(int)));
-		//cudaAssert(cudaMalloc((void **)&d_pattern,strlen(pattern2) * sizeof(char)));
-		cudaAssert(cudaMalloc((void **)&d_stridx, 2*p_size * sizeof(int)));
+		//cudaAssert(cudaMalloc((void **)&d_SHIFT,shiftsize * sizeof(int)));
+		//cudaAssert(cudaMalloc((void **)&d_stridx, 2*p_size * sizeof(int)));
 
 		//Copy Device Vectors
-		cudaAssert(cudaMemcpy(d_SHIFT,SHIFT,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
-		///cudaAssert(cudaMemcpy(d_PREFIX_value,PREFIX_value,shiftsize * p_size * sizeof(int), cudaMemcpyHostToDevice));
-		//cudaAssert(cudaMemcpy(d_PREFIX_index,PREFIX_index,shiftsize * p_size * sizeof(int), cudaMemcpyHostToDevice));
-		//cudaAssert(cudaMemcpy(d_PREFIX_size,PREFIX_size,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
-		//cudaAssert(cudaMemcpy(d_pattern,pattern2,strlen(pattern2) * sizeof(char),cudaMemcpyHostToDevice));
-		cudaAssert(cudaMemcpy(d_stridx,stridx,2*p_size * sizeof(int), cudaMemcpyHostToDevice));
+		//cudaAssert(cudaMemcpy(d_SHIFT,SHIFT,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
+		//cudaAssert(cudaMemcpy(d_stridx,stridx,2*p_size * sizeof(int), cudaMemcpyHostToDevice));
+
+		//HostDevicePointers for Device Memory
+		cudaAssert(cudaHostGetDevicePointer(&d_result,result,0));
+		cudaAssert(cudaHostGetDevicePointer(&d_SHIFT,SHIFT,0));
+		cudaAssert(cudaHostGetDevicePointer(&d_stridx,stridx,0));
+		cudaAssert(cudaHostGetDevicePointer(&d_PREFIX_value,PREFIX_value,0));
+		cudaAssert(cudaHostGetDevicePointer(&d_PREFIX_index,PREFIX_index,0));
+		cudaAssert(cudaHostGetDevicePointer(&d_PREFIX_size,PREFIX_size,0));
+		cudaAssert(cudaHostGetDevicePointer(&d_pattern,pattern2,0));
 
 		float time;
 		cudaEvent_t start, stop;
 
-		cudaAssert( cudaEventCreate(&start) );
-		cudaAssert( cudaEventCreate(&stop) );
-		cudaAssert( cudaEventRecord(start, 0) );
+//		cudaAssert( cudaEventCreate(&start) );
+	//	cudaAssert( cudaEventCreate(&stop) );
+		//cudaAssert( cudaEventRecord(start, 0) );
+		//cudaAssert( cudaEventSynchronize(start) );
 
+		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
+		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
 
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_result,d_pattern,d_stridx, d_SHIFT,
 				d_PREFIX_value, d_PREFIX_index, d_PREFIX_size, m, p_size);
 		cudaAssert(cudaThreadSynchronize());
 
-		cudaAssert( cudaEventRecord(stop, 0) );
-		cudaAssert( cudaEventSynchronize(stop) );
-		cudaAssert( cudaEventElapsedTime(&time, start, stop) );
+	//	cudaAssert( cudaEventRecord(stop, 0) );
+	//	cudaAssert( cudaEventSynchronize(stop) );
+	//	cudaAssert( cudaEventElapsedTime(&time, start, stop) );
 
-		printf("Time to generate:  %3.1f ms \n", time);
+	//	printf("Time to generate:  %3.1f ms \n", time);
 
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,MAX_BUFFER_PACKETS*sizeof(R),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS,cudaMemcpyDeviceToHost));
-		cudaAssert(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
+		//cudaAssert(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/
@@ -409,6 +424,8 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 
 		cout<<"Time taken for preprocessing "<<timeTaken<<" us"<<endl;
+		DEBUG(STR(ANALYSIS_NAME)"> Number of patterns > %d",p_size);
+
 	}
 }
 

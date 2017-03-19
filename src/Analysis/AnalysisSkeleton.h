@@ -19,8 +19,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <string>
 #include <ctime>
 #include<algorithm>
-#include <sstream>
-
 //#include <cuda.h>
 //#include <cuda_runtime.h>
 #include "/usr/local/cuda/include/cuda.h"
@@ -54,7 +52,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "Libs/Gpu/Macros/Hooks.h"
 #include "Libs/Gpu/Macros/Util.h"
 
-using namespace std;
+
 
 /* Base blank class AnalysisSkeleton definition */
 class AnalysisSkeleton {
@@ -66,16 +64,6 @@ private:
 };
 
 #ifdef __CUDACC__
-
-namespace patch
-{
-    template <typename T> std::string to_string( const T& n )
-    {
-        std::ostringstream stm;
-        stm << n ;
-        return stm.str() ;
-    }
-}
 
 /**** Forward declaration prototypes ****/
 #define statesrow 550000
@@ -265,9 +253,14 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		state.windowState.windowStartTime= packetBuffer->getPacket(0)->timestamp;
 		state.windowState.windowEndTime= packetBuffer->getPacket(packetBuffer->getNumOfPackets()-1)->timestamp;
 
+		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
+		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
+
 		int n = 14;
 		int p_size = 3;
 		int alphabet = 256;
+
+		
 		string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + patch::to_string(noOfPatterns) + ".cpp";
 		vector<string> tmp;
 		string line;
@@ -283,14 +276,11 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 			tmp.push_back(line);
 		}
 
+
 		int m = (*min_element(tmp.begin(),tmp.end(),length())).size();
 		p_size = tmp.size();
-
-
 		int B = 3;
-		int* stridx;
-	    cudaAssert(cudaHostAlloc((void**) &stridx, (2*p_size)*sizeof(int), cudaHostAllocMapped));
-
+		int stridx[2*p_size];
 		memset(stridx,0,2*p_size);
 
 		//Giving value for stride
@@ -301,8 +291,7 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 			k=stridx[i+1];
 		}
 
-		char* pattern2;
-		cudaAssert(cudaHostAlloc((void**) &pattern2, stridx[2*p_size - 1]*sizeof(char), cudaHostAllocMapped));
+		char* pattern2 =  (char *)malloc(stridx[2*p_size - 1]*sizeof(char));
 
 		//flatten
 		int subidx = 0;
@@ -317,21 +306,18 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		int shiftsize = determine_shiftsize(alphabet);
 
-		//int *SHIFT = (int *) malloc(shiftsize * sizeof(int)); //shiftsize = maximum hash value of the B-size suffix of the patterns
-		int *SHIFT;
-		cudaAssert(cudaHostAlloc((void**) &SHIFT, shiftsize *  sizeof(int), cudaHostAllocMapped));
+
+
+		int *SHIFT = (int *) malloc(shiftsize * sizeof(int)); //shiftsize = maximum hash value of the B-size suffix of the patterns
 
 		//The hash value of the B'-character prefix of a pattern
-		int *PREFIX_value;
-		cudaAssert(cudaHostAlloc((void**) &PREFIX_value, shiftsize * p_size * sizeof(int), cudaHostAllocMapped));
+		int *PREFIX_value = (int *) malloc(shiftsize * p_size * sizeof(int)); //The possible prefixes for the hash values.
 
 		//The pattern number
-		int *PREFIX_index;
-		cudaAssert(cudaHostAlloc((void**) &PREFIX_index, shiftsize * p_size * sizeof(int), cudaHostAllocMapped));
+		int *PREFIX_index = (int *) malloc(shiftsize * p_size * sizeof(int));
 
 		//How many patterns with the same prefix hash exist
-		int *PREFIX_size;
-		cudaAssert(cudaHostAlloc((void**) &PREFIX_size, shiftsize *  sizeof(int), cudaHostAllocMapped));
+		int *PREFIX_size = (int *) malloc(shiftsize * sizeof(int));
 
 		for (int i = 0; i < shiftsize; i++) {
 
@@ -339,6 +325,8 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 			SHIFT[i] = m - B + 1;
 			PREFIX_size[i] = 0;
 		}
+
+
 
 		preprocessing(tmp,SHIFT,shiftsize,PREFIX_value,PREFIX_index,PREFIX_size,m);
 		char *d_pattern;
@@ -349,56 +337,50 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int *d_PREFIX_index;
 		int *d_PREFIX_size;
 
-		int * result; //= (int*)malloc(N *sizeof(int));
-		int * d_result;
-		cudaAssert(cudaHostAlloc((void**) &result, N *  sizeof(int), cudaHostAllocMapped));
+		int * result = (int*)malloc(N *sizeof(int));
 		memset(result,0,N *sizeof(int));
-
-		//cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
-		//cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
+		int * d_result;
+		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
+		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
 
 		//Allocating device memory
-		//cudaAssert(cudaMalloc((void **)&d_SHIFT,shiftsize * sizeof(int)));
-		//cudaAssert(cudaMalloc((void **)&d_stridx, 2*p_size * sizeof(int)));
+		cudaAssert(cudaMalloc((void **)&d_SHIFT,shiftsize * sizeof(int)));
+		//cudaAssert(cudaMalloc((void **)&d_PREFIX_value,shiftsize * p_size * sizeof(int)));
+		//cudaAssert(cudaMalloc((void **)&d_PREFIX_index,shiftsize * p_size * sizeof(int)));
+		//cudaAssert(cudaMalloc((void **)&d_PREFIX_size,shiftsize * sizeof(int)));
+		//cudaAssert(cudaMalloc((void **)&d_pattern,strlen(pattern2) * sizeof(char)));
+		cudaAssert(cudaMalloc((void **)&d_stridx, 2*p_size * sizeof(int)));
 
 		//Copy Device Vectors
-		//cudaAssert(cudaMemcpy(d_SHIFT,SHIFT,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
-		//cudaAssert(cudaMemcpy(d_stridx,stridx,2*p_size * sizeof(int), cudaMemcpyHostToDevice));
-
-		//HostDevicePointers for Device Memory
-		cudaAssert(cudaHostGetDevicePointer(&d_result,result,0));
-		cudaAssert(cudaHostGetDevicePointer(&d_SHIFT,SHIFT,0));
-		cudaAssert(cudaHostGetDevicePointer(&d_stridx,stridx,0));
-		cudaAssert(cudaHostGetDevicePointer(&d_PREFIX_value,PREFIX_value,0));
-		cudaAssert(cudaHostGetDevicePointer(&d_PREFIX_index,PREFIX_index,0));
-		cudaAssert(cudaHostGetDevicePointer(&d_PREFIX_size,PREFIX_size,0));
-		cudaAssert(cudaHostGetDevicePointer(&d_pattern,pattern2,0));
+		cudaAssert(cudaMemcpy(d_SHIFT,SHIFT,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
+		///cudaAssert(cudaMemcpy(d_PREFIX_value,PREFIX_value,shiftsize * p_size * sizeof(int), cudaMemcpyHostToDevice));
+		//cudaAssert(cudaMemcpy(d_PREFIX_index,PREFIX_index,shiftsize * p_size * sizeof(int), cudaMemcpyHostToDevice));
+		//cudaAssert(cudaMemcpy(d_PREFIX_size,PREFIX_size,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
+		//cudaAssert(cudaMemcpy(d_pattern,pattern2,strlen(pattern2) * sizeof(char),cudaMemcpyHostToDevice));
+		cudaAssert(cudaMemcpy(d_stridx,stridx,2*p_size * sizeof(int), cudaMemcpyHostToDevice));
 
 		float time;
 		cudaEvent_t start, stop;
 
-//		cudaAssert( cudaEventCreate(&start) );
-	//	cudaAssert( cudaEventCreate(&stop) );
-		//cudaAssert( cudaEventRecord(start, 0) );
-		//cudaAssert( cudaEventSynchronize(start) );
+		cudaAssert( cudaEventCreate(&start) );
+		cudaAssert( cudaEventCreate(&stop) );
+		cudaAssert( cudaEventRecord(start, 0) );
 
-		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
-		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
 
 		COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)<<<grid,block>>>(GPU_buffer,GPU_data,GPU_results,state,d_result,d_pattern,d_stridx, d_SHIFT,
 				d_PREFIX_value, d_PREFIX_index, d_PREFIX_size, m, p_size);
 		cudaAssert(cudaThreadSynchronize());
 
-	//	cudaAssert( cudaEventRecord(stop, 0) );
-	//	cudaAssert( cudaEventSynchronize(stop) );
-	//	cudaAssert( cudaEventElapsedTime(&time, start, stop) );
+		cudaAssert( cudaEventRecord(stop, 0) );
+		cudaAssert( cudaEventSynchronize(stop) );
+		cudaAssert( cudaEventElapsedTime(&time, start, stop) );
 
-	//	printf("Time to generate:  %3.1f ms \n", time);
+		printf("Time to generate:  %3.1f ms \n", time);
 
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,MAX_BUFFER_PACKETS*sizeof(R),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS,cudaMemcpyDeviceToHost));
-		//cudaAssert(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
+		cudaAssert(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/
@@ -424,8 +406,6 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 
 		cout<<"Time taken for preprocessing "<<timeTaken<<" us"<<endl;
-		DEBUG(STR(ANALYSIS_NAME)"> Number of patterns > %d",p_size);
-
 	}
 }
 
