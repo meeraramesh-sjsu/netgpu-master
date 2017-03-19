@@ -18,10 +18,10 @@
 using namespace std;
 
 /*Using constant memory for storing multiple patterns, their correspnding indices and pattern hashes in constant memory*/
-__device__ char* const_pattern;
-__device__ int* const_indexes;
-__device__ int const_num_strings;
-__device__ int* const_patHash;
+__device__  char* const_pattern;
+__device__  int* const_indexes;
+__device__  int const_num_strings;
+__device__  int* const_patHash;
 
 typedef struct {
 	//IP
@@ -117,7 +117,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	__shared__ T elements[256];
 	__shared__ clock_t starttime;
 	__shared__ clock_t stoptime;
-	__shared__ uchar4 packet[64];
+	//__shared__ uchar4 packet[64];
 
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
@@ -125,7 +125,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	if(threadIdx.x ==0)
 		starttime = clock();
 
-if(threadIdx.x < 16)
+/*if(threadIdx.x < 16)
 	{
 		
 		uint4 *uint4_text = reinterpret_cast<uint4 *>((GPU_buffer)->packet+ 16*threadIdx.x);
@@ -136,16 +136,16 @@ if(threadIdx.x < 16)
 
 		//recast data to uchar4
 	int i=threadIdx.x*4;
-		packet[i]   = *reinterpret_cast<uchar4 *>(&uint4_var.x);
+//		packet[i]   = *reinterpret_cast<uchar4 *>(&uint4_var.x);
 //		printf("Line2 \n");
-		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
+//		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
 //		printf("Line3 \n");
 //		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
 //		printf("Line4 \n");
 //		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);
 //		printf("Line5 \n");
 	}
-
+*/
 	/*if(threadIdx.x == 0 && blockIdx.x==0)
 	{
 		printf("Printing the 256 byte packet");
@@ -188,6 +188,7 @@ if(threadIdx.x < 16)
 				GPU_results[blockIdx.x].maliciousIP=1;
 			}
 		}
+		printf("Completed checking private IP addresses \n");
 	}
 	if(threadIdx.x == 33) //Checksum verification
 	{
@@ -207,6 +208,7 @@ if(threadIdx.x < 16)
 			unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
 			if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
 		}
+		printf("Completed checking checksum \n");
 	}
 	
 	if(threadIdx.x == 64) //check sport or dport is 0; check ackNo is o, with ack bit set; check malicious flag bit combinations
@@ -234,6 +236,7 @@ if(threadIdx.x < 16)
 				GPU_results[blockIdx.x].maliciousFlags = 1;
 
 		}
+		printf("Completed checking flags for TCP \n");
 	}
 
 	if(IS_IP4() && threadIdx.x == 33) //save source and destn IP addres to output
@@ -246,12 +249,13 @@ if(threadIdx.x < 16)
 
 		GPU_results[blockIdx.x].ipSrc = ipSrc;
 		GPU_results[blockIdx.x].ipDst = ipDst;
+		printf("Completed saving IP addresses \n");
 	}
 	
-	if(threadIdx.x==0 && blockIdx.x==0) //calculate pattern hash
+	/*if(threadIdx.x==0 && blockIdx.x==0) //calculate pattern hash
 	{
 		elements[threadIdx.x].patHash = calcHash(elements[threadIdx.x].signature,elements[threadIdx.x].signLen);
-	}
+	}*/
 
 	//Naive Payload Signature Matching
 
@@ -281,7 +285,7 @@ if(threadIdx.x < 16)
 //		}
 
 //	/*Rabin Karp signature matching implementation
-	if(threadIdx.x >=54 && threadIdx.x <= 256 - 5)
+	/*if(threadIdx.x >=54 && threadIdx.x <= 256 - 5)
 	{
 		char *signature = elements[threadIdx.x].signature;
 		GPU_results[blockIdx.x].signature = signature;
@@ -300,7 +304,7 @@ if(threadIdx.x < 16)
 			}
 			if(result) GPU_results[blockIdx.x].signatureFound = 1;
 		}
-	}
+	}*/
 
 	/*Rabin Karp Muli-pattern string matching implementation*/
 	if(threadIdx.x >= 54) {
