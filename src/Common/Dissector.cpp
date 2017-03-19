@@ -188,11 +188,11 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 
 }
 
-long hashCal(const char* key, int  m, int offset) {
+long hashCal(const char* pattern, int  m, int offset) {
 	long h = 0;
 	for (int j = 0; j < m; j++)
 	{
-		h = (256 * h + key[offset + j]) % 997;
+		h = (256 * h + pattern[offset + j]) % 997;
 	}
 	return h;
 }
@@ -236,13 +236,7 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 			if (out[currentState][0] == 0)
 			continue;
 
-<<<<<<< HEAD
-			// Match found, print all matching words of arr[]
-			// using output function.
-			int outSize = out[currentState][0];
-			for (int j = 1; j <= outSize; ++j)
-			{
-=======
+
 		// Match found, print all matching words of arr[]
 		// using output function.
 		int outSize = out[currentState][0];
@@ -250,19 +244,19 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 		//#pragma omp parallel for
 		for (int j = 1; j <= outSize; ++j)
 		{
->>>>>>> 1c83716fa7cbf75584f5582afedc626a366a55ee
 			int patIndex = out[currentState][j];
 			//The size of the output is fixed to the pattern size, but the current State value
 			//can exceed the pattern size
 			if(patIndex>=k || patIndex<0) continue;
 			DEBUG2("In searchWords outIndex=%d currentState=%d patIndex=%d",j,currentState,out[currentState][j]);
-				long start = (long) i - arr[patIndex].size() + 1;
-				if(start >= text.size()) continue;
-				printf("Word %s appears from %d to %d",arr[patIndex].c_str(),start,i);
-				//cout << "Word " << arr[j] << " appears from "
-					//	<< start << " to " << i << endl;
-			}
-		}		
+			long start = (long) i - arr[patIndex].size() + 1;
+			if(start >= text.size()) continue;
+			printf("Word %s appears from %d to %d",arr[patIndex].c_str(),start,i);
+			//cout << "Word " << arr[j] << " appears from "
+			//	<< start << " to " << i << endl;
+		}
+	}
+}
 }
 
 void Dissector::payLoadRabinKarp(char* packetPointer) {
@@ -280,26 +274,10 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 	}
 
 	else cout << "Unable to open file";
-
-	for(int i=0;i<tmp.size();i++)
-		setlen.insert(tmp[i].length());
-
-	sort(tmp.begin(),tmp.end(),compare);
-
-	//Fill the map with pattern hashes
-	for(int i=0;i<tmp.size();i++)
-	{
-		long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
-		mapHash[patHash] = i;
-	}
-
 	int payLoadLength = packetLength - 40;
-	int minLen = tmp[0].length();
-
-	int q = 997;
-	int R = 256;
-
 	/*long hy = 0;
+	 * sort(tmp.begin(),tmp.end(),compare);
+	int minLen = tmp[0].length();
 
 	if(payLoadLength < minLen) return;
 
@@ -332,6 +310,20 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 	//More optimal Rabin karp algorithm
 	//Starting from 0, move for every pattern length, computing the hash values
 	//Time complexity O(N* number of pattern lengths)
+	//Tmp is the vector of patterns
+	for(int i=0;i<tmp.size();i++)
+		setlen.insert(tmp[i].length());
+
+	//Fill the map with pattern hashes
+	for(int i=0;i<tmp.size();i++)
+	{
+		long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
+		mapHash[patHash] = i;
+	}
+
+	int q = 997;
+	int R = 256;
+
 	for(auto it= setlen.begin();it!=setlen.end();it++)
 	{
 		int m = *it;
@@ -343,7 +335,8 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 		int txtHash = hashCal((char*)packetPointer, m,0);
 
 		// check for match at offset 0
-		if ((mapHash[txtHash]>0) && memcmp((char*)packetPointer,tmp[mapHash[txtHash]].c_str(),m)==0)
+		if ((mapHash[txtHash]>0) && memcmp((char*)packetPointer,
+				tmp[mapHash[txtHash]].c_str(),m)==0)
 		{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
 
 		// check for hash match; if hash match, check for exact match
@@ -354,7 +347,8 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 
 			// match
 			int offset = j - m + 1;
-			if ((mapHash[txtHash]>0) && memcmp((char*) (packetPointer + offset), tmp[mapHash[txtHash]].c_str(),m)==0)
+			if ((mapHash[txtHash]>0) &&
+					memcmp((char*) (packetPointer + offset), tmp[mapHash[txtHash]].c_str(),m)==0)
 			{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
 		}
 	}
