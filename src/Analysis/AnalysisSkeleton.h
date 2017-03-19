@@ -288,7 +288,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 
 		int B = 3;
-		int stridx[2*p_size];
+		int* stridx;
+	    cudaAssert(cudaHostAlloc((void**) &stridx, (2*p_size)*sizeof(int), cudaHostAllocMapped));
+
 		memset(stridx,0,2*p_size);
 
 		//Giving value for stride
@@ -315,7 +317,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 
 		int shiftsize = determine_shiftsize(alphabet);
 
-		int *SHIFT = (int *) malloc(shiftsize * sizeof(int)); //shiftsize = maximum hash value of the B-size suffix of the patterns
+		//int *SHIFT = (int *) malloc(shiftsize * sizeof(int)); //shiftsize = maximum hash value of the B-size suffix of the patterns
+		int *SHIFT;
+		cudaAssert(cudaHostAlloc((void**) &SHIFT, shiftsize *  sizeof(int), cudaHostAllocMapped));
 
 		//The hash value of the B'-character prefix of a pattern
 		int *PREFIX_value;
@@ -345,21 +349,26 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int *d_PREFIX_index;
 		int *d_PREFIX_size;
 
-		int * result = (int*)malloc(N *sizeof(int));
-		memset(result,0,N *sizeof(int));
+		int * result; //= (int*)malloc(N *sizeof(int));
 		int * d_result;
-		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
-		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
+		cudaAssert(cudaHostAlloc((void**) &result, N *  sizeof(int), cudaHostAllocMapped));
+		memset(result,0,N *sizeof(int));
+
+		//cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
+		//cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
 
 		//Allocating device memory
-		cudaAssert(cudaMalloc((void **)&d_SHIFT,shiftsize * sizeof(int)));
-		cudaAssert(cudaMalloc((void **)&d_stridx, 2*p_size * sizeof(int)));
+		//cudaAssert(cudaMalloc((void **)&d_SHIFT,shiftsize * sizeof(int)));
+		//cudaAssert(cudaMalloc((void **)&d_stridx, 2*p_size * sizeof(int)));
 
 		//Copy Device Vectors
-		cudaAssert(cudaMemcpy(d_SHIFT,SHIFT,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
-		cudaAssert(cudaMemcpy(d_stridx,stridx,2*p_size * sizeof(int), cudaMemcpyHostToDevice));
+		//cudaAssert(cudaMemcpy(d_SHIFT,SHIFT,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
+		//cudaAssert(cudaMemcpy(d_stridx,stridx,2*p_size * sizeof(int), cudaMemcpyHostToDevice));
 
 		//HostDevicePointers for Device Memory
+		cudaAssert(cudaHostGetDevicePointer(&d_result,result,0));
+		cudaAssert(cudaHostGetDevicePointer(&d_SHIFT,SHIFT,0));
+		cudaAssert(cudaHostGetDevicePointer(&d_stridx,stridx,0));
 		cudaAssert(cudaHostGetDevicePointer(&d_PREFIX_value,PREFIX_value,0));
 		cudaAssert(cudaHostGetDevicePointer(&d_PREFIX_index,PREFIX_index,0));
 		cudaAssert(cudaHostGetDevicePointer(&d_PREFIX_size,PREFIX_size,0));
@@ -368,10 +377,10 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		float time;
 		cudaEvent_t start, stop;
 
-		cudaAssert( cudaEventCreate(&start) );
-		cudaAssert( cudaEventCreate(&stop) );
-		cudaAssert( cudaEventRecord(start, 0) );
-		cudaAssert( cudaEventSynchronize(start) );
+//		cudaAssert( cudaEventCreate(&start) );
+	//	cudaAssert( cudaEventCreate(&stop) );
+		//cudaAssert( cudaEventRecord(start, 0) );
+		//cudaAssert( cudaEventSynchronize(start) );
 
 		DEBUG(STR(ANALYSIS_NAME)"> Throwing Kernel with default implementation.");
 		DEBUG(STR(ANALYSIS_NAME)"> Parameters -> gridDim:%d",grid.x);
@@ -380,16 +389,16 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 				d_PREFIX_value, d_PREFIX_index, d_PREFIX_size, m, p_size);
 		cudaAssert(cudaThreadSynchronize());
 
-		cudaAssert( cudaEventRecord(stop, 0) );
-		cudaAssert( cudaEventSynchronize(stop) );
-		cudaAssert( cudaEventElapsedTime(&time, start, stop) );
+	//	cudaAssert( cudaEventRecord(stop, 0) );
+	//	cudaAssert( cudaEventSynchronize(stop) );
+	//	cudaAssert( cudaEventElapsedTime(&time, start, stop) );
 
-		printf("Time to generate:  %3.1f ms \n", time);
+	//	printf("Time to generate:  %3.1f ms \n", time);
 
 		/*** Copy results & auxBlocks arrays ***/
 		cudaAssert(cudaMemcpy(results,GPU_results,MAX_BUFFER_PACKETS*sizeof(R),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaMemcpy(auxBlocks,state.GPU_auxBlocks,sizeof(int64_t)*MAX_BUFFER_PACKETS,cudaMemcpyDeviceToHost));
-		cudaAssert(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
+		//cudaAssert(cudaMemcpy(result,d_result,N *sizeof (int),cudaMemcpyDeviceToHost));
 		cudaAssert(cudaThreadSynchronize());
 
 		/*** FREE GPU DYNAMIC MEMORY ***/
