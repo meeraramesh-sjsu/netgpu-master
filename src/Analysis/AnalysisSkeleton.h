@@ -50,12 +50,6 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include "Libs/Gpu/Macros/Hooks.h"
 #include "Libs/Gpu/Macros/Util.h"
 
-
-#define statesrow 11
-#define chars 256
-int states = 0;
-int gotofn[statesrow][chars];
-
 /* Base blank class AnalysisSkeleton definition */
 class AnalysisSkeleton {
 
@@ -202,36 +196,6 @@ void calcPatHash(vector<string> tmp, int *patHash, int numStr)
  }
  }
 }
-
-//GoTO function used for AhoCorasick Algorithm. Using this function the next State to be taken is determined.
-int buildGoto(string arr[],int k)
-{
-int states = 1;
-memset(gotofn,0,sizeof(gotofn));
-for(int i=0;i<k;i++)
-{
-	string temp = arr[i];
-	int currentState = 0;
-	int ch = 0;
-
-	for(int j=0;;j++) {
-	ch = temp[j];
-
-	if(gotofn[currentState][ch] == 0)
-	gotofn[currentState][ch] = states++;
-
-	if(j==temp.size()-1) {
-	gotofn[currentState][ch] |= ((1<<i)<<16);
-	break;
-	}
-
-	currentState = gotofn[currentState][ch] & 0x0000FFFF;
-
-	}
-}
-return states;
-}
-
 
 //default Kernel 
 template<typename T,typename R>
