@@ -65,11 +65,19 @@ private:
 
 #ifdef __CUDACC__
 
+namespace patch
+{
+    template <typename T> std::string to_string( const T& n )
+    {
+        std::ostringstream stm;
+        stm << n ;
+        return stm.str() ;
+    }
+}
+
 /**** Forward declaration prototypes ****/
 #define statesrow 550000
 
-int gotofn[550000][256];
-int output[statesrow];
 
 template<typename T,typename R>
 __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results,analysisState_t state,int *d_result,char* d_pattern, int* d_stridx, int* d_SHIFT,
