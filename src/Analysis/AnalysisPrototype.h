@@ -12,7 +12,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 /*Include skeleton */
 #include "../Scheduler/Scheduler.h"
-#include "AnalysisSkeletonNotPinnedWorking"
+#include "AnalysisSkeleton.h"
 #include "Libs/Host/Database/QueryManager.h"
 #include "Libs/Host/Database/DatabaseManager.h"
 
