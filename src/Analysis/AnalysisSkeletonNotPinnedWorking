@@ -18,6 +18,10 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 #include <vector>
 #include <string>
 #include <ctime>
+#include <fstream>
+#include <stdio.h>
+
+using namespace std;
 //#include <cuda.h>
 //#include <cuda_runtime.h>
 #include "/usr/local/cuda/include/cuda.h"
@@ -129,6 +133,7 @@ int buildGoto(vector<string> arr)
 //default Kernel 
 template<typename T,typename R>
 __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state, int* gotofn, int *result,int *d_output){
+
 	state.blockIterator = blockIdx.x;
 	COMPOUND_NAME(ANALYSIS_NAME,mining)(GPU_buffer, GPU_data, GPU_results, state);
 	__syncthreads();	
@@ -151,7 +156,7 @@ __global__ void COMPOUND_NAME(ANALYSIS_NAME,KernelAnalysis)(packet_t* GPU_buffer
 //default Launch Wrapper for Analysis not using Windows 
 template<typename T,typename R>
 void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuffer, packet_t* GPU_buffer,int numberOfPatterns){
-
+	printf("In Kernel");
 	analysisState_t state;
 	T *GPU_data;
 	R *GPU_results, *results;
@@ -225,21 +230,49 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		    }
 		  else cout << "fooey\n";
 		  cout<<"Number of patterns = "<<tmp.size()<<endl;
-	
+		/*tmp.push_back("ebf55eb499cd2180fc21750458eb5190");
+		tmp.push_back("2421b44ee90600b43ecd21b44fbacc01cd21726eb8023dba9e00cd218bd8b80057cd2183f90074dfb8024233d233c9cd21a3d401b8004233c933d2cd21b43f8b0ed4018b167a02cd21");
+		tmp.push_back("eb2b905a45cd602ec606250601902e803e2606008d3e08060e07755e2ec606260605902ec6062b06ff90eb4e902ec6062b060090b435b060cd21bb000126817f");
+		tmp.push_back("5a45cd602ec606250601902e803e2606");
+		tmp.push_back("81c91f00cd21b43ecd215a1f59b443b0");
+		tmp.push_back("35b060cd21bb000126817f035a4574c0");
+		tmp.push_back("1c0226803de8742db99f0183ee03f3a4");
+		tmp.push_back("a483eb0426891e020026c7060000f5e9bfcfcfc53690");
+		tmp.push_back("5657b800b88ed8bb00008a073c307502b04f88074343");
+		tmp.push_back("2ec6062b060090b435b060cd21bb0001");
+		tmp.push_back("521eb8023dcd2193b43f33c98ed941ba");
+		tmp.push_back("2e300547e2fab8dd4bcd213d34127503");
+		tmp.push_back("0f83c61890b9d9062e3004fec046e2f8");
+		tmp.push_back("803eb801287326803eb7010977e6b403b009bb03018a2eb8018a0eb701b600b202cd13fe06b701eb");
+		tmp.push_back("0733c98bd1b802422e8b1e390f9cfa2eff1ee80dc38becb80057e8ebffbb630f890f895702e8c802");
+		tmp.push_back("b80101e8af005b5803c1f7d832e403c8b440cd210e1f72152bc8751133d2b80042cd21ba9b02b903");
+		tmp.push_back("c8751133d2b80042cd21ba9b02b90300b440cd21595ab80157cd21b43ecd21e92cffb003cf2a2e2a");
+		tmp.push_back("c8751133d2b80042cd21ba9b02b90300b440cd21595ab80157cd21b43ecd21e92cffb003cf2a2e43");
+		tmp.push_back("0805fa26a3900026891e9200fbc39c2eff1e0205c3b8004233c933d2e8efffc3b43ee8e9ffc3a11d");
+		tmp.push_back("00c353ffd65b8f060f00b440b94f02ba4f02cd2133c9b8004233d2cd21baa304b44059cd21b80157");
+		tmp.push_back("02cd2133c9b8004233d2cd21baa304b44059cd21b801575a59cd21b43ecd21585a1f59cd215a1fb8");
+		tmp.push_back("b9a5008d960000cd21b440b944028d969303cd21b8004233c933d2cd21b4408d96cf02b91a00cd21");
+		tmp.push_back("b8004233c933d2cd21b4408d96cf02b91a00cd21b43ecd21c3b003cfb82435cd215306b4258d96f0");
+		tmp.push_back("be9303b94402e867feb440b9a5008d960000cd21b440b944028d969303cd21b8004233c933d2cd21");
+		tmp.push_back("21b8024233c999cd21b4408d960301b92202cd21b801578b8e80038b968203cd21b43ecd21b5008a");
+		tmp.push_back("5133c9e85200b002e84300b4408d96960359cd21b8024233c999cd21b4408d960301b92202cd21b8");
+		tmp.push_back("33f6bb0c00b905008a0704148842f64346e2f5c642f600c7");
+		tmp.push_back("680001501e06ba44008ec226ah13b0600017423be000189f7b96701f3a4061fb82135cd213e891e48013e8c064a01b82125ba5901cd21071fbf00febe4c01");
+		tmp.push_back("Hello");
+		tmp.push_back("how");
+		tmp.push_back("are");
+		tmp.push_back("you");*/
+
+		/*Pattern matching starts*/
+		/*	 vector<string> tmp;
+		 tmp.push_back("Hello");
+		 tmp.push_back("how");
+		 tmp.push_back("are");
+		 tmp.push_back("you");*/
+
 		int chars = 256;
 		memset(gotofn,0,sizeof(gotofn));
 		int states = buildGoto(tmp);
-		int* array;
-
-		//	printf("CUDA HOST ALLOC \n");
-		cudaAssert(cudaHostAlloc((void**) &array, states * 256 * sizeof(int), cudaHostAllocMapped));
-
-		DEBUG(STR(ANALYSIS_NAME)"> Allocated Host Array in Pinned memory, size = %d Bytes",states * 256 * sizeof(int));
-
-		for(int i=0;i<states;i++)
-			for(int j=0;j<256;j++)
-		array[i * 256 + j ] = gotofn[i][j];
-
 		cout<<"total packets= "<<state.lastPacket<<endl;
 
 		int *d_gotofn;
@@ -250,12 +283,10 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		int * result = (int*)malloc(N *sizeof(int));
 		memset(result,0,N *sizeof(int));
 
-		//cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
-		//cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
+		cudaAssert(cudaMallocPitch(&d_gotofn,&pitch,chars * sizeof(int),states));
+		cudaAssert(cudaMemcpy2D(d_gotofn,pitch,gotofn,chars * sizeof(int),chars * sizeof(int),states,cudaMemcpyHostToDevice));
 
 		//Getting the device pointer for the pinned memory
-		/*New*/	cudaAssert(cudaHostGetDevicePointer(&d_gotofn, array, 0));
-		DEBUG(STR(ANALYSIS_NAME)"Set a device pointer to point to the array");
 
 		cudaAssert(cudaMalloc(&d_result,N *sizeof (int)));
 		cudaAssert(cudaMemset(d_result,0,N*sizeof (int)));
