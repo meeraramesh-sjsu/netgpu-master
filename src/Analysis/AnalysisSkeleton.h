@@ -354,6 +354,10 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 		//Allocating device memory
 		cudaAssert(cudaMalloc((void **)&d_SHIFT,shiftsize * sizeof(int)));
 		cudaAssert(cudaMalloc((void **)&d_stridx, 2*p_size * sizeof(int)));
+		cudaAssert(cudaMalloc((void **)&d_PREFIX_value, shiftsize * p_size *  sizeof(int)));
+		cudaAssert(cudaMalloc((void **)&d_PREFIX_index, shiftsize * p_size *  sizeof(int)));
+		cudaAssert(cudaMalloc((void **)&d_PREFIX_size, shiftsize * sizeof(int)));
+		cudaAssert(cudaMalloc((void **)&d_pattern,stridx[2*p_size - 1]*sizeof(char)));
 
 		//Copy Device Vectors
 		cudaAssert(cudaMemcpy(d_SHIFT,SHIFT,shiftsize * sizeof(int), cudaMemcpyHostToDevice));
