@@ -1,0 +1,14 @@
+==108653== NVPROF is profiling process 108653, command: ./example pcap/packet256new.pcap 1800
+==108653== Profiling application: ./example pcap/packet256new.pcap 1800
+==108653== Profiling result:
+"Start","Duration","Grid X","Grid Y","Grid Z","Block X","Block Y","Block Z","Registers Per Thread","Static SMem","Dynamic SMem","Size","Throughput","Device","Context","Stream","Name"
+ms,ms,,,,,,,,B,KB,MB,GB/s,,,,
+323.033587,3.915155,,,,,,,,,,23.062500,5.752511,"Tesla K80 (0)","1","7","[CUDA memcpy HtoD]"
+330.773722,0.042719,,,,,,,,,,6.187500,141.447142,"Tesla K80 (0)","1","7","[CUDA memset]"
+330.819161,0.040256,,,,,,,,,,6.187500,150.101363,"Tesla K80 (0)","1","7","[CUDA memset]"
+330.862105,0.040991,,,,,,,,,,6.187500,147.409931,"Tesla K80 (0)","1","7","[CUDA memset]"
+330.905784,0.011552,,,,,,,,,,1.125000,95.103256,"Tesla K80 (0)","1","7","[CUDA memset]"
+330.920088,9.728000e-03,,,,,,,,,,0.281250,28.233779,"Tesla K80 (0)","1","7","[CUDA memset]"
+362.924264,0.223102,288,1,1,256,1,1,31,2.254400e+04,0.000000,,,"Tesla K80 (0)","1","7","void IpScan_KernelAnalysis<IpScan_ipScanAnalysis_t, IpScan_ipScanAnalysis_t>(packet_t*, IpScan_ipScanAnalysis_t*, IpScan_ipScanAnalysis_t*, analysisState_t, int*, char*, int*, int*, int*, int*, int*, int, int) [225]"
+363.174405,0.986325,,,,,,,,,,6.187500,6.126257,"Tesla K80 (0)","1","7","[CUDA memcpy DtoH]"
+364.178970,0.093471,,,,,,,,,,0.562500,5.876865,"Tesla K80 (0)","1","7","[CUDA memcpy DtoH]"

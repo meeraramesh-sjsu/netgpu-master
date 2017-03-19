@@ -1,0 +1,29 @@
+==117495== NVPROF is profiling process 117495, command: ./example pcap/packet256new.pcap 10
+==117495== Profiling application: ./example pcap/packet256new.pcap 10
+==117495== Profiling result:
+"Time(%)","Time","Calls","Avg","Min","Max","Name"
+%,ms,,us,us,ms,
+70.537691,4.021619,7,574.517000,1.408000,3.915221,"[CUDA memcpy HtoD]"
+18.989714,1.082675,3,360.891000,3.711000,0.986709,"[CUDA memcpy DtoH]"
+7.847000,0.447387,1,447.387000,447.387000,0.447387,"void IpScan_KernelAnalysis<IpScan_ipScanAnalysis_t, IpScan_ipScanAnalysis_t>(packet_t*, IpScan_ipScanAnalysis_t*, IpScan_ipScanAnalysis_t*, analysisState_t, int*, char*, int*, int*, int*, int*, int*, int, int)"
+2.625594,0.149695,6,24.949000,5.088000,0.042880,"[CUDA memset]"
+
+==117495== API calls:
+"Time(%)","Time","Calls","Avg","Min","Max","Name"
+%,ms,,ms,ms,ms,
+65.096585,205.083243,4,51.270810,0.501228,193.861373,"cudaHostAlloc"
+29.578391,93.185109,1,93.185109,93.185109,93.185109,"cudaDeviceReset"
+2.045208,6.443317,3,2.147772,0.809380,2.847704,"cudaFreeHost"
+1.695856,5.342703,10,0.534270,0.013573,3.951985,"cudaMemcpy"
+0.511761,1.612274,15,0.107484,5.964000e-03,0.239897,"cudaMalloc"
+0.295812,0.931939,6,0.155323,2.459000e-03,0.765446,"cudaThreadSynchronize"
+0.275361,0.867511,166,5.225000e-03,1.170000e-04,0.196809,"cuDeviceGetAttribute"
+0.214000,0.674195,7,0.096313,7.197000e-03,0.132738,"cudaFree"
+0.197410,0.621931,1,0.621931,0.621931,0.621931,"cudaLaunch"
+0.038152,0.120197,2,0.060098,0.054605,0.065592,"cuDeviceTotalMem"
+0.025700,0.080968,2,0.040484,0.039163,0.041805,"cuDeviceGetName"
+0.023323,0.073479,6,0.012246,4.762000e-03,0.036759,"cudaMemset"
+0.001440,4.536000e-03,13,3.480000e-04,1.340000e-04,2.273000e-03,"cudaSetupArgument"
+0.000472,1.486000e-03,1,1.486000e-03,1.486000e-03,1.486000e-03,"cudaConfigureCall"
+0.000312,9.840000e-04,2,4.920000e-04,2.400000e-04,7.440000e-04,"cuDeviceGetCount"
+0.000215,6.760000e-04,4,1.690000e-04,1.470000e-04,1.880000e-04,"cuDeviceGet"

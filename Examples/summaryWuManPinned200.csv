@@ -1,0 +1,30 @@
+==109152== NVPROF is profiling process 109152, command: ./example pcap/packet256new.pcap 200
+==109152== Profiling application: ./example pcap/packet256new.pcap 200
+==109152== Profiling result:
+"Time(%)","Time","Calls","Avg","Min","Max","Name"
+%,ms,,ms,ms,ms,
+73.288907,3.921301,1,3.921301,3.921301,3.921301,"[CUDA memcpy HtoD]"
+20.146043,1.077908,2,0.538954,0.093503,0.984405,"[CUDA memcpy DtoH]"
+3.861156,0.206590,1,0.206590,0.206590,0.206590,"void IpScan_KernelAnalysis<IpScan_ipScanAnalysis_t, IpScan_ipScanAnalysis_t>(packet_t*, IpScan_ipScanAnalysis_t*, IpScan_ipScanAnalysis_t*, analysisState_t, int*, char*, int*, int*, int*, int*, int*, int, int)"
+2.703893,0.144671,5,0.028934,9.600000e-03,0.042624,"[CUDA memset]"
+
+==109152== API calls:
+"Time(%)","Time","Calls","Avg","Min","Max","Name"
+%,ms,,ms,ms,ms,
+65.589172,207.056747,11,18.823340,9.484000e-03,191.479059,"cudaHostAlloc"
+29.587100,93.402743,1,93.402743,93.402743,93.402743,"cudaDeviceReset"
+2.017221,6.368113,3,2.122704,0.813138,2.792742,"cudaFreeHost"
+1.606930,5.072875,3,1.690958,0.105977,3.958565,"cudaMemcpy"
+0.371507,1.172801,8,0.146600,0.122940,0.248799,"cudaMalloc"
+0.332142,1.048530,166,6.316000e-03,1.050000e-04,0.392262,"cuDeviceGetAttribute"
+0.282296,0.891174,7,0.127310,0.099300,0.248408,"cudaFree"
+0.120725,0.381113,6,0.063518,2.243000e-03,0.215194,"cudaThreadSynchronize"
+0.036497,0.115217,2,0.057608,0.053457,0.061760,"cuDeviceTotalMem"
+0.025033,0.079027,2,0.039513,0.038743,0.040284,"cuDeviceGetName"
+0.019009,0.060008,5,0.012001,4.983000e-03,0.036577,"cudaMemset"
+0.008520,0.026896,1,0.026896,0.026896,0.026896,"cudaLaunch"
+0.001523,4.808000e-03,13,3.690000e-04,1.330000e-04,2.374000e-03,"cudaSetupArgument"
+0.001265,3.994000e-03,7,5.700000e-04,4.190000e-04,1.291000e-03,"cudaHostGetDevicePointer"
+0.000498,1.571000e-03,1,1.571000e-03,1.571000e-03,1.571000e-03,"cudaConfigureCall"
+0.000326,1.030000e-03,2,5.150000e-04,2.220000e-04,8.080000e-04,"cuDeviceGetCount"
+0.000236,7.450000e-04,4,1.860000e-04,1.130000e-04,2.730000e-04,"cuDeviceGet"

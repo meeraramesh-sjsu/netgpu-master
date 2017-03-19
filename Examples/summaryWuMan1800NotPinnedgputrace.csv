@@ -1,0 +1,22 @@
+==117470== NVPROF is profiling process 117470, command: ./example pcap/packet256new.pcap 1800
+==117470== Profiling application: ./example pcap/packet256new.pcap 1800
+==117470== Profiling result:
+"Start","Duration","Grid X","Grid Y","Grid Z","Block X","Block Y","Block Z","Registers Per Thread","Static SMem","Dynamic SMem","Size","Throughput","Device","Context","Stream","Name"
+ms,ms,,,,,,,,B,KB,MB,GB/s,,,,
+323.763371,3.915540,,,,,,,,,,23.062500,5.751945,"Tesla K80 (0)","1","7","[CUDA memcpy HtoD]"
+331.412244,0.042848,,,,,,,,,,6.187500,141.021295,"Tesla K80 (0)","1","7","[CUDA memset]"
+331.457811,0.040224,,,,,,,,,,6.187500,150.220775,"Tesla K80 (0)","1","7","[CUDA memset]"
+331.500723,0.040768,,,,,,,,,,6.187500,148.216260,"Tesla K80 (0)","1","7","[CUDA memset]"
+331.544243,0.010655,,,,,,,,,,1.125000,103.109602,"Tesla K80 (0)","1","7","[CUDA memset]"
+331.557618,9.568000e-03,,,,,,,,,,0.281250,28.705916,"Tesla K80 (0)","1","7","[CUDA memset]"
+340.720010,5.088000e-03,,,,,,,,,,1.098633e-03,0.210865,"Tesla K80 (0)","1","7","[CUDA memset]"
+341.336003,6.079000e-03,,,,,,,,,,0.020432,3.282226,"Tesla K80 (0)","1","7","[CUDA memcpy HtoD]"
+341.354850,4.448000e-03,,,,,,,,,,0.013618,2.989947,"Tesla K80 (0)","1","7","[CUDA memcpy HtoD]"
+341.531744,6.343608,,,,,,,,,,36.470261,5.614390,"Tesla K80 (0)","1","7","[CUDA memcpy HtoD]"
+348.010934,6.332824,,,,,,,,,,36.470261,5.623951,"Tesla K80 (0)","1","7","[CUDA memcpy HtoD]"
+354.362158,6.048000e-03,,,,,,,,,,0.020432,3.299050,"Tesla K80 (0)","1","7","[CUDA memcpy HtoD]"
+354.429037,0.078399,,,,,,,,,,0.439363,5.472837,"Tesla K80 (0)","1","7","[CUDA memcpy HtoD]"
+355.172228,0.461531,288,1,1,256,1,1,32,2.254400e+04,0.000000,,,"Tesla K80 (0)","1","7","void IpScan_KernelAnalysis<IpScan_ipScanAnalysis_t, IpScan_ipScanAnalysis_t>(packet_t*, IpScan_ipScanAnalysis_t*, IpScan_ipScanAnalysis_t*, analysisState_t, int*, char*, int*, int*, int*, int*, int*, int, int) [225]"
+355.972347,0.984917,,,,,,,,,,6.187500,6.135015,"Tesla K80 (0)","1","7","[CUDA memcpy DtoH]"
+356.977040,0.093599,,,,,,,,,,0.562500,5.868828,"Tesla K80 (0)","1","7","[CUDA memcpy DtoH]"
+357.084303,3.871000e-03,,,,,,,,,,1.098633e-03,0.277159,"Tesla K80 (0)","1","7","[CUDA memcpy DtoH]"

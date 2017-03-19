@@ -1,0 +1,34 @@
+==121595== NVPROF is profiling process 121595, command: ./example pcap/packet256new.pcap 500
+==121595== Profiling application: ./example pcap/packet256new.pcap 500
+==121595== Profiling result:
+"Time(%)","Time","Calls","Avg","Min","Max","Name"
+%,ms,,ms,ms,ms,
+73.191972,3.915660,1,3.915660,3.915660,3.915660,"[CUDA memcpy HtoD]"
+20.185430,1.079890,2,0.539945,0.093503,0.986387,"[CUDA memcpy DtoH]"
+3.804780,0.203550,1,0.203550,0.203550,0.203550,"void IpScan_KernelAnalysis<IpScan_ipScanAnalysis_t, IpScan_ipScanAnalysis_t>(packet_t*, IpScan_ipScanAnalysis_t*, IpScan_ipScanAnalysis_t*, analysisState_t, int*, int*, int*)"
+2.817818,0.150749,6,0.025124,6.367000e-03,0.042624,"[CUDA memset]"
+
+==121595== API calls:
+"Time(%)","Time","Calls","Avg","Min","Max","Name"
+%,ms,,ms,ms,ms,
+66.405418,223.755069,7,31.965009,0.484212,192.718037,"cudaHostAlloc"
+29.111425,98.091829,1,98.091829,98.091829,98.091829,"cudaDeviceReset"
+1.935677,6.522323,3,2.174107,0.890840,2.830441,"cudaFreeHost"
+1.508371,5.082501,3,1.694167,0.108575,3.960893,"cudaMemcpy"
+0.359274,1.210583,8,0.151322,0.126988,0.251335,"cudaMalloc"
+0.260042,0.876221,166,5.278000e-03,1.060000e-04,0.218705,"cuDeviceGetAttribute"
+0.238123,0.802364,7,0.114623,0.101585,0.154918,"cudaFree"
+0.069354,0.233689,5,0.046737,2.835000e-03,0.207737,"cudaThreadSynchronize"
+0.035736,0.120413,2,0.060206,0.053520,0.066893,"cuDeviceTotalMem"
+0.035038,0.118062,6,0.019677,4.987000e-03,0.057931,"cudaMemset"
+0.023687,0.079815,2,0.039907,0.038560,0.041255,"cuDeviceGetName"
+0.006600,0.022239,1,0.022239,0.022239,0.022239,"cudaLaunch"
+0.003356,0.011308,2,5.654000e-03,4.936000e-03,6.372000e-03,"cudaEventSynchronize"
+0.001716,5.781000e-03,2,2.890000e-03,2.372000e-03,3.409000e-03,"cudaEventRecord"
+0.001644,5.541000e-03,7,7.910000e-04,1.370000e-04,3.544000e-03,"cudaSetupArgument"
+0.001429,4.816000e-03,2,2.408000e-03,9.540000e-04,3.862000e-03,"cudaEventCreate"
+0.001385,4.666000e-03,3,1.555000e-03,7.960000e-04,2.991000e-03,"cudaHostGetDevicePointer"
+0.000807,2.720000e-03,1,2.720000e-03,2.720000e-03,2.720000e-03,"cudaEventElapsedTime"
+0.000419,1.413000e-03,1,1.413000e-03,1.413000e-03,1.413000e-03,"cudaConfigureCall"
+0.000287,9.660000e-04,2,4.830000e-04,2.020000e-04,7.640000e-04,"cuDeviceGetCount"
+0.000212,7.140000e-04,4,1.780000e-04,1.110000e-04,2.640000e-04,"cuDeviceGet"
