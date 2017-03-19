@@ -18,10 +18,6 @@
 using namespace std;
 
 /*Using constant memory for storing multiple patterns, their correspnding indices and pattern hashes in constant memory*/
-__device__ char* const_pattern;
-__device__ int* const_indexes;
-__device__ int const_num_strings;
-__device__ int* const_patHash;
 
 typedef struct {
 	//IP
@@ -37,17 +33,13 @@ typedef struct {
 	int size_packet;
 	int signatureFound;
 	int ipPacket;
-	char* signature;
 	const uint8_t* hexsignature;
 	char packet;
-	int patHash;
-	int signLen;
 	uint32_t ipSrc;
 	uint32_t ipDst;
 	int flags;
 	int sport;
 	int timeTaken;
-	int num_strings;
 	int signatureNumber;
 } COMPOUND_NAME(ANALYSIS_NAME, ipScanAnalysis_t);
 
@@ -65,88 +57,38 @@ typedef struct {
 			DATA_ELEMENT.maliciousFlags=0;\
 			DATA_ELEMENT.maliciousPort=0;\
 			DATA_ELEMENT.signatureFound=0;\
-			DATA_ELEMENT.signature = "Hello";\
-			DATA_ELEMENT.signLen = 5;\
 			DATA_ELEMENT.packet = GET_PACKET_BYTE;\
 			DATA_ELEMENT.ipSrc = -1;\
-			const_pattern = pattern;\
-			const_indexes =indexes;\
-			const_num_strings = num_strings;\
-			const_patHash = patHash;\	
-DATA_ELEMENT.num_strings = num_strings;\
 }while(0)
 
 	/***** IPSCAN DETECTOR ANALYSIS *****/
 #define $IPSCAN_DETECTOR$ANALYSIS(threshold) \
-		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,d_result,counter,threshold);\
+		COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(GPU_buffer,GPU_data,GPU_results,state,gotofn,d_result,d_output,counter,threshold);\
 		__syncthreads()
 
-	__device__ int lastTwoBytes(char pack)
+__device__ int lastTwoBytes(char pack)
 {
 	return pack & 0x000000FF;
 }
-
-__device__ int calcHash(char pattern[], int M)
-{
-	int i = threadIdx.x;
-	int len = threadIdx.x + M;
-	int hash = 0;
-	for (; i < len; i++)
-	{
-		hash = (hash * 256 + pattern[i]) % 997;
-	}
-	return hash;
-}
-
-template<typename T>
-__device__ int memCmpDev(T input[], char *pattern,int *indexes,int i,int offset,int M)
-{
-	bool result = true;
-	int j = indexes[2*i];
-	for (int i = offset; i < offset + M && result; i++)
-	{
-		if (input[i].packet != pattern[j++]) result = false;
-	}
-	return !result;
-}
-
+		
 template<typename T,typename R>
-__device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int* d_result,int *counter,int thresHold) {
-
+__device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int* gotofn,int* result,int *d_output,int* counter,int thresHold) {
+	
+	if(blockIdx.x >= state.lastPacket) return;
 	/* Erases duplicates and counts elements inside block */
 	__shared__ T elements[256];
 	__shared__ clock_t starttime;
 	__shared__ clock_t stoptime;
 	__shared__ uchar4 packet[64];
-
+	__shared__ int stateszero[256];
+	
 	int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
 
 	//Mine to Shared to save memory accesses
 	if(threadIdx.x ==0)
 		starttime = clock();
 
-if(threadIdx.x < 16)
-	{
-		printf("Line1 \n");
-		uint4 *uint4_text = reinterpret_cast<uint4 *>((GPU_buffer)->packet+ 16*threadIdx.x);
-		uint4 uint4_var;
-
-		//memory transaction
-		uint4_var = uint4_text[0];
-
-		//recast data to uchar4
-	int i=threadIdx.x*4;
-		packet[i]   = *reinterpret_cast<uchar4 *>(&uint4_var.x);
-//		printf("Line2 \n");
-		packet[i+1] = *reinterpret_cast<uchar4 *>(&uint4_var.y);
-//		printf("Line3 \n");
-//		packet[i+2] = *reinterpret_cast<uchar4 *>(&uint4_var.z);
-//		printf("Line4 \n");
-//		packet[i+3] = *reinterpret_cast<uchar4 *>(&uint4_var.w);
-//		printf("Line5 \n");
-	}
-
-	if(threadIdx.x == 0 && blockIdx.x==0)
+	/*if(threadIdx.x == 0 && blockIdx.x==0)
 	{
 		printf("Printing the 256 byte packet");
 		for(int i=0;i<64;i++)
@@ -155,11 +97,15 @@ if(threadIdx.x < 16)
 			printf("Line %d\n",6+i);
 			if(i%4==0) printf("\n");
 		}
-	}
+	}*/
 
 	elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+	//Copying the state 0 information to shared memory
+	//printf("Copying to shared memory");
+	stateszero[threadIdx.x] = gotofn[threadIdx.x];
 	__syncthreads();
 
+//	printf("In header checking");
 	if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
 	{
 		if(IS_IP4()) //Checking if it is a IPv4 Packet
@@ -237,7 +183,7 @@ if(threadIdx.x < 16)
 	}
 
 	if(IS_IP4() && threadIdx.x == 33) //save source and destn IP addres to output
-	{
+		{
 		GPU_results[blockIdx.x].ipPacket = 1;
 		uint32_t ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
 																																																												+ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
@@ -247,83 +193,32 @@ if(threadIdx.x < 16)
 		GPU_results[blockIdx.x].ipSrc = ipSrc;
 		GPU_results[blockIdx.x].ipDst = ipDst;
 	}
+
+	//Aho Corasick Algorithm
+	int pos=threadIdx.x;
+	char ch = elements[pos++].packet;
+	int chint = ch & 0x000000FF; 
+	int nextState = stateszero[chint];
+	if(nextState!=0) {
+	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
 	
-	if(threadIdx.x==0 && blockIdx.x==0) //calculate pattern hash
-	{
-		elements[threadIdx.x].patHash = calcHash(elements[threadIdx.x].signature,elements[threadIdx.x].signLen);
+	//printf("currstate %d output %d",currState,outputMatch);
+	while(nextState!=0 && pos<256) {
+		//printf("In AhoCorasick Payload matching2 \n");
+	ch = elements[pos++].packet;
+	chint = ch & 0x000000FF;
+	nextState = gotofn[nextState*256 + chint];
+
+	//currState = nextState & 0x0000FFFF;
+	//nextState >>= 16;
+	//outputMatch = nextState & 0x0000FFFF;
+	//printf("Output Match %d ",outputMatch);
+	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
 	}
-
-	//Naive Payload Signature Matching
-
-//		if(threadIdx.x >=54)
-//		{
-//			GPU_results[blockIdx.x].signature = elements[threadIdx.x].signature;
-//			char *input = elements[threadIdx.x].signature;
-//					int val1 = (input[2] - 48) > 9 ? (input[2] - 55) * 16 : (input[2] - 48) * 16;
-//					int val2 = (input[3] - 48) > 9 ? (input[3] - 55) : (input[3] - 48);
-//					int val = val1 + val2;
-//			if(elements[threadIdx.x].packet == val && (96 - threadIdx.x > elements[threadIdx.x].signatureLength))
-//			{
-//				int j = 1;
-//				int k = 4;
-//				int i = threadIdx.x;
-//				while (input[k]!='\0' && i+j < 96)
-//				{
-//					val1 = (input[k] - 48) > 9 ? (input[k] - 55) * 16 : (input[k] - 48) * 16;
-//					val2 = (input[k+1] - 48) > 9 ? (input[k+1] - 55) : (input[k+1] - 48);
-//					val = val1 + val2;
-//					if(elements[i+j].packet!=val)
-//						break;
-//					else {j++;k=k+2;}
-//				}
-//				if(input[k]=='\0') GPU_results[blockIdx.x].signatureFound = 1;
-//			}
-//		}
-
-//	/*Rabin Karp signature matching implementation
-	if(threadIdx.x >=54 && threadIdx.x <= 256 - 5)
-	{
-		char *signature = elements[threadIdx.x].signature;
-		GPU_results[blockIdx.x].signature = signature;
-		int hy,i;
-		for(int hy=i=0;i<5;i++)
-		{
-			hy = (hy*256 + elements[i+threadIdx.x].packet) % 997;
-		}
-		if(hy == elements[0].patHash)
-		{
-			bool result = true;
-			for(int j=0;j<5;j++)
-			{
-				if(elements[j+threadIdx.x].packet != signature[j])
-					result = false;
-			}
-			if(result) GPU_results[blockIdx.x].signatureFound = 1;
-		}
 	}
-
-	/*Rabin Karp Muli-pattern string matching implementation*/
-	if(threadIdx.x >= 54) {
-		GPU_results[0].num_strings = const_num_strings;
-		for(int i=0;i<const_num_strings;i++) {
-			int patLen = const_indexes[2*i+1] - const_indexes[2*i];
-			if(threadIdx.x<=256-patLen) {
-				int hy,j;
-				for(hy=j=0;j<patLen;j++) {
-					hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
-				}
-				if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this 
-				{
-					GPU_results[blockIdx.x].maliciousPayload = 1;
-				GPU_results[blockIdx.x].signatureNumber = i; 
-				d_result[i]=1;
-			} 
-		} } }
-
-
 __syncthreads();
 
-/*Execution time calc for each block*/
+	//Execution time calc for each block
 if(threadIdx.x ==0)
 {
 	stoptime = clock();
@@ -332,9 +227,9 @@ if(threadIdx.x ==0)
 }
 
 template<typename T,typename R>
-__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *d_result,int *counter,int thresHold) {
-
-	ipscananalysis<ANALYSIS_INPUT_TYPE,ANALYSIS_INPUT_TYPE>(GPU_buffer,GPU_data,GPU_results,state,d_result,counter,thresHold);
+__device__ __inline__ void COMPOUND_NAME(ANALYSIS_NAME,ipScanAnalysisCode)(packet_t* GPU_buffer, T* GPU_data, R* GPU_results, analysisState_t state,int *gotofn, int *d_result,int *d_output,int *counter,int thresHold) {
+			
+	ipscananalysis<ANALYSIS_INPUT_TYPE,ANALYSIS_INPUT_TYPE>(GPU_buffer,GPU_data,GPU_results,state,gotofn,d_result,d_output,counter,thresHold);
 	//while(totalThreads<3840) { };
 }
 
