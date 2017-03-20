@@ -1,0 +1,14 @@
+==137659== NVPROF is profiling process 137659, command: ./example pcap/packet256new.pcap 500
+==137659== Profiling application: ./example pcap/packet256new.pcap 500
+==137659== Warning: Found 1 invalid records in the result.
+==137659== Warning: This can happen if device ran out of memory or if a device kernel was stopped due to an assertion.
+==137659== Profiling result:
+"Start","Duration","Grid X","Grid Y","Grid Z","Block X","Block Y","Block Z","Registers Per Thread","Static SMem","Dynamic SMem","Size","Throughput","Device","Context","Stream","Name"
+ms,ms,,,,,,,,B,B,MB,GB/s,,,,
+325.457965,3.942565,,,,,,,,,,23.062500,5.712518,"Tesla K80 (0)","1","7","[CUDA memcpy HtoD]"
+333.605556,0.030641,,,,,,,,,,7.312500,233.057449,"Tesla K80 (0)","1","7","[CUDA memset]"
+333.638795,4.706000e-03,,,,,,,,,,7.312500,1517.448636,"Tesla K80 (0)","1","7","[CUDA memset]"
+333.644860,4.770000e-03,,,,,,,,,,7.312500,1497.088738,"Tesla K80 (0)","1","7","[CUDA memset]"
+333.650825,3.688000e-03,,,,,,,,,,1.125000,297.893930,"Tesla K80 (0)","1","7","[CUDA memset]"
+333.655689,5.527000e-03,,,,,,,,,,0.281250,49.693903,"Tesla K80 (0)","1","7","[CUDA memset]"
+======== Error: Application returned non-zero code 255

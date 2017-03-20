@@ -1,0 +1,6 @@
+==66262== NVPROF is profiling process 66262, command: ./Examples/example pcap/packet256new.pcap 50
+==66262== Profiling application: ./Examples/example pcap/packet256new.pcap 50
+==66262== Profiling result:
+No kernels were profiled.
+==66262== Warning: Some profiling data are not recorded. Make sure cudaProfilerStop() or cuProfilerStop() is called before application exit to flush profile data.
+======== Error: Application received signal 11

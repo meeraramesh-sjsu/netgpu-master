@@ -1,0 +1,4 @@
+==129997== NVPROF is profiling process 129997, command: ./example pcap/packet256new.pcap 500
+==129997== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==129997== Error: Application encountered error: an illegal memory access was encountered (700).
+======== Error: Application returned non-zero code 255

@@ -208,7 +208,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 			unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
 			if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
 		}
-		printf("Completed checking checksum \n");
+		//printf("Completed checking checksum \n");
 	}
 	
 	if(threadIdx.x == 64) //check sport or dport is 0; check ackNo is o, with ack bit set; check malicious flag bit combinations
@@ -236,7 +236,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 				GPU_results[blockIdx.x].maliciousFlags = 1;
 
 		}
-		printf("Completed checking flags for TCP \n");
+		//printf("Completed checking flags for TCP \n");
 	}
 
 	if(IS_IP4() && threadIdx.x == 33) //save source and destn IP addres to output
@@ -249,7 +249,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 
 		GPU_results[blockIdx.x].ipSrc = ipSrc;
 		GPU_results[blockIdx.x].ipDst = ipDst;
-		printf("Completed saving IP addresses \n");
+		//printf("Completed saving IP addresses \n");
 	}
 	
 	/*if(threadIdx.x==0 && blockIdx.x==0) //calculate pattern hash
@@ -327,7 +327,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		B:
 		} }
 	
-	printf("Completed payload threadId = %d blockId = %d\n",threadIdx.x,blockIdx.x);
+	//printf("Completed payload threadId = %d blockId = %d\n",threadIdx.x,blockIdx.x);
 
 
 __syncthreads();

@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include<string>
 #include<vector>
-#include<sys/time.h>
 using namespace std;
 #include "../hostTimeUtils.h"
 
@@ -39,14 +38,14 @@ void printFlagBits(int flags)
 }
 
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_FILE(filename,severe,critical)\
-		dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical,result)
+		dumpIpScanAlarmsToFile(packetBuffer,results,state,auxBlocks,(char*)filename,severe,critical,result,pattern,index)
 
 //int *result,char* pattern,int *index
 #define $IPSCAN_DETECTOR$DUMPER$DUMP_ALARMS_TO_STDERR(severe,critical)\
 		dumpIpScanAlarmsToOstream(cerr, packetBuffer,results,state,auxBlocks,severe,critical)
 
 template<typename R>
-void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, char* filename,int severeLimit, int criticalLimit, int *result){
+void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, char* filename,int severeLimit, int criticalLimit, int *result,char *pattern,int *index){
 
 	//cout<<"TCP = "<<(*results).indexTcp<<"UDP= "<< (*results).indexUdp<<"ICMP ="<< (*results).indexIcmp;
 	cout<<endl<<"*********************CPU SECTION***********************************"<<endl;
@@ -70,7 +69,7 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 		file << "#Alarm Output Format: ANALYSIS_NAME> IP_SOURCE RATE(ips/second) IPS_COUNTER(number of different ips) ALARM_TYPE"<<endl<<endl;
 	}
 
-	dumpIpScanAlarmsToOstream(file, packetBuffer,results,state,auxBlocks,severeLimit,criticalLimit,result);
+	dumpIpScanAlarmsToOstream(file, packetBuffer,results,state,auxBlocks,severeLimit,criticalLimit,result,pattern,index);
 
 	//TODO: leave it opened till the end
 	file.close();
@@ -78,15 +77,17 @@ void inline dumpIpScanAlarmsToFile(PacketBuffer* packetBuffer,R* results, analys
 }
 
 template<typename R>
-void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, int severeLimit, int criticalLimit,int *result){
+void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R* results, analysisState_t state, int64_t* auxBlocks, int severeLimit, int criticalLimit,int *result,char* pattern,int *index){
 	int i,j;
 	bool hasResults;
 	uint8_t* pointer;
 	//time vars	
 	time_t aux;
 	struct tm * timeinfo;
+	int noofStr = results[0].num_strings;
 	//Dump alarms
 	cout<<"*************Crafted Packets***************"<<endl;
+	cout<<"No Of Malicious virus signatures used "<<noofStr<<endl;
 	int totalcycles = 0;
 	int incorrectVerNumber = 0;
 	vector<struct in_addr> maliciousSrcIPs;
@@ -163,7 +164,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			cout<<"Alarm!! The IPv4 Packet has an incorrect checksum and should be discarded"<<endl;
 			cout<<"From"<<inet_ntoa(in)<<endl;
 		}
-		/*if(results[i].maliciousPayload)
+		if(results[i].maliciousPayload)
 		{  
 			cout<<"**************Deep packet Inspection*************************"<<endl;
 			malicious = true;
@@ -174,10 +175,10 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 			for(int j=start;j<end;j++)
 			cout<<pattern[j]<<endl;
 			cout<<"****************************************************************** DPI END***************"<<endl;
-		}*/
+		}
 		maliciousSrcIPs.push_back(in);
 	}
-	/*	for(int i=0;i<noofStr;i++)
+		for(int i=0;i<noofStr;i++)
 		{
 			if(result[i])
 			{
@@ -189,18 +190,7 @@ void inline dumpIpScanAlarmsToOstream(ostream& os, PacketBuffer* packetBuffer,R*
 					cout<<pattern[j];
 				cout<<endl;
 			}
-		} */
-		
-		for(int i=0;i<state.lastPacket;i++)
-			{
-				if(result[i]>0)
-				{
-					cout<<"************************************************";
-					cout<<"Virus pattern found: ";
-					cout<<result[i]<<" ";
-					cout<<endl;
-				}
-			}
+		}
 	
 		cout<<"Traffic from the following source IPs should be blocked"<<endl;
 		for(int i=0;i<maliciousSrcIPs.size();i++)
