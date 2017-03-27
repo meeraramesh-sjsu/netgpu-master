@@ -311,6 +311,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 		GPU_results[0].num_strings = const_num_strings;
 		for(int i=0;i<const_num_strings;i++) {
 			int patLen = const_indexes[2*i+1] - const_indexes[2*i];
+			//This condition checks if the pattern length is < packet length
 			if(threadIdx.x<=256-patLen) {
 				int hy,j;
 				for(hy=j=0;j<patLen;j++) {
@@ -319,13 +320,14 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 				}
 				if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this 
 				{
-					GPU_results[blockIdx.x].maliciousPayload = 1;
+				GPU_results[blockIdx.x].maliciousPayload = 1;
 				GPU_results[blockIdx.x].signatureNumber = i; 
 				d_result[i]=1;
 			} 
 		}
 		B:
-		} }
+		} 
+	}
 	
 	//printf("Completed payload threadId = %d blockId = %d\n",threadIdx.x,blockIdx.x);
 

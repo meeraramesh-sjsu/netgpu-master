@@ -290,6 +290,9 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 			string temp(str);
 			string fileName = "/home/meera/gpudir/netgpu-master/src/Analysis/Pattern/patterns" + temp + ".cpp";
 			string line;
+			int count128 = 0;
+			int count64 = 0;
+			int count256 = 0;
 
 			  ifstream myfile(fileName.c_str());
 
@@ -298,12 +301,15 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 			    while (getline( myfile, line ))  // same as: while (getline( myfile, line ).good())
 			      {
 			    	tmp.push_back(line);
+			    	if(line.size()<=64) count64++;
+			    	else if(line.size()<=128) count128++;
+			    	else if(line.size()<=256) count256++;
 			      }
 			    myfile.close();
 			    }
 			  else cout << "fooey\n";
 			  cout<<"Number of patterns = "<<tmp.size()<<endl;
-
+			  cout<<"count64= "<<count64<<" count128= "<<count128<<" count256= "<<count256<<endl;
 		 int *patHash;
 		 int *d_patHash;
 
