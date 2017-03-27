@@ -195,6 +195,8 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	}
 
 	//Aho Corasick Algorithm
+	if(threadIdx.x>=54)
+	{
 	int pos=threadIdx.x;
 	char ch = elements[pos++].packet;
 	int chint = ch & 0x000000FF; 
@@ -214,6 +216,7 @@ __device__ void ipscananalysis(packet_t* GPU_buffer, T* GPU_data, R* GPU_results
 	//outputMatch = nextState & 0x0000FFFF;
 	//printf("Output Match %d ",outputMatch);
 	if(d_output[nextState] > 0) result[blockIdx.x] = d_output[nextState];
+	}
 	}
 	}
 __syncthreads();
