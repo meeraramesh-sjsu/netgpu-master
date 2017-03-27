@@ -302,8 +302,8 @@ void COMPOUND_NAME(ANALYSIS_NAME,launchAnalysis_wrapper)(PacketBuffer* packetBuf
 			      {
 			    	tmp.push_back(line);
 			    	if(line.size()<=64) count64++;
-			    	else if(line.size()<=128) count128++;
-			    	else if(line.size()<=256) count256++;
+			    	if(line.size()<=128) count128++;
+			    	if(line.size()<=256) count256++;
 			      }
 			    myfile.close();
 			    }
