@@ -1,0 +1,170 @@
+\chapter{Code snippets\label{app:appa}}
+
+\section{Header Checking in block level parallelism}
+\begin{lstlisting}
+__shared__ T elements[256];
+__shared__ clock_t starttime;
+__shared__ clock_t stoptime;
+__shared__ uchar4 packet[64];
+
+int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
+
+//Mine to Shared to save memory accesses
+if(threadIdx.x ==0)
+starttime = clock();
+
+elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+//Copying the state 0 information to shared memory
+//printf("Copying to shared memory");
+__syncthreads();
+
+//	printf("In header checking");
+if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
+{
+if(IS_IP4()) //Checking if it is a IPv4 Packet
+{
+GPU_results[blockIdx.x].ipPacket = 1;
+int verBlock = (elements[14].packet & 0x000000F0) >> 4;
+if(verBlock !=4 && verBlock !=6) GPU_results[blockIdx.x].maliciousVer=1;
+
+int octet1 = elements[26].packet & 0x000000FF;
+int octet2 = elements[27].packet & 0x000000FF;
+int octet1Dst = elements[30].packet & 0x000000FF;
+int octet2Dst = elements[31].packet & 0x000000FF;
+
+if (octet1 == 10 || octet1Dst == 10)
+{
+GPU_results[blockIdx.x].maliciousIP=1;
+}
+// 172.16.0.0 - 172.31.255.255
+if ((octet1 == 172 || octet1Dst == 172 ) && (octet2 >= 16 || octet2Dst >=16 ) && (octet2 <= 31 || octet2Dst<=31))
+{
+GPU_results[blockIdx.x].maliciousIP=1;
+}
+// 192.168.0.0 - 192.168.255.255
+if ((octet1 == 192  || octet1Dst == 192) && (octet2 == 168 || octet2Dst == 168))
+{
+GPU_results[blockIdx.x].maliciousIP=1;
+}
+}
+}
+if(threadIdx.x == 33) //Checksum verification
+{
+if(IS_IP4()) //check if a IPv4 Packet
+{
+int checksum = ((elements[14].packet & 0x000000FF)<<8 + (elements[15].packet & 0x000000FF)) +
+((elements[16].packet & 0x000000FF)<<8 + (elements[17].packet & 0x000000FF)) +
+((elements[18].packet & 0x000000FF)<<8  + (elements[19].packet & 0x000000FF )) +
+((elements[20].packet & 0x000000FF)<<8 + (elements[21].packet & 0x000000FF)) +
+((elements[22].packet & 0x000000FF)<<8  + (elements[23].packet & 0x000000FF)) +
+((elements[24].packet & 0x000000FF)<<8 + (elements[25].packet & 0x000000FF)) +
+(lastTwoBytes(elements[26].packet)<<8 + lastTwoBytes(elements[27].packet)) +
+(lastTwoBytes(elements[28].packet)<<8 + lastTwoBytes(elements[29].packet)) +
+(lastTwoBytes(elements[30].packet)<<8 + lastTwoBytes(elements[31].packet)) +
+(lastTwoBytes(elements[32].packet)<<8 + lastTwoBytes(elements[33].packet));
+
+unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
+if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
+}
+}
+
+if(threadIdx.x == 64) //check sport or dport is 0; check ackNo is o, with ack bit set; check malicious flag bit combinations
+{
+if(IS_TCP())
+{
+GPU_results[blockIdx.x].flags = lastTwoBytes(elements[47].packet);
+GPU_results[blockIdx.x].sport = lastTwoBytes(elements[34].packet) << 8 + lastTwoBytes(elements[35].packet);
+if(lastTwoBytes(elements[33].packet) == 255)
+GPU_results[blockIdx.x].maliciousDst = 1;
+
+if((lastTwoBytes(elements[34].packet) == 0 && lastTwoBytes(elements[35].packet) == 0) ||
+(lastTwoBytes(elements[36].packet) == 0 && lastTwoBytes(elements[37].packet) == 0))
+GPU_results[blockIdx.x].maliciousPort = 1;
+int ackNo = lastTwoBytes(elements[42].packet)<<24 + lastTwoBytes(elements[43].packet)<<16 + lastTwoBytes(elements[44].packet)<<8 + lastTwoBytes(elements[45].packet);
+if(lastTwoBytes(elements[47].packet & 16) ==1 && (ackNo == 0))
+GPU_results[blockIdx.x].maliciousAck = 1;
+
+int reservedVal = lastTwoBytes(elements[46].packet) >> 4;
+if(reservedVal != 0) GPU_results[blockIdx.x].maliciousReserved = 1;
+
+int flagVal  = lastTwoBytes(elements[47].packet);
+
+if(flagVal == 3 || flagVal == 11 || flagVal == 7 || flagVal == 15 || flagVal == 1 || flagVal == 0)
+GPU_results[blockIdx.x].maliciousFlags = 1;
+
+}
+}
+
+if(IS_IP4() && threadIdx.x == 33) //save source and destn IP addres to output
+{
+GPU_results[blockIdx.x].ipPacket = 1;
+uint32_t ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
++ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
+uint32_t ipDst = ((elements[30].packet & 0x000000FF)  << 24) + ((elements[31].packet & 0x000000FF)  << 16)
++ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
+
+GPU_results[blockIdx.x].ipSrc = ipSrc;
+GPU_results[blockIdx.x].ipDst = ipDst;
+} 
+\end{lstlisting}
+
+
+\section{Rabin Karp algorithm}
+\begin{lstlisting}
+
+
+
+\end{lstlisting}
+
+\section{Wu Manber algorithm}
+\begin{lstlisting}
+unsigned int hash1, hash2;
+if(threadIdx.x >= 54 + m-1)
+{
+hash1 = elements[threadIdx.x - 2].packet & 0x000000FF; //bitwise & used because to avoid two complement negative numbers
+hash1 <<= 2;
+hash1 += elements[threadIdx.x - 1].packet & 0x000000FF;
+hash1 <<= 2;
+hash1 += elements[threadIdx.x].packet & 0x000000FF;
+
+int shift = d_SHIFT[hash1];
+
+if (shift == 0) {
+
+hash2 = elements[threadIdx.x - m + 1].packet & 0x000000FF;
+hash2 <<= 2;
+hash2 += elements[threadIdx.x - m + 2].packet & 0x000000FF;
+
+//For every pattern with the same suffix as the text
+for (int i = 0; i < d_PREFIX_size[hash1]; i++) {
+
+//If the prefix of the pattern matches that of the text
+if (hash2 == d_PREFIX_value[hash1 * prefixPitch + i]) {
+
+//memcmp implementation
+int patIndex = d_PREFIX_index[hash1* prefixPitch + i];
+
+int starttxt = threadIdx.x - m + 1 + 2;
+int startpat = d_stridx[2*patIndex] + 2;
+int endpat = d_stridx[2*patIndex+1];
+while(elements[starttxt].packet!='\0' && startpat < endpat) {
+if(elements[starttxt++].packet!=d_pattern[startpat++]) return;
+}
+if(startpat >= endpat) { 
+printf("The pattern exists %d\n", patIndex);
+GPU_results[blockIdx.x].maliciousPayload = 1;
+//atomicAdd(&GPU_results[blockIdx.x].signatureNumber,1);
+result[blockIdx.x] = patIndex;
+}
+}
+}
+}
+}
+\end{lstlisting}
+
+\section{Aho Corasick algorithm}
+\begin{lstlisting}
+
+
+
+\end{lstlisting}

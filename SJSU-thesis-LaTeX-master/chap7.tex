@@ -1,0 +1,6 @@
+\chapter{Conclusion}
+
+In this paper, I presented a framework that utilizes the GPU for header checking and pattern matching. The classic Rabin Karp algorithm was parallelized using CUDA to run on the GPU to do pattern matching. The framework proposes two parallelism approaches and two algorithms for pattern matching. Parallelism approaches explored were: Thread level parallelism,  where each thread analyze a single packet and Block Level Parallelism, where a block of threads analyze a single packet. The algorithms explored were: Naive pattern matching and Rabin Karp. Evaluations proved that block level parallelism outperforms the thread level parallelism by a factor of 116.
+
+In the future we plan to reduce the overhead of data transfer from the host to the device.One way of doing this, is by the use of Pinned memory to asynchronously transfer data from the CPU to the GPU. We would accomplish this by using CUDA streams. We also plan to implement other pattern matching algorithms such as Aho-Corasick and Boyer-Moore for pattern matching and compare the performance. 
+

@@ -1,0 +1,14 @@
+\chapter{Introduction}
+
+Network intrusion detection systems such as firewall capture and drop malicious packets which intend to attack the network. These intrusion detection systems report the malicious activity to an administrator and the administrator will prevent the packets from moving across the network. These types of intrusion detection systems are a host-based intrusion detection system and a network-based intrusion detection system. The host-based intrusion detection system monitors the operating system to see if it is being attacked, while the network-based intrusion detection system monitors the network traffic.
+
+There are two ways in which the IDS can detect the traffic which are signature-based detection system and detection based on comparing with models of good traffic. In this framework I have adopted the signature based intrusion detection system. Signature analysis means comparing the packet contents to a database of bad traffic signatures and checking if they exist. Examples of bad signatures are malware. Signature analysis is done by pattern matching. 
+
+Pattern matching is a computationally intensive task and it accounts for up to 75 percent of the time the IDSs operates. When pattern matching is done there are no intermediate results that need to be waited for, the entire packet is searched with different patterns. This can be done in parallel with multiple threads. The GPU is being used for General purpose processing. The massive parallelism of the GPU can be exploited to do pattern matching. There are other approaches in hardware, such as using ASIC’s. They are very efficient, but they are not flexible enough to modify the code. 
+
+Vendors like NVIDIA have released Software Development Kits (SDKs) which has massively increased the number of general purpose applications on the GPU. Many researchers have used GPUs in various network security applications, including Gnort, a GPU version of Snort, Snap a GPU version of clickOS. 
+
+In this paper, I describe the different approaches used to perform string matching on the GPU. I will show the throughput gained by having multiple threads working on a single packet. 
+I have used Naive algorithm, Rabin Karp algorithm, Aho-Corasick algorithm and Wu-Manber algorithm for pattern matching. I will show the evaluation obtained by using single pattern matching as well as multi-pattern matching on the GPU.
+
+In the next section, the GPU architecture and deep packet inspection are explained. 

@@ -1,0 +1,339 @@
+\chapter{Implementation}
+
+\section{Main function}
+The netGPU \cite{bib3} framework was used to capture packets from the network interface card or file and transfer the packets to the GPU. The start of the framework is the main function. The main function adds feeders to the pool,analysis components and starts the analysis. The Figure ~\ref{fig:main}. shows the code for the main function.
+
+\begin{figure}
+	\centering
+	\begin{lstlisting}[frame=none,language=C++] 
+	OfflinePacketFeeder* feeder = new OfflinePacketFeeder(argv[1]);
+	int AnoOfPatterns = atoi(argv[2]);
+	
+	//Capturing from lo
+	//LivePacketFeeder* feeder = new LivePacketFeeder("lo");
+	
+	//Adding analysis to pool
+	Scheduler::addAnalysisToPool(IpScan::launchAnalysis);
+	
+	//Adding a single feeder
+	Scheduler::addFeederToPool(feeder);
+	
+	//Starting execution (infinite loop)
+	Scheduler::start(AnoOfPatterns);
+		
+	delete feeder;
+	\end{lstlisting}
+	\caption{Main function – the start of the framework \cite{bib3}}
+	\label{fig:main}
+\end{figure}
+
+\section{Packet Capture and Transfer to GPU}
+
+\subsection{Capture the Network packets}
+PacketFeeders obtain Network packet data using the LibPCAP library and save the data into PacketBuffers object as shown in Figure ~\ref{fig:packetfeeder}. LibPCAP \cite{bib4} is a C/C++ library used to capture network traffic data. If the buffer is full, the thread waits until the processor thread copies the buffer from the CPU to GPU. 
+
+\begin{figure}[h]
+	\centering
+	\begin{lstlisting}[frame=none,language=C++] 
+	loadPacketBuffer()
+	{
+	lockTheMutex();
+	validate = ifBufferFull();
+	if(validate==1)
+	waitForBufferToBeCopied();
+	unlockTheMutex();
+	lockTheMutex();
+	saveIntoPacketBuffer();
+	unlockTheMutex();
+	}
+	\end{lstlisting}
+	\caption{Pseudo code to save max buffer packets to be copied to the GPU}
+\label{fig:packetfeeder}
+\end{figure}
+
+\subsection{Buffer the network packets}
+Figure ~\ref{fig:getpacketbuffer} shows the method from the Packet Feeder class which gets the Packet Buffer object. All the derived classed of the Packet Feeder class should implement this method. The classes which derive from the abstract Packet Feeder class will obtain the packets from the network card or a file.
+
+\begin{figure}
+	\centering
+	\begin{lstlisting}[frame=none,language=C++] 
+	//Get a filled PacketBuffer
+	virtual PacketBuffer* getSniffedPacketBuffer(void)=0;
+	\end{lstlisting}
+	\caption{Get the packet feeder object \cite{bib3}}
+	\label{fig:getpacketbuffer}
+\end{figure}
+
+The packet buffer object defines an array of MAX BUFFER Packets and the max size of each packet is MAX PACKET bytes, which makes it easily accessible for the threads in the GPU. The packet has header and a payload. Figure ~\ref{fig:packetbuffer} shows the data structure of the PacketBuffer object and the data structure of the individual packet with the header and body.
+The packet buffer object is copied to the Pinned memory and the GPU can directly access it.Figure ~\ref{fig:packetbuffer} contains the data structure to represent the header of the packet. The header consists of two fields, the proto and offset. The proto and offset have array size as 7, which represents the 7 layers of the OSI model. The next section contains the dissect methods which dissects the packet and fills the proto and offset fields of the header.
+
+\begin{figure}
+	\centering
+	\begin{lstlisting}[frame=none,language=C++] 
+	typedef struct{
+		int proto[7];
+		int offset[7];		
+	}headers_t;
+	
+	typedef struct{
+		timeval timestamp;
+		headers_t headers;
+		uint8_t packet[MAX_BUFFER_PACKET_SIZE];
+	}packet_t;
+	
+	packet_t* buffer;
+	\end{lstlisting}
+	\caption{Packet Buffer is a pointer to a packet which is an array of MAX_BUFFER_PACKET size\cite{bib3}}
+	\label{fig:packetbuffer}
+\end{figure}
+
+
+
+\section{Dissectors}
+Dissector class is used to get the size of the Ethernet, IPv4, TCP, UDP headers and is used to fill the headers. The Packet Buffer calls the dissect method of this class before pushing the packet into packet buffer. The dissect method calls a data link layer method depending on the data link layer protocol. The data link layer method calls the Network layer method (IPv4 or IPv6) depending on the network layer protocol. The Network layer method calls the Transport layer protocol method depending on the transport layer protocol(TCP or UDP). dissectEthernet, dissectIpv4, dissectTcp are Data Link layer, Network layer, Transport layer methods respectively as shown in Figure ~\ref{fig:calldissectmethods} and dissect methods call the virtual action methods.
+
+\begin{figure}
+	\centering
+\begin{lstlisting}[frame=none,language=C++] 
+	class Dissector {
+	public:
+	unsigned int dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user);
+	private:
+	void dissectEthernet(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	void dissectIp4(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	void dissectTcp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	void dissectUdp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	void dissectIcmp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	
+	//Virtual Actions:
+	
+	virtual void EthernetVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ethernet2Header* header,void* user)=0;
+	virtual void Ip4VirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ip4Header* header,void* user)=0;
+	virtual void TcpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,TcpHeader* header,void* user)=0;
+	virtual void UdpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,UdpHeader* header,void* user)=0;
+	virtual void IcmpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,IcmpHeader* header,void* user)=0;
+	
+	virtual void EndOfDissectionVirtualAction(unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user)=0;
+	
+	};
+\end{lstlisting}
+	\caption{Dissect methods and targeted OSI(Open Source Interconnect) layer methods \cite{bib3}}
+	\label{fig:calldissectmethods}
+\end{figure}
+
+The Virtual action methods will be derived by the methods in the PreAnalyzerDissector class and the Size Dissector class. The PreAnalyzerDissector class methods are used for perform header checking in the CPU using C or OpenMP and Size Dissector class methods are used to extract the packet to get the proto and header offsets of the 7 layers and these offsets will be used in the GPU for DPI.
+
+%Proofreading should start
+\subsection{Sequential Pattern Matching algorithms using C}
+
+\subsubsection{PreAnalyzerDissector}
+This component was used while developing the CPU version of Deep Packet Inspection. The methods of this class are used to decode and analyze the headers in the packet. The IPv4VirtualAction method checks the integrity of the IPv4 layer header. The TCPVirtualAction method checks the integrity of the TCP header. In the payload section, three String matching algorithms were developed. The following sections explain the algorithm along with the Code for Rabin Karp, Wu Manber and Aho Corasick algorithms.
+
+\subsubsection{Rabin Karp algorithm}
+
+Rabin Karp algorithm is based on the idea of hashing. Let’s consider an example.
+Consider the hash table size to be 97. Let the search pattern be 59372. We have 59362 \% 97 = 95
+
+\begin {table}[h]
+\caption {Hash value for sub texts} \label{tab:title} 
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} 
+	\midrule
+	Text & Text & Text & Text & Text & Text & Text & Text & Text & Hash Value\\
+	\midrule
+	3 & 1 & 5 & 9 & 3 & 6 & 2 & 6 & 3 \\
+	\midrule
+	3 & 1 & 5 & 9 & 3 & & & & & 31593\%97=68 \\
+	\midrule
+	 & 1 & 5 & 9 & 3 & 6 & & & & 15937\%97=29\\
+	\midrule
+	 & 	& 5 & 9 & 3 & 6 & 2 & & & 59372\%97=95 \\
+	\midrule
+	 & 	&  & 9 & 3 & 6 & 2 & 6 & & 93726\%97=24 \\
+	\midrule
+	 & 	&  &   & 3 & 6 & 2 & 6 & 3 & 36263\%97=82 \\
+	\midrule
+\end{tabular}
+\end {table}
+
+
+We’re trying to evaluate the module Hash value of each number.
+Using the modular hash function we wish to compute
+Xi mod Q = Ti*R\^m-1 + Ti+1 * R\^M-2 + …….+ Ti+M-1 * R\^0 mod Q
+Where R is the range and is 10 for decimal number and 256 for Ascii numbers. Since we are considering decimal numbers for this example, R = 10, Q = 97 and M = 5.
+Thus Xi mod Q = (3*10000 + 1 * 1000 + 5 * 100 + 9 *10 + 3*1) \% 97 = 68
+To calculate Xi We can use Horner’s method which has a linear method to evaluate a degree-M polynomial.
+
+\begin {table}[h]
+\caption {Hash value for sub texts} \label{tab:title} 
+\begin{tabular}{|c|c|c|c|c|c|c|} 
+	\midrule
+	I &  0 & 1 & 2 & 3 & 4\\
+	\midrule
+	0 & 3 & 1 & 5 & 9 & 3\\
+	\midrule
+	1 & (3)\%97=3 \\
+	\midrule
+	2 & 3 & 1 &  (3*10 + 1)\%97 = 31 \\
+	\midrule
+	3 & 3 & 1 & 5 &  (31*10 + 5)\%97= 24 \\
+	\midrule
+	4 & 3 & 1 & 5 & 9 & (24*10 + 9)\%97 = 55 \\
+	\midrule
+	5 & 3 & 1 & 5 & 9 & 3 & (55*10 + 3)\%97 = 68 \\
+	\midrule
+\end{tabular}
+\end {table}
+
+The resultant value after applying the hashing algorithm can be same for two numbers.
+For ex: 59372 \% 97 = 95 and 59459 \% 97 = 95
+For each position of the text we calculate the modulo hash value and compare it with the pattern, if we find a match we need to compare the text with the pattern for the pattern length.
+The running time of this algorithm is O(NM) where N is the length of the text and M is the length of the pattern.
+This algorithm can be optimized by calculating the current Hash Value by using the previous Hash Value.
+If we want to compute Xi+1 mod Q, we can efficiently compute it with Xi mod Q.
+We know, Xi = Ti*R\^m-1 + Ti+1 * R\^M-2 + …….+ Ti+M-1 * R\^0
+Thus, Xi+1 = Ti+1*R\^m-1 + Ti+2 * R\^m-2 +…….+Ti+1+M-1*R\^0
+Thus Xi+1 =  (Xi  – Ti*R\^m-1) * R  + Ti+M
+
+Let’s consider an example
+Current Value Xi = 31593
+Next Value Xi+1 = 15936
+i = 0, Ti = 3, R\^m-1 = 10000, R = 10, m = 5, Ti+M = 6
+Thus Xi+1 = (31593 – 3*10000)*10 + 6 = 15930 + 6 = 15936
+After we get the next value, which would need to do a mod with Q to compare with the pattern.
+Figure ~\ref{fig:modulohash} contains the code to calculate the hash value for the pattern length. Once we get this hashValue for the next hash values we can apply the above formula.
+Thus for a single pattern matching algorithm the time Complexity is O(N). The singly pattern matching algorithm is extended for Multiple pattern matching by saving the lengths of the individual patterns and calculating the original hash for each individual pattern, comparing with the pattern Hash. If it does not match, the above formula is used to calculate the next hash value by appending the next character and comparing the new hash value with the pattern hash and so on. This process is repeated up to the length of the payload.
+Figure ~\ref{fig:multirabinkarp} contains the code for Multi pattern Rabin Karp algorithm and the time complexity is O(N*MaxM) where MaxM is the maximum pattern length
+\begin{figure}
+	\centering
+	\begin{lstlisting}
+	long hashCal(const char* pattern, int  m, int offset) {
+	long h = 0;
+	for (int j = 0; j < m; j++) {
+	h = (256 * h + pattern[offset + j]) % 997;
+	}
+	return h;
+	}
+	\end{lstlisting}
+	\caption{Calculate the hash value of the pattern}
+	\label{fig:modulohash}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\begin{lstlisting}
+	//Starting from 0, move for every pattern length, computing the hash values
+	//Time complexity O(N* number of pattern lengths)
+	//Tmp is the vector of patterns
+	for(int i=0;i<tmp.size();i++)
+	setlen.insert(tmp[i].length());
+	
+	//Fill the map with pattern hashes
+	for(int i=0;i<tmp.size();i++)
+	{
+	long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
+	mapHash[patHash] = i;
+	}
+	
+	//Choosing a large prime
+	int q = 997; 
+	int R = 256;
+	
+	for(auto it= setlen.begin();it!=setlen.end();it++)
+	{
+	int m = *it;
+	int RM = 1;
+	for (int i = 1; i <= m-1; i++)
+	RM = (256 * RM) % 997;
+	
+	if (m > payLoadLength) break;
+	int txtHash = hashCal((char*)packetPointer, m,0);
+	
+	// check for match at offset 0
+	if ((mapHash[txtHash]>0) && memcmp((char*)packetPointer,
+	tmp[mapHash[txtHash]].c_str(),m)==0)
+	{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
+	
+	// check for hash match; if hash match, check for exact match
+	for (int j = m; j < payLoadLength; j++) {
+	// Remove leading digit, add trailing digit, check for match.
+	txtHash = (txtHash + q - RM*packetPointer[j-m] % q) % q;
+	txtHash = (txtHash*R + packetPointer[j]) % q;
+	
+	// match
+	int offset = j - m + 1;
+	if ((mapHash[txtHash]>0) &&
+	memcmp((char*) (packetPointer + offset), tmp[mapHash[txtHash]].c_str(),m)==0)
+	{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
+	}
+	}
+	\end{lstlisting}
+	\caption{Multi-pattern rabin karp algorithm}
+	\label{fig:multirabinkarp}
+\end{figure}
+
+\subsubsection{Wu Manber algorithm}
+The Wu Manber algorithm is based on the Idea of Boyer-Moore algorithm to start searching from Right to Left. According to Boyer Moore algorithm, While searching in the text from the Right to the Left, if the Rightmost character in the text, does not match any of the characters in the pattern, we can skip searching a block of characters upto the pattern length and move the search pointer by the pattern length. The intuition is that this is the common case and we skip searching multiple characters and thus improve the performance.
+
+Wu Manber algorithm consists of two phases: The preprocessing phase and the searching phase.
+In the pre-processing phase, the shift table and prefix tables are constructed. The shift tables gives the value you need to shift, if there is a mismatch. The prefix tables contains the hashes of the prefixes of the patterns and the corresponding patterns.
+Both the shift table and the prefix tables are indexed by the hash values. If multiple patterns index to the same hash value:
+
+\begin{enumerate}
+	\item The shift table stores the value which has the minimum shift.
+	\item The prefix table stores all the patterns which map to a hash value as a linked list.
+\end{enumerate}
+
+The shift and the prefix table is used in the searching phase.
+
+Consider the text as “ANDYMEETMESOONATGOOGLE” and patterns as “SOON”, “COME”, “GOOGLE”. We should find the patterns in the text.
+First, find the minimum length of the pattern, which is 4 in this case. So, we need to include the first four characters to construct the shift table.
+
+\begin {table}[h]
+\caption {Shift table} \label{tab:title} 
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|} 
+	\midrule
+	SO &	OO &	ON &	CO &	OM &	ME &	GO &	OO &	OG   &	* \\
+	2 & 1 & 0 & 2 & 1 & 0 & 2 & 1 & 0  & 3\\
+	\midrule
+\end{tabular}
+\end{table}
+
+
+PREFIX Table points to a list of patterns whose first B(2) characters hash into the index.
+Index by the Hash – Value is the list of Patterns which have common Prefix
+SO – SOON
+CO – COME
+GO – GOOGLE
+Search Phase:
+In the search phase, first consider the first 4 characters of the text. Then take the last two characters of those four characters and compute the hash value. For that hash value, check the shift table and shift accordingly. If the shift value is 0, compute the hash value of the first two characters of those four characters and go to the prefix table. Compare the value of the pattern in the prefix table with the value of the text, If the pattern size if larger than the four patterns, include the additional characters from the text.
+Let’s consider an example:
+
+\begin {table}[h]
+\caption {Shift tabl [Text = ANDYMEETMESOONATGOOGLE]} \label{tab:title} 
+\begin{tabular}{|c|c|c|c|c|} 
+	\midrule
+	STEP & INDEX & SHIFT & PREFIX CHECK & RESULT\\
+	\midrule
+	1 & 0 & 3\\
+	\midrule
+	2 & 3 & 3\\
+	\midrule
+	3 & 6 & 0 & Yes & NoMatch\\
+	\midrule 
+	4 & 9 & 1\\
+	\midrule
+	5 & 10 & 0 & Yes & Match(Soon)\\
+	\midrule
+	6 & 11 & 3\\
+	\midrule
+	7 & 14 & 2\\
+	\midrule
+	8 & 16 & 0 & Yes & Match(Google)\\
+	\midrule
+\end{tabular}
+\end{table}
+
+In step 1 the index for DY will map to * in the SHIFT table, because there is no pattern which has DY as its suffix. Hence a maximum shift is applied, which is 3.
+In step 3, the index for ME will map to ME in the SHIFT table, because the pattern COME has ME as the suffix. Since the SHIFT is 0, the prefix hash value for ET is calculated and the PREFIX table is checked. Since ET does not index to any value in the PREFIX table there is No Match. Similarly for Step 5, the PREFIX table is accessed and there was a match.
+
+\subsubsection{Aho Corasick algorithm}

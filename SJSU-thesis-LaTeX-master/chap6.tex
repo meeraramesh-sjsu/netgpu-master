@@ -1,0 +1,22 @@
+\chapter{Related Work}
+
+The use of GPUs for packet processing is not a new invention. Gnort, an IDS uses the GPU for pattern matching. They proposed GPU based Aho-Corasick algorithm and this prototype outperforms Snort by a factor of two. They experimented two strategies for pattern matching. In the first method, a single packet is processed by a stream processor independently. In the second method, a single packet is processed by multiple stream processors cooperatively. According to Vasiliadis (2008), “An advantage of this method is that all threads are assigned the same amount of work, so execution does not diverge, which would hinder the SIMD execution.”
+
+They use Pinned memory for asynchronous transfer from CPU to GPU. According to Vasiliadis (2008), “Furthermore, the copy from page-locked memory to the GPU is performed using DMA, without occupying the CPU. Thus, the CPU can continue working and collecting the next batch of packets at the same time the GPU is processing the packets of the previous batch." 
+
+Many researchers have tried to increase the performance of string matching algorithms with the help of GPU. For example, Zha \& Sahni (2008), developed Aho-Corasick and multipattern Boyer-Moore string matching algorithms to address the deficiencies in the GPU to GPU case and CPU to CPU case. In the GPU to GPU case, the input and output are left in GPU memory, whereas in the CPU to CPU case, the input and output are in Host memory.
+
+In the GPU-GPU case the two deficiencies they addressed are:
+
+\begin{enumerate}
+	\item
+	Reading from global memory: The Tesla GPU reads data from the Global memory for 16 threads at a time and the total bandwidth for such a transaction is 128 bytes. But the threads read only 1 byte at a time, thus a total of 16 bytes is read in a single transaction. Thus only 1/8th of the bandwidth between the GPU and the SM will utilized. 
+	\item
+	Coalescing multiple read transactions: The Tesla GPU coalesces all the transactions of a half warp to a single transaction, if the accessed data is in the same 128-byte segment.But if the pattern length is greater than 128, the consecutive threads in a half warp access the data which are 128 bytes apart and no coalescing occurs.According to Zha (2013), “Although the pseudocode is written to enable all threads to simultaneously access the needed input character from device memory, an actual implementation on the Tesla GPU will serialize these accesses and, in fact, every read from device memory will transmit exactly 1 byte to an SM resulting in a 1/128 utilization of the available bandwidth.”
+\end{enumerate}
+
+They proposed a solution to the above problem by having multiple threads in a half warp collectively access the global memory. The threads can access a maximum of 128 bits at a time, so total of 8 threads of a half warp need to access 128 bytes to achieve 100\% bandwidth utilization between GPU and SM.Due to the fact that the threads operate in different 128-byte segments, these threads save the data in the shared memory and they operate on the collected data.
+
+In the CPU-CPU case they proposed two approaches to overlap the I/O between CPU and GPU, and GPU computation.GPUs have a additional memory known as Pinned memory to support asynchronous transfer of data between the CPU and GPU. The strategy consists of four parts: Initially partitioning the input data into segments, asynchronously copying each segment to the device memory, processing each segment on the GPU and returning the results to the CPU. In order to ensure that the transferring, processing and writing the results from a segment are done in order, CUDA makes use of Streams. In a steam the tasks are executed in sequence. The total number of streams are same as the number of segments.In order to ensure the above strategy works, there should be enough device memory to accommodate all the segments. This strategy is optimal with runtime, while the next strategy requires less global memory.
+
+They proposed another approach where they need two buffers for input and two buffers for output to be allocated on the GPU. Initially one of the input buffers is filled. While the GPU is performing computation on this input buffer, the CPU asynchronously transfers data to the other input buffer. The GPU writes the data to the output buffer, after which the input and output buffers are swapped. The CPU asynchronously reads the data from this output buffer. 

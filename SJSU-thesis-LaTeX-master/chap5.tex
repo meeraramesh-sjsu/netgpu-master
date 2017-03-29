@@ -1,0 +1,87 @@
+\chapter{Evaluation}
+The time taken to execute the framework was measured by varying the size of the packet. Rabin Karp multi-pattern search algorithm was used for pattern matching. The execution times for thread Level and block level parallelism were plotted in a semi-log graph and are shown in Fig. 3. The execution time gradually increases with the packet size and block level packet processing significantly improves the throughput over thread level packet processing. 
+
+For the experiments we used a Tesla K80 GPU, which has 13 Stream Multiprocessors each of which contain 192 Stream Processors which operates at 562 GHZ with 11.25 GB global memory, 48 KB shared memory/block, 64K registers/block and 64 KB constant memory. The CPU used was a Intel Xeon Processor E 5 family operating at 2.30 GHz. The number of patterns were fixed to 100 and the packets were captured using a pcap file.
+
+\subsection{Optimization over thread level parallelism}
+
+\subsection{Stall breakdown}
+FIGURE
+The number of patterns used for this evaluation was 1800, the packet size was 256 and there were 10 packets. The warps can be stalled stalled for many reasons, among them synchronization, memory throttle and execution dependencies have significant differences between the three algorithms as observed from the graph.
+
+Memory throttle occurs because there is a huge number of memory requests which prevents progress. This occurs because there are a number of uncoalesced memory requests to the global memory. This reason can be proved by the fact that the global memory load efficiency is less than 25\% and the global memory store efficiency is less than 15\%. Uncoalesced memory requests implies the memory requests are outside the 128 or 64 or 32 byte memory gap. The driver coalesces the global memory stores and loads of the threads of a warp when the all memory accesses are within a 128 or 32 or 64 byte memory segment.
+
+TABLE
+
+In the Aho Corasick algorithm, the goto function table and the output table are accessed from global memory. The number of states in goto function is 447129. Goto function is used by every thread to decide which is the next state it needs to traverse to continue pattern matching. Goto function is a two dimensional array, where the number of rows is same as the number of states and the number of columns is 256. Thus the size of the goto function table is 447129 x 256 x 4 Bytes, which equals 447129KB. The individual threads can access any index of the Goto array and the output array and the index is a factor of the current state and the next character. The state and the character could be different for each thread and thus the memory accesses would be non-coalesced. Due to the huge size of the Goto function table the data could not be saved in the shared memory because shared memory size is 16KB. 
+
+In the Wu Manber algorithm, the shift table, the prefix size, the prefix value, the prefix index and the pattern table are accessed from the global memory. But five tables should be accessed by the threads and thus the memory throttle is higher than Aho Corasick algorithm. The tables are indexed by the hash values and the hash values obtained by different threads would be different and hence there would be multiple memory requests which aren’t coalesced. 
+
+In the Rabin Karp algorithm the Memory throttle is much lesser compared to other algorithms. There are three tables which are accessed from global memory. There is a for loop which iterates over all the patterns and the threads sequentially check the hash values with the hash value of each pattern. Here the threads compute the hash value of the text and all the threads access the same address of the global memory to get the pattern hash value. If all the threads in a warp access the same address, the data will be broadcasted to the threads from the global memory and hence it takes only one memory transaction. If the hash value matches with the pattern hash, then a memory compare takes place between the text and the pattern. At this time, two tables are accessed from the global memory. These tables are accessed only if the pattern hashes match and the locations which the threads access the table to fetch the patterns could lead to a non-coalesced memory access. But this case happens very few number of times, thus the Memory throttle is very less.
+
+Synchronization occurs because the threads in a warp are being blocked due to the call to the syncthreads function. Before the call to syncthreads function there is a shared store, Thus it is evident that this is caused due to the shared store latency.  There is no huge difference between these three algorithms because the number of synchthreads calls are the same for all the three.
+
+From the CUDA programming guide, “the number of clock cycles taken by the device to completely execute the thread, [is different from] the number of clock cycles the device actually spent executing thread instructions. The former number is greater than the latter since the threads are time sliced”. The reason is because the thread execution even includes the idle time the thread resides waiting for the result from the previous instructions. This is due to execution dependency. 
+
+Multiple threads would share an execution unit of a processor and each thread is given a period of time(time slice) to execute and then it would be preempted and the execution unit is given to another thread. If the threads cannot complete the work in a single time slice then it would have to wait till it gets another time slice. The waiting time depends on the number of parallel threads and the availability of resources. 
+
+In the Aho Corasick algorithm, the threads do not perform arithmetic operations on the device(the calculations are completed on the pre processing stage in the CPU) and hence the utilization of the execution units are low. In the Wu Manber algorithm, the hashes are computed for the suffixes and the prefixes of the text. The hash values are computed using three instructions where each instruction is dependent on the result of the previous instruction.Thus the execution dependency is slightly higher than Aho Corasick algorithm. In the Rabin Karp algorithm, each thread computes the hash value for 1076 patterns and there is instruction dependency while calculating the hash value for each pattern. Hence the execution dependency is much higher than the previous algorithms.
+
+\subsection{Resource Utilization}
+\subsubsection{Memory Utilization}
+
+Packets are stored in the shared memory for the three algorithms. The way in which the packets are fetched from the shared memory affects the shared memory efficiency. Shared memory load transactions are the number of load requests to the shared memory and Shared memory store transactions are the number of store requests to the shared memory. Shared memory Replay overload is the  number of replays due to shared memory conflicts for every instruction executed. The shared memory load transaction is very high for Rabin Karp compared to the other two algorithms and this reasoning is supported by the shared memory replay overhead. 
+
+In Rabin Karp algorithm, each thread begins pattern matching starting from its thread index. 
+I.e tid 0 begins by accessing byte in shared memory at index 0, tid 1 begins at index 1,tid 2 begins at index 2 and so on.The default 32-bit addressing mode is used in the shared memory.
+The bandwidth of each memory transaction is 32-bits. Thus, even though each thread accesses 1 byte of data, 4 bytes of data is being fetched from the shared memory. If the size of the pattern 0 is 200B, then bank conflicts begins when thread 0 starts fetching the 4 Byte word from address 33 until thread 0 fetches the 4 byte word at address 199(excluding all the addresses which are a multiple of 32). Thus 194 memory transactions are serialized (6 addresses are multiples of 32) for each thread. These serialized memory transactions occurs for 56 threads. Since there could be multiple 200B patterns, there could be up to 4 groups of  56 threads (224 of the 256 threads) which cause serialized memory transactions from the shared memory.
+
+In Aho Corasick and Wu Manber algorithm the shared memory replay overhead is approximately equal  and very low compared to the Rabin Karp algorithm. The replay overhead is caused by the DPI of the header in both these algorithms and the overhead of the string matching is very less. In Aho Corasick algorithm if thread 0 starts fetching the 4 byte word from address 33, that implies the previous 32 characters of the text matches with any pattern which happens very infrequently. In this evaluation, 8 patterns out of the 1786 patterns were present in the packets. Thus there could be a maximum of 8 memory transactions which are serialized.
+In WuManber algorithm, only 5 (3 for suffix and 2 for prefix if shift is 0) characters are fetched by each thread and thus there could be only 2 memory transactions per thread which are serialized for threads with index above 33. There can be up to 6 memory transactions (pattern size is 200) for a thread if the hash values of the suffixes and the prefixes match, which occurs very infrequently. Since there could be 2 serialized memory transactions for Wu Manber when compared to 1 serialized memory transaction for Aho Corasick for thread indices above 33, the number of shared memory load transactions are slightly higher. Shared memory store is slightly higher in Aho Corasick algorithm because the values of the next state for the first character of every pattern is stored in the shared memory. This was done to enhance the performance because at least one character of the text will be checked with the goto function.
+
+Since, the number of load/stores are high, the shared memory accesses could be replaced by shuffle instructions. With shuffle instructions threads in a warp exchange data among themselves without the need of shared or global memory. The shuffle instructions have lower latency when compared to shared memory instructions and do not consume any space.
+
+\subsubsection{Warp Utilization}
+Warp execution efficiency is the average number of active threads executed in a warp. This can be due to branch divergence. Compute resources are efficiently used when all the threads in a warp execute the same branch. When this does not happen the warp execution efficiency is reduced because of the under utilization of the compute resources.
+
+During the header check phase of deep packet inspection, only few threads are active per warp which leads to a decrease in the execution efficiency. The header check phase is common to the three algorithms and the differences in the graph are caused due to the pattern matching algorithms.
+While performing the evaluations, the packets are crafted such that the payload of each packet has the pattern “FICDFICD” repeated multiple times. This pattern was chosen because multiple threads would be executing if there is a pattern match (In WuManber algorithm two threads would be executing for this pattern, because the suffix “ICD” is repeated two times). The three algorithms execute multiple instructions only when there is a pattern match. 
+
+In Wu Manber algorithm, only the threads which have a shift value as 0 are active as shown in Fig 4. These threads then calculate the hash value of the prefixes and iterative over the patterns with the same prefix. If the hash value of the prefix calculated matches the pattern prefix then that thread becomes active as shown in Fig 5. The number of threads which are active per warp in these two cases are low which reduces the warp execution efficiency. The pattern “FICDFICD” is repeated throughout the payload of the packet. Since 2 threads out of 8 threads will have the first condition true, thus the warp execution throughput for the pattern matching is = 25% (8/32)
+
+FIGURE
+
+FIGURE
+
+In the Aho Corasick algorithm there are two conditions which cause branch divergence as shown in Fig 6. and Fig 7. Two out of 8 threads will have both the conditions true and they start executing. 
+
+FIGURE
+
+FIGURE
+
+Even though the number of threads active per warp for both Wu-Manber and Aho-Corasick algorithms are the same, the number of threads which are using the execution units is lower for Wu Manber algorithm. The reason is because there are four arrays which needs to be accessed from the global memory by the threads and threads would resume execution only after the data is obtained. Since the memory accesses are not coalesced the memory transactions are serialized and the number of threads active per warp will be reduced. The number of shared memory load transactions are also lesser in the Wu Manber algorithm when compared to Aho Corasick algorithm. 
+
+In Rabin Karp algorithm the if condition which checks if the thread index is less than packet length - pattern length as shown in Fig 8. is the cause for branch divergence. For ex: consider the thread with thread Id 127 (warp 3), the maximum pattern length should be 128.  There are 749 patterns with length <=64  and 1441 patterns with <=128 and  1743 patterns with length <=256. Thus all the threads in warps 2,3 and 10 threads in warp 1 would be active. Thread Index 54 is the starting thread for pattern matching because the size of the header is 54. Warp 0 is used for checking the validation of the header. But the Warp efficiency is less than Aho Corasick algorithm because the percentage of pipeline stalls due to execution dependency is high.
+
+FIGURE
+
+\subsubsection{SM Utilization}
+
+FIGURE
+
+The graph shows the average percentage of time each multiprocessor was utilized during the execution of the kernel. A SM is active when there is at least one warp currently executing on the SM.      
+
+SM Utilization is the “The percentage of time at least one warp is active on a multiprocessor averaged over all multiprocessors on the GPU”  In the Rabin Karp algorithm all the threads in warp 2,3 are active as explained in the previous section. Thus the SM efficiency is very close to 100\%. In the Aho Corasick algorithm and Wu-Manber algorithm the warps are active during the search phase. In the Wu-Manber algorithm different warps get scheduled on the SM to hide the memory latency, hence the percentage of time at least one warp is active is reduced.
+
+\subsubsection{Issue Slot Utilization}
+
+\subsection{Cache Hit Rate}
+
+\subsection{Comparison between OpenMP, CPU and GPU version}
+
+TABLE
+
+\subsection{Pinned Memory Efficiency}
+
+
+
