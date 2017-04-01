@@ -1,7 +1,7 @@
 #!/bin/bash
 #git pull origin openMP
 make
-sudo make install
+make install
 cd Examples/
 make
 

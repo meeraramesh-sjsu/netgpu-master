@@ -169,6 +169,7 @@ Dissector.lo: Dissector.cpp /usr/include/stdc-predef.h Dissector.h \
  /usr/include/c++/4.8/bits/deque.tcc \
  /usr/include/c++/4.8/bits/stl_queue.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/omp.h \
+ /usr/include/c++/4.8/bitset \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/stdc++.h \
  /usr/include/c++/4.8/cassert /usr/include/assert.h \
  /usr/include/c++/4.8/cfloat \
@@ -201,8 +202,8 @@ Dissector.lo: Dissector.cpp /usr/include/stdc-predef.h Dissector.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdalign.h \
  /usr/include/c++/4.8/cstdbool \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdbool.h \
- /usr/include/c++/4.8/ctgmath /usr/include/c++/4.8/bitset \
- /usr/include/c++/4.8/iomanip /usr/include/c++/4.8/locale \
+ /usr/include/c++/4.8/ctgmath /usr/include/c++/4.8/iomanip \
+ /usr/include/c++/4.8/locale \
  /usr/include/c++/4.8/bits/locale_facets_nonio.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/time_members.h \
  /usr/include/x86_64-linux-gnu/c++/4.8/bits/messages_members.h \
@@ -706,6 +707,8 @@ AhoCorasick.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/4.8/include/omp.h:
 
+/usr/include/c++/4.8/bitset:
+
 /usr/include/x86_64-linux-gnu/c++/4.8/bits/stdc++.h:
 
 /usr/include/c++/4.8/cassert:
@@ -793,8 +796,6 @@ AhoCorasick.h:
 /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdbool.h:
 
 /usr/include/c++/4.8/ctgmath:
-
-/usr/include/c++/4.8/bitset:
 
 /usr/include/c++/4.8/iomanip:
 

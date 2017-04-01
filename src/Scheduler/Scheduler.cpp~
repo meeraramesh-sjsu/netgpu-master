@@ -18,7 +18,8 @@ void Scheduler::init(void){
 	sigset_t set;
 
 	//Memset pools
-	memset(&feedersPool,0,sizeof(feedersPool));			
+	memset(&feedersPool,0,sizeof(feedersPool));		
+	memset(&analysisFunctions,0,sizeof(analysisFunctions));	
 	
 	//Ignore SIGTERM signal (to be inherit by feeders threads)
 	sigemptyset(&set);

@@ -18,7 +18,7 @@ The NetGPU framework is distributed in the hope that it will be useful, but WITH
 
 /* Define debug level 0,1,2 */
 /* less verbose <---> more verbose */
-#define DEBUG_LEVEL 2
+#define DEBUG_LEVEL 0
 
 /* GENERAL CONSTANTS */
 #define APP_NAME NetGpu

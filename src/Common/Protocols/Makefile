@@ -17,7 +17,6 @@
 
 
 
-INSTALL_TOP_DIR=/home/meera/gpudir/netgpu-master
 am__is_gnu_make = test -n '$(MAKEFILE_LIST)' && test -n '$(MAKELEVEL)'
 am__make_running_with_option = \
   case $${target_option-} in \
@@ -213,19 +212,19 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/meera/gpudir/netgpu-master/missing aclocal-1.14
+ACLOCAL = ${SHELL} /home/meera/netgpu-master/missing aclocal-1.14
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 AR = ar
-AUTOCONF = ${SHELL} /home/meera/gpudir/netgpu-master/missing autoconf
-AUTOHEADER = ${SHELL} /home/meera/gpudir/netgpu-master/missing autoheader
-AUTOMAKE = ${SHELL} /home/meera/gpudir/netgpu-master/missing automake-1.14
+AUTOCONF = ${SHELL} /home/meera/netgpu-master/missing autoconf
+AUTOHEADER = ${SHELL} /home/meera/netgpu-master/missing autoheader
+AUTOMAKE = ${SHELL} /home/meera/netgpu-master/missing automake-1.14
 AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -O3 --compiler-options -fno-strict-aliasing --compiler-options -fno-inline --compiler-bindir=/usr/bin/g++
 CPP = gcc -E
-CPPFLAGS = -std=c++11
+CPPFLAGS = 
 CUDA_DIR = /usr/local/cuda/bin/..
 CXX = g++
 CXXCPP = g++ -E
@@ -258,7 +257,7 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/meera/gpudir/netgpu-master/missing makeinfo
+MAKEINFO = ${SHELL} /home/meera/netgpu-master/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
@@ -282,10 +281,10 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 VERSION = 0.1
-abs_builddir = /home/meera/gpudir/netgpu-master/src/Common/Protocols
-abs_srcdir = /home/meera/gpudir/netgpu-master/src/Common/Protocols
-abs_top_builddir = /home/meera/gpudir/netgpu-master
-abs_top_srcdir = /home/meera/gpudir/netgpu-master
+abs_builddir = /home/meera/netgpu-master/src/Common/Protocols
+abs_srcdir = /home/meera/netgpu-master/src/Common/Protocols
+abs_top_builddir = /home/meera/netgpu-master
+abs_top_srcdir = /home/meera/netgpu-master
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -315,7 +314,7 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/meera/gpudir/netgpu-master/install-sh
+install_sh = ${SHELL} /home/meera/netgpu-master/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -324,8 +323,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-#prefix = /usr/local
-prefix = ${INSTALL_TOP_DIR}/usr/local
+prefix = /usr/local
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin

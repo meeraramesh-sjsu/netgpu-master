@@ -148,7 +148,7 @@ void OfflinePacketFeeder::_start(void){
 
 	//Check if opened correctly	
         if (descr == NULL){
-                printf("ERROR %s",errbuf);        
+                printf("%s",errbuf);        
 		return;
 }
 

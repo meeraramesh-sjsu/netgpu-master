@@ -38,7 +38,7 @@ int g[MAXS][MAXC];
 int buildMatchingMachine(vector<string> arr, int k)
 {
   // Initialize all values in output function as 0.
-   
+    memset(out, 0, sizeof out);
 
     // Initialize all values in goto function as -1.
     memset(g, -1, sizeof g);

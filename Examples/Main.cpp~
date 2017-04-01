@@ -7,6 +7,7 @@
 //#include "Analysis/Throughput/Throughput.h"
 //#include "Analysis/Histogram/Histogram.h"
 //#include "Analysis/PortScan/PortScan.h"
+#include "Analysis/IpScan/IpScan.h"
 //#include "Analysis/IpScan/kernel.h"
 //#include "Analysis/Advanced/Advanced.h"
 
