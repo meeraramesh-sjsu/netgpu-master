@@ -146,9 +146,10 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 	else DEBUG2("Unable to open file");
 	DEBUG2("added file contents to vector");
 
+	payLoadRabinKarp(onBoardProtocol,tmp);
 	//Aho-Corasick
-	DEBUG2("Aho-Corasick Pattern matchingMAc!");
-	searchWords(tmp,tmp.size(),packet);
+	//DEBUG2("Aho-Corasick Pattern matchingMAc!");
+	//searchWords(tmp,tmp.size(),packet);
 	cout<<endl;
 	//WuManber
 
@@ -259,8 +260,8 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 }
 }
 
-void Dissector::payLoadRabinKarp(char* packetPointer) {
-	vector<int> mapHash(997,-1);
+void Dissector::payLoadRabinKarp(char* packetPointer,vector<string> tmp) {
+	/*vector<int> mapHash(997,-1);
 	vector<string> tmp;
 	set<int> setlen;
 	ifstream myFile ("/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns10.cpp", ios::in);
@@ -273,7 +274,7 @@ void Dissector::payLoadRabinKarp(char* packetPointer) {
 		}
 	}
 
-	else cout << "Unable to open file";
+	else cout << "Unable to open file";*/
 	int payLoadLength = packetLength - 40;
 	/*long hy = 0;
 	 * sort(tmp.begin(),tmp.end(),compare);

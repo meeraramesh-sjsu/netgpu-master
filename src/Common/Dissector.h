@@ -45,7 +45,7 @@ private:
 	void dissectTcp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
 	void dissectUdp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
 	void dissectIcmp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
-	void payLoadRabinKarp(char* packetPointer);
+	void payLoadRabinKarp(char* packetPointer,vector<string> tmp);
 	void searchWords(vector<string> arr, int k, string text);
 //Virtual Actions:
 
