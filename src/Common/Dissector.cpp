@@ -261,10 +261,10 @@ void Dissector::searchWords(vector<string> arr, int k, string text)
 }
 
 void Dissector::payLoadRabinKarp(char* packetPointer,vector<string> tmp) {
-	/*vector<int> mapHash(997,-1);
-	vector<string> tmp;
+	vector<int> mapHash(997,-1);
+	//vector<string> tmp;
 	set<int> setlen;
-	ifstream myFile ("/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns10.cpp", ios::in);
+	/*ifstream myFile ("/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns10.cpp", ios::in);
 	std::string line;
 
 	if (myFile.is_open()) {
