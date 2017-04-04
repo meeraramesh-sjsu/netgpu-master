@@ -5,7 +5,17 @@
 #include "../Util.h"
 #include <omp.h>
 using namespace std;
+#include <sstream>
 
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
 
 #define _DISSECTOR_CHECK_OVERFLOW(a,b) \
 		do{ \
@@ -21,6 +31,7 @@ struct length {
 		return a.size() < b.size();
 	}
 };
+
 
 //TotalPacketLength, used to find the payload
 int packetLength;
@@ -130,7 +141,7 @@ void Dissector::dissectTcp(const uint8_t* packetPointer,unsigned int* totalHeade
 
 	//payLoadRabinKarp(onBoardProtocol);
 	string packet(onBoardProtocol);
-	string fileName = "/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns" + to_string(this->noOfPatterns) + ".cpp";
+	string fileName = "/home/meera/gpudir/netgpu-master/src/Common/Pattern/patterns" + patch::to_string(this->noOfPatterns) + ".cpp";
 
 	vector<string> tmp;
 	ifstream myFile (fileName, ios::in);
