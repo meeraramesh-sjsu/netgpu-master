@@ -1,0 +1,21 @@
+\chapter{Related Work}
+
+The use of GPUs for packet processing is not a new invention. Gnort \cite{bib10} an IDS, uses the parallel version of the Aho-Corasick algorithm \cite{bib6} for signature matching. G. Vasiliadis et al. \cite{bib10} demonstrated the packet processing with the GPU based Aho-Corasick algorithm, which outperformed Snort by a factor of two. Two pattern-matching strategies were tested. In the first method, a packet is processed by a stream processor. In the second method, a packet is processed by multiple stream processors cooperatively. They used pinned memory for asynchronous transfer from the CPU to the GPU. Unlike Gnort, my thesis provides wider and deeper analysis of GPU-version IDS design by implementing three signature-matching algorithms and comparing the performance with sequential and parallel CPU-version IDSs.
+
+Many researchers have tried to improve the performance of string matching algorithms with the help of the GPU. For example, X. Zha and S. Sahni \cite{bib12}, developed Aho-Corasick and multi-pattern Boyer-Moore string matching algorithms to address the deficiencies in both the GPU to GPU case and CPU to CPU case. In the GPU to GPU case, the input and output are left in GPU memory, whereas in the CPU to CPU case, the input and output are in host memory. In the GPU to GPU case, the two deficiencies addressed are as follows:
+
+\begin{enumerate}[leftmargin=*]
+	\item
+	Reading from global memory: The Tesla GPU reads data from global memory for 16 threads at a time and the total bandwidth for such a transaction is 128 bytes. As, each thread reads one byte at a time, a total of 16 bytes is read in a single transaction. Thus, only 1/8th of the total bandwidth for a transaction between the GPU and the SM will be utilized. 
+	\item
+	Coalescing multiple read transactions: The Tesla GPU coalesces all the transactions of a half-warp to a single transaction, if the data accesses are in the same 128-byte segment. But, if the pattern length is greater than 128, the consecutive threads in a half-warp access the data, which are 128 bytes apart, with no coalescing.
+\end{enumerate}
+\vspace{\topsep}
+
+X. Zha and S. Sahni \cite{bib12} proposed a solution to the above problem by having multiple threads in a half-warp collectively access the global memory. In the CPU to CPU case, they proposed two approaches to overlap the I/O between CPU and GPU, and GPU computation using pinned memory.
+
+The parallel failure-less Aho-Corasick algorithm (PFAC) is a variation of the Aho-Corasick algorithm implemented on a GPU \cite{bib20}. It is remarkably distinct from the other implementations of this algorithm. Each thread is mapped to a character from the input text. Since each thread should search for a pattern from a particular position, there is no need for back tracking. Thus, the failure table was not used. The go-to array was stored in the shared memory, the patterns were grouped based on their prefixes and the patterns were saved in different multi-processors.
+
+Snort \cite{bib11} uses the Aho-Corasick \cite{bib18} multi-pattern-matching algorithm for deep packet inspection, whereas another study \cite{bib21} utilized the Boyer-Moore single pattern-matching algorithm \cite{bib17}. The Boyer-Moore algorithm is a single pattern-matching algorithm. When the Boyer-Moore algorithm is used for multi-pattern matching, the time complexity is the product of the number of patterns and the size of the input text, whereas Snort uses a multi-pattern-matching algorithm and the time complexity is independent of the number of patterns and is linear to the size of the input text.
+
+PixelSnort \cite{bib22} is a modified version of the Knuth-Morris-Pratt algorithm \cite{bib23} that offloads the computationally intensive packet processing to the GPU by grouping signatures and packets into textures. The throughput of PixelSnort outperformed Snort by 40\% with respect to the rate of packet processing. 

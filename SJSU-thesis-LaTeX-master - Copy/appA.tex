@@ -1,0 +1,573 @@
+\chapter{Code snippets\label{app:appa}}
+\vspace{\topsep}
+\section{Header Checking in Block-Level Parallelism}
+\begin{lstlisting}
+__shared__ T elements[256];
+__shared__ clock_t starttime;
+__shared__ clock_t stoptime;
+__shared__ uchar4 packet[64];
+
+int threadIndex = blockIdx.x*blockDim.x + threadIdx.x;
+
+//Mine to Shared to save memory accesses
+if(threadIdx.x ==0)
+starttime = clock();
+
+elements[threadIdx.x] = cudaSafeGet(&GPU_data[threadIndex]);
+//Copying the state 0 information to shared memory
+//printf("Copying to shared memory");
+__syncthreads();
+
+//	printf("In header checking");
+if(threadIdx.x == 14) // Representative thread for warp 0 , Check incorrect version and private address range
+{
+if(IS_IP4()) //Checking if it is a IPv4 Packet
+{
+GPU_results[blockIdx.x].ipPacket = 1;
+int verBlock = (elements[14].packet & 0x000000F0) >> 4;
+if(verBlock !=4 && verBlock !=6) GPU_results[blockIdx.x].maliciousVer=1;
+
+int octet1 = elements[26].packet & 0x000000FF;
+int octet2 = elements[27].packet & 0x000000FF;
+int octet1Dst = elements[30].packet & 0x000000FF;
+int octet2Dst = elements[31].packet & 0x000000FF;
+
+if (octet1 == 10 || octet1Dst == 10)
+{
+GPU_results[blockIdx.x].maliciousIP=1;
+}
+// 172.16.0.0 - 172.31.255.255
+if ((octet1 == 172 || octet1Dst == 172 ) && (octet2 >= 16 || octet2Dst >=16 ) && (octet2 <= 31 || octet2Dst<=31))
+{
+GPU_results[blockIdx.x].maliciousIP=1;
+}
+// 192.168.0.0 - 192.168.255.255
+if ((octet1 == 192  || octet1Dst == 192) && (octet2 == 168 || octet2Dst == 168))
+{
+GPU_results[blockIdx.x].maliciousIP=1;
+}
+}
+}
+if(threadIdx.x == 33) //Checksum verification
+{
+if(IS_IP4()) //check if a IPv4 Packet
+{
+int checksum = ((elements[14].packet & 0x000000FF)<<8 + (elements[15].packet & 0x000000FF)) +
+((elements[16].packet & 0x000000FF)<<8 + (elements[17].packet & 0x000000FF)) +
+((elements[18].packet & 0x000000FF)<<8  + (elements[19].packet & 0x000000FF )) +
+((elements[20].packet & 0x000000FF)<<8 + (elements[21].packet & 0x000000FF)) +
+((elements[22].packet & 0x000000FF)<<8  + (elements[23].packet & 0x000000FF)) +
+((elements[24].packet & 0x000000FF)<<8 + (elements[25].packet & 0x000000FF)) +
+(lastTwoBytes(elements[26].packet)<<8 + lastTwoBytes(elements[27].packet)) +
+(lastTwoBytes(elements[28].packet)<<8 + lastTwoBytes(elements[29].packet)) +
+(lastTwoBytes(elements[30].packet)<<8 + lastTwoBytes(elements[31].packet)) +
+(lastTwoBytes(elements[32].packet)<<8 + lastTwoBytes(elements[33].packet));
+
+unsigned int sum = ~(checksum>>16 + (checksum & 0xFFFF));
+if(sum!=-1) GPU_results[blockIdx.x].maliciousCheckSum = 1;
+}
+}
+
+if(threadIdx.x == 64) //check sport or dport is 0; check ackNo is o, with ack bit set; check malicious flag bit combinations
+{
+if(IS_TCP())
+{
+GPU_results[blockIdx.x].flags = lastTwoBytes(elements[47].packet);
+GPU_results[blockIdx.x].sport = lastTwoBytes(elements[34].packet) << 8 + lastTwoBytes(elements[35].packet);
+if(lastTwoBytes(elements[33].packet) == 255)
+GPU_results[blockIdx.x].maliciousDst = 1;
+
+if((lastTwoBytes(elements[34].packet) == 0 && lastTwoBytes(elements[35].packet) == 0) ||
+(lastTwoBytes(elements[36].packet) == 0 && lastTwoBytes(elements[37].packet) == 0))
+GPU_results[blockIdx.x].maliciousPort = 1;
+int ackNo = lastTwoBytes(elements[42].packet)<<24 + lastTwoBytes(elements[43].packet)<<16 + lastTwoBytes(elements[44].packet)<<8 + lastTwoBytes(elements[45].packet);
+if(lastTwoBytes(elements[47].packet & 16) ==1 && (ackNo == 0))
+GPU_results[blockIdx.x].maliciousAck = 1;
+
+int reservedVal = lastTwoBytes(elements[46].packet) >> 4;
+if(reservedVal != 0) GPU_results[blockIdx.x].maliciousReserved = 1;
+
+int flagVal  = lastTwoBytes(elements[47].packet);
+
+if(flagVal == 3 || flagVal == 11 || flagVal == 7 || flagVal == 15 || flagVal == 1 || flagVal == 0)
+GPU_results[blockIdx.x].maliciousFlags = 1;
+
+}
+}
+
+if(IS_IP4() && threadIdx.x == 33) //save source and destn IP addres to output
+{
+GPU_results[blockIdx.x].ipPacket = 1;
+uint32_t ipSrc = ((elements[26].packet & 0x000000FF)  << 24) + ((elements[27].packet & 0x000000FF)  << 16)
++ ((elements[28].packet & 0x000000FF )<< 8) + (elements[29].packet & 0x000000FF);
+uint32_t ipDst = ((elements[30].packet & 0x000000FF)  << 24) + ((elements[31].packet & 0x000000FF)  << 16)
++ ((elements[32].packet & 0x000000FF )<< 8) + (elements[33].packet & 0x000000FF);
+
+GPU_results[blockIdx.x].ipSrc = ipSrc;
+GPU_results[blockIdx.x].ipDst = ipDst;
+} 
+\end{lstlisting}
+\vspace{\topsep}
+
+\section{Rabin-Karp Algorithm}
+\vspace{\topsep}
+\subsection{Sequential Pattern-Matching Algorithm using C}
+	\begin{lstlisting}
+	long hashCal(const char* pattern, int  m, int offset) {
+	long h = 0;
+	for (int j = 0; j < m; j++) {
+	h = (256 * h + pattern[offset + j]) % 997;
+	}
+	return h;
+	}
+	\end{lstlisting}
+
+
+	\begin{lstlisting}
+	//Starting from 0, move for every pattern length, computing the hash values
+	//Time complexity O(N* number of pattern lengths)
+	//Tmp is the vector of patterns
+	for(int i=0;i<tmp.size();i++)
+	setlen.insert(tmp[i].length());
+	
+	//Fill the map with pattern hashes
+	for(int i=0;i<tmp.size();i++)
+	{
+	long patHash = hashCal(tmp[i].c_str(), tmp[i].size(),0);
+	mapHash[patHash] = i;
+	}
+	
+	//Choosing a large prime
+	int q = 997; 
+	int R = 256;
+	
+	for(auto it= setlen.begin();it!=setlen.end();it++)
+	{
+	int m = *it;
+	int RM = 1;
+	for (int i = 1; i <= m-1; i++)
+	RM = (256 * RM) % 997;
+	
+	if (m > payLoadLength) break;
+	int txtHash = hashCal((char*)packetPointer, m,0);
+	
+	// check for match at offset 0
+	if ((mapHash[txtHash]>0) && memcmp((char*)packetPointer,
+	tmp[mapHash[txtHash]].c_str(),m)==0)
+	{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
+	
+	// check for hash match; if hash match, check for exact match
+	for (int j = m; j < payLoadLength; j++) {
+	// Remove leading digit, add trailing digit, check for match.
+	txtHash = (txtHash + q - RM*packetPointer[j-m] % q) % q;
+	txtHash = (txtHash*R + packetPointer[j]) % q;
+	
+	// match
+	int offset = j - m + 1;
+	if ((mapHash[txtHash]>0) &&
+	memcmp((char*) (packetPointer + offset), tmp[mapHash[txtHash]].c_str(),m)==0)
+	{ cout<<"Virus Pattern " << tmp[mapHash[txtHash]] <<" exists"<<endl; break;}
+	}
+	}
+	\end{lstlisting}
+\vspace{\topsep}
+\subsection{Parallel Pattern-Matching Algorithm using CUDA}
+
+\begin{lstlisting}
+/*Rabin Karp Muli-pattern string matching implementation*/
+if(threadIdx.x >= 54) {
+GPU_results[0].num_strings = const_num_strings;
+for(int i=0;i<const_num_strings;i++) {
+int patLen = const_indexes[2*i+1] - const_indexes[2*i];
+//This condition checks if the pattern length is < packet length
+if(threadIdx.x<=256-patLen) {
+int hy,j;
+for(hy=j=0;j<patLen;j++) {
+if((j+threadIdx.x) >= 256) goto B;
+hy = (hy * 256 + elements[j+threadIdx.x].packet) % 997;
+}
+if(hy == const_patHash[i] && memCmpDev<T>(elements,const_pattern,const_indexes,i,threadIdx.x,patLen) == 0) //Complete this 
+{
+GPU_results[blockIdx.x].maliciousPayload = 1;
+GPU_results[blockIdx.x].signatureNumber = i; 
+d_result[i]=1;
+} 
+}
+B:
+} 
+}
+\end{lstlisting}
+\vspace{\topsep}
+\section{Wu-Manber Algorithm}
+\vspace{\topsep}
+\subsection{Parallel Pattern-Matching Algorithm using OpenMP}
+\vspace{\topsep}
+\subsubsection{Pre-Processing Phase}
+\begin{lstlisting}
+void preproc_wuManber(vector<string> pattern, int m, int B,
+int *SHIFT, int *PREFIX_value, int *PREFIX_index, int *PREFIX_size) {
+
+int p_size = pattern.size();
+DEBUG2("p_size= %d",p_size);
+#pragma omp parallel for
+for (int j = 0; j < p_size; ++j) {
+int threadNum = omp_get_thread_num();
+DEBUG2("ThreadNum= %d",threadNum);
+/* Don't want to add #pragma for the inner loop because
+* you may need to use the previous value of SHIFT[hash]
+* in the future loops, reduction is used if the data needs to be
+* gathered together at the end.
+*/
+//add each 3-character subpattern (similar to q-grams)
+
+}
+}
+\end{lstlisting}
+\vspace{\topsep}
+\subsubsection{Search Phase}
+\begin{lstlisting}
+unsigned int search_wuManber(vector<string> pattern, int m,
+string text, int n, int *SHIFT, int *PREFIX_value,
+int *PREFIX_index, int *PREFIX_size) {
+
+int column = m - 1;
+
+unsigned int hash1, hash2;
+
+unsigned int matches = 0;
+
+size_t shift;
+int p_size = pattern.size();
+
+const char* textC = text.c_str();
+
+for (column = m - 1;column < n;) {
+
+hash1 = text[column - 2];
+hash1 <<= m_nBitsInShift;
+hash1 += text[column - 1];
+hash1 <<= m_nBitsInShift;
+hash1 += text[column];
+
+shift = SHIFT[hash1];
+
+//printf("column %i hash1 = %i shift = %i\n", column, hash1, shift);
+
+if (shift == 0) {
+
+hash2 = text[column - m + 1];
+hash2 <<= m_nBitsInShift;
+hash2 += text[column - m + 2];
+volatile bool flag=false;
+//printf("hash2 = %i PREFIX[hash1].size = %i\n", hash2, PREFIX[hash1].size);
+
+//For every pattern with the same suffix as the text
+#pragma omp parallel for
+for (int i = 0; i < PREFIX_size[hash1]; i++) {
+//if(flag) continue;
+//If the prefix of the pattern matches that of the text
+if (hash2 == PREFIX_value[hash1 * p_size + i]) {
+
+//Compare directly the pattern with the text
+if (memcmp(pattern[PREFIX_index[hash1 * p_size + i]].c_str(),
+textC + column - m + 1, m) == 0) {
+
+#pragma omp critical
+{
+matches++;
+}
+//flag = true;
+printf("Match of pattern index %i at %i\n", PREFIX_index[hash1 * p_size + i], column-m+1);
+}
+
+}
+}
+
+column++;
+} else
+column += shift;
+}
+
+return matches;
+}
+\end{lstlisting}
+\vspace{\topsep}
+\subsection{Parallel Pattern-Matching Algorithm using CUDA}
+Each thread starts searching from its thread Id. elements array contains the 256 byte packet and is stored in shared memory.
+\begin{lstlisting}
+unsigned int hash1, hash2;
+if(threadIdx.x >= 54 + m-1)
+{
+hash1 = elements[threadIdx.x - 2].packet & 0x000000FF; //bitwise & used because to avoid two complement negative numbers
+hash1 <<= 2;
+hash1 += elements[threadIdx.x - 1].packet & 0x000000FF;
+hash1 <<= 2;
+hash1 += elements[threadIdx.x].packet & 0x000000FF;
+
+int shift = d_SHIFT[hash1];
+
+if (shift == 0) {
+
+hash2 = elements[threadIdx.x - m + 1].packet & 0x000000FF;
+hash2 <<= 2;
+hash2 += elements[threadIdx.x - m + 2].packet & 0x000000FF;
+
+//For every pattern with the same suffix as the text
+for (int i = 0; i < d_PREFIX_size[hash1]; i++) {
+
+//If the prefix of the pattern matches that of the text
+if (hash2 == d_PREFIX_value[hash1 * prefixPitch + i]) {
+
+
+int patIndex = d_PREFIX_index[hash1* prefixPitch + i];
+
+int starttxt = threadIdx.x - m + 1 + 2;
+int startpat = d_stridx[2*patIndex] + 2;
+int endpat = d_stridx[2*patIndex+1];
+//memcmp implementation
+while(elements[starttxt].packet!='\0' && startpat < endpat) {
+if(elements[starttxt++].packet!=d_pattern[startpat++]) return;
+}
+if(startpat >= endpat) { 
+printf("The pattern exists %d\n", patIndex);
+GPU_results[blockIdx.x].maliciousPayload = 1;
+result[blockIdx.x] = patIndex;
+}
+}
+}
+}
+}
+\end{lstlisting}
+\vspace{\topsep}
+\section{Aho-Corasick algorithm}
+\vspace{\topsep}
+\subsection{Sequential Pattern-Matching Algorithm using C}
+\vspace{\topsep}
+\subsubsection{Pre-Processing Phase}
+\begin{lstlisting}
+// Returns the number of states that the built machine has.
+// States are numbered 0 up to the return value - 1, inclusive.
+int buildMatchingMachine(vector<string> arr, int k)
+{
+// Initialize all values in output function as 0.
+
+
+// Initialize all values in goto function as -1.
+memset(g, -1, sizeof g);
+
+// Initially, we just have the 0 state
+int states = 1;
+
+// Construct values for goto function, i.e., fill g[][]
+// This is same as building a Trie for arr[]
+
+omp_set_dynamic(0);
+omp_set_num_threads(4);
+
+//#pragma omp parallel for
+for (int i = 0; i < k; ++i)
+{
+const string &word = arr[i];
+int currentState = 0;
+printf("tid = %d",omp_get_thread_num());
+// Insert all characters of current word in arr[]
+for (int j = 0; j < word.size(); ++j)
+{
+int ch = word[j];
+
+// Allocate a new node (create a new state) if a
+// node for ch doesn't exist.
+if (g[currentState][ch] == -1)
+g[currentState][ch] = states++;
+
+currentState = g[currentState][ch];
+}
+
+// Add current word in output function
+
+out[currentState] |= (patterns << i);
+
+}
+
+// For all characters which don't have an edge from
+// root (or state 0) in Trie, add a goto edge to state
+// 0 itself
+for (int ch = 0; ch < MAXC; ++ch)
+if (g[0][ch] == -1)
+g[0][ch] = 0;
+
+// Now, let's build the failure function
+
+// Initialize values in fail function
+memset(f, -1, sizeof f);
+
+// Failure function is computed in breadth first order
+// using a queue
+queue<int> q;
+
+// Iterate over every possible input
+for (int ch = 0; ch < MAXC; ++ch)
+{
+// All nodes of depth 1 have failure function value
+// as 0. For example, in above diagram we move to 0
+// from states 1 and 3.
+if (g[0][ch] != 0)
+{
+f[g[0][ch]] = 0;
+q.push(g[0][ch]);
+}
+}
+
+// Now queue has states 1 and 3
+while (q.size())
+{
+// Remove the front state from queue
+int state = q.front();
+q.pop();
+
+// For the removed state, find failure function for
+// all those characters for which goto function is
+// not defined.
+for (int ch = 0; ch < MAXC; ++ch)
+{
+// If goto function is defined for character 'ch'
+// and 'state'
+if (g[state][ch] != -1)
+{
+// Find failure state of removed state
+int failure = f[state];
+
+// Find the deepest node labeled by proper
+// suffix of string from root to current
+// state.
+while (g[failure][ch] == -1)
+failure = f[failure];
+
+failure = g[failure][ch];
+f[g[state][ch]] = failure;
+
+// Merge output values
+out[g[state][ch]] |= out[failure];
+
+// Insert the next level node (of Trie) in Queue
+q.push(g[state][ch]);
+}
+}
+}
+
+return states;
+}
+
+// Returns the next state the machine will transition to using goto
+// and failure functions.
+// currentState - The current state of the machine. Must be between
+//                0 and the number of states - 1, inclusive.
+// nextInput - The next character that enters into the machine.
+int findNextState(int currentState, char nextInput)
+{
+int answer = currentState;
+int ch = nextInput;
+
+// If goto is not defined, use failure function
+while (g[answer][ch] == -1)
+answer = f[answer];
+
+return g[answer][ch];
+}
+\end{lstlisting}
+\subsubsection{Search Phase}
+\begin{lstlisting}
+void Dissector::searchWords(vector<string> arr, int k, string text)
+{
+// Preprocess patterns.
+// Build machine with goto, failure and output functions
+buildMatchingMachine(arr, k);
+cout<<"Completed building machine"<<endl;
+// Initialize current state
+// Traverse the text through the nuilt machine to find
+// all occurrences of words in arr[]
+int currentState = 0;	
+for (int i = 0; i < text.size(); ++i)
+{
+int tid = omp_get_thread_num();
+int nthreads = omp_get_num_threads();
+
+//cout<<"threadID = "<<tid<<"loop index= "<<i<<endl;
+int pos = i;
+currentState = findNextState(currentState, text[pos]);
+//cout<<tid<<" "<<pos<<" "<<currentState<<" "<<endl;
+// If match not found, move to next state
+if (out[currentState] == checkPattern)
+{
+pos = pos + 1;
+continue;
+}
+// Match found, print all matching words of arr[]
+// using output function.
+for (int j = 0; j < k; ++j)
+{
+if ((out[currentState] & (patterns << j))!=checkPattern)
+{
+cout << "Word " << arr[j] << " appears from "
+<< pos - arr[j].size() + 1 << " to " << pos << endl;
+}
+}
+}
+}
+\end{lstlisting}
+\vspace{\topsep}
+\subsection{Parallel Pattern-Matching Algorithm using OpenMP}
+OpenMP directive “pragma omp parallel for” is added to the search phase of the algorithm. The pre-processing phase has to be done sequentially by a single thread, because the states are constructed as a result of the previous states and the new character. In the search phase, the algorithm was evaluated by 256 threads and each thread starts searching for the patterns from its thread Id. The for loop is split into 256 chunks and each chunk is assigned to a thread. 
+
+\begin{lstlisting}
+\caption{Search Phase}
+// This function finds all occurrences of all array words
+// in text.
+void Dissector::searchWords(vector<string> arr, int k, string text)
+{
+// Preprocess patterns.
+// Build machine with goto, failure and output functions
+buildMatchingMachine(arr, k);
+cout<<"Completed building machine"<<endl;
+// Initialize current state
+// Traverse the text through the nuilt machine to find
+// all occurrences of words in arr[]
+
+int nProcessors = omp_get_max_threads();
+//cout<<"max threads = "<<nProcessors<<endl;
+omp_set_dynamic(0);
+omp_set_num_threads(256);
+omp_set_dynamic(1);	
+#pragma omp parallel for	
+for (int i = 0; i < text.size(); ++i)
+{
+int tid = omp_get_thread_num();
+int nthreads = omp_get_num_threads();
+
+//cout<<"threadID = "<<tid<<"loop index= "<<i<<endl;
+int pos = i;
+int currentState = 0;
+while(pos<text.size()) {
+currentState = findNextState(currentState, text[pos]);
+// If match not found, move to next state
+if (out[currentState] == checkPattern)
+{
+pos = pos + 1;
+continue;
+}
+// Match found, print all matching words of arr[]
+// using output function.
+for (int j = 0; j < k; ++j)
+{
+if ((out[currentState] & (patterns << j))!=checkPattern)
+{
+cout << "Word " << arr[j] << " appears from "
+<< pos - arr[j].size() + 1 << " to " << pos << endl;
+}
+}
+pos = pos + 1;
+}
+}
+}
+\end{lstlisting}
+

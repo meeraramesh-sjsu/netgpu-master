@@ -1,0 +1,93 @@
+
+\chapter{Implementation}
+
+The netGPU \cite{bib3} framework was used to capture packets from the network interface card or file and to transfer the packets to the GPU.
+
+\section{Packet Capture and Transfer to the GPU}
+\vspace{\topsep}
+\subsection{Capturing the Network Packets}
+Packet feeders obtain network packet data using the LibPCAP library and save the data into the packet buffer object, as shown in Fig. ~\ref{fig:packetfeeder}. LibPCAP \cite{bib4} is a C/C++ library used to capture network traffic data. If the buffer is full, the thread waits until the processor thread copies the buffer from the CPU to the GPU. 
+
+\begin{figure}[H]
+	\centering
+	\begin{lstlisting}[frame=none,language=C++] 
+	loadPacketBuffer()
+	{
+	lockTheMutex();
+	validate = ifBufferFull();
+	if(validate==1)
+	//WaitForBuffer waits until the entire buffer is full
+	waitForBufferToBeCopied();
+	unlockTheMutex();
+	lockTheMutex();
+	saveIntoPacketBuffer();
+	unlockTheMutex();
+	}
+	\end{lstlisting}
+	\caption{Pseudo code to store the packet buffer that will be copied to the GPU}
+	\label{fig:packetfeeder}
+\end{figure}
+\squeezeup
+\subsection{Buffer the Network Packets}
+getSniffedPacketBuffer() is the getter method of the packet feeder class to obtain the packet buffer object. The derived classes of the packet feeder class should implement this method. The classes which derive from the abstract packet feeder class will obtain the packets from the network card or a file.
+
+The packet buffer object defines an array of 'Max Buffer' size packets and the maximum size of each packet is 'Max Packet' bytes. Each packet has a header and a payload. Fig. ~\ref{fig:packetbuffer} shows the data structure of the packet buffer object and  packets with the header and body.
+The packet buffer object is copied to pinned memory so that the GPU can directly access it. Fig. ~\ref{fig:packetbuffer} contains the data structure representing the header of the packet. The header consists of two fields, the proto and offset. The proto and offset fields are one-dimensional arrays of size seven, and they represent the seven layers of the open source interconnect (OSI) model.
+
+\begin{figure}[H]
+	\centering
+	\begin{lstlisting}[frame=none,language=C++] 
+	typedef struct{
+	int proto[7];
+	int offset[7];        
+	}headers_t;
+	
+	typedef struct{
+	timeval timestamp;
+	headers_t headers;
+	uint8_t packet[MAX_BUFFER_PACKET_SIZE];
+	}packet_t;
+	
+	packet_t* buffer;
+	\end{lstlisting}
+	\caption[The array of packets of "Max Buffer" size]{The array of packets of "Max Buffer" size \cite{bib3}}
+	\label{fig:packetbuffer}
+\end{figure}
+\squeezeup
+\section{Dissectors}
+Dissector class was used to get the size of the Ethernet, IPv4, TCP, and UDP headers and was used to fill the proto and offset fields. A method from the PacketBuffer class calls the dissect method of this class before pushing the packet into the packet buffer. The dissect method calls a data link layer method depending on the data link layer protocol. The data link layer method calls the network layer method (IPv4 or IPv6) depending on the network layer protocol. The network layer method calls the transport layer protocol method depending on the transport layer protocol (TCP or UDP). DissectEthernet, dissectIpv4 and dissectTcp are data link layer, network layer, and transport layer methods (respectively) as shown in Fig. ~\ref{fig:calldissectmethods}. The dissect methods call the virtual action methods.
+
+\begin{figure}[H]
+	\centering
+	\begin{lstlisting}[frame=none,language=C++] 
+	class Dissector {
+	public:
+	unsigned int dissect(const uint8_t* packetPointer,const struct pcap_pkthdr* hdr,const int deviceDataLinkInfo,void* user);
+	private:
+	void dissectEthernet(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	void dissectIp4(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	void dissectTcp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	void dissectUdp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	void dissectIcmp(const uint8_t* packetPointer,unsigned int * totalHeaderLength,const struct pcap_pkthdr* hdr,void* user);
+	
+	//Virtual Actions:
+	
+	virtual void EthernetVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ethernet2Header* header,void* user)=0;
+	virtual void Ip4VirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,Ip4Header* header,void* user)=0;
+	virtual void TcpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,TcpHeader* header,void* user)=0;
+	virtual void UdpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,UdpHeader* header,void* user)=0;
+	virtual void IcmpVirtualAction(const uint8_t* packetPointer,unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,IcmpHeader* header,void* user)=0;
+	
+	virtual void EndOfDissectionVirtualAction(unsigned int* totalHeaderLength,const struct pcap_pkthdr* hdr,void* user)=0;
+	
+	};
+	\end{lstlisting}
+	\caption[Dissect methods and targeted OSI layer methods]{Dissect methods and targeted OSI layer methods \cite{bib3}}
+	\label{fig:calldissectmethods}
+\end{figure}
+\squeezeup
+
+The virtual functions are defined in the pre-analyzer dissector class and the size dissector class. The pre-analyzer dissector class methods are used for performing header checking in the CPU using C and OpenMP. The size dissector class methods are used to extract the packet to get the protocol and header offset fields. The offsets will be used in the GPU for DPI.
+
+\subsection{PreAnalyzerDissector}
+This component was used while developing the CPU-version of DPI. The methods of this class are used to decode and analyze the headers in the packet. The IPv4 virtual action method checks the integrity of the IPv4 layer header. The TCP virtual action method checks the integrity of the TCP header. In the payload module, three string matching algorithms were developed using C and OpenMP. 

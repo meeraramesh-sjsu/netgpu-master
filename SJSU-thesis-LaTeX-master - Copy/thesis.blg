@@ -1,0 +1,17 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: thesis.aux
+A level-1 auxiliary file: chap1.aux
+A level-1 auxiliary file: chap2.aux
+A level-1 auxiliary file: chap3.aux
+A level-1 auxiliary file: chap9.aux
+A level-1 auxiliary file: chap4.aux
+A level-1 auxiliary file: chap5.aux
+A level-1 auxiliary file: chap6.aux
+A level-1 auxiliary file: chap7.aux
+I couldn't open style file uriref.bst
+---line 56 of file thesis.aux
+ : \bibstyle{uriref
+ :                 }
+I'm skipping whatever remains of this command
+A level-1 auxiliary file: appA.aux
+I found no style file---while reading file thesis.aux
+(There were 2 error messages)
