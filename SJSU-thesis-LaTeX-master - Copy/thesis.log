@@ -1,0 +1,1150 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.3.27)  5 JUN 2017 09:06
+entering extended mode
+**./thesis.tex
+(thesis.tex
+LaTeX2e <2017/01/01> patch level 1
+Babel <3.9r> and hyphenation patterns for 75 language(s) loaded.
+(urithesis.cls
+Document Class: urithesis 2011/08/23 v 1.13 San Jose State University thesis fo
+rmat
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\base\report.cls"
+Document Class: report 2014/09/29 v1.4h Standard LaTeX document class
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\base\size12.clo"
+File: size12.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+\@realheadsep=\skip43
+\@realtextheight=\skip44
+\@altheadsep=\skip45
+\@alttextheight=\skip46
+\@fullheadheight=\skip47
+\@headtofootheight=\skip48
+\c@chaptercitecount=\count88
+\c@totaltablecount=\count89
+\c@totalfigurecount=\count90
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsmath\amsmath.sty"
+Package: amsmath 2016/11/05 v2.16a AMS math features
+\@mathmargin=\skip49
+
+For additional information on amsmath, use the `?' option.
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsmath\amstext.sty"
+Package: amstext 2000/06/29 v2.01 AMS text
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsmath\amsgen.sty"
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks14
+\ex@=\dimen103
+))
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsmath\amsbsy.sty"
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen104
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsmath\amsopn.sty"
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count91
+LaTeX Info: Redefining \frac on input line 213.
+\uproot@=\count92
+\leftroot@=\count93
+LaTeX Info: Redefining \overline on input line 375.
+\classnum@=\count94
+\DOTSCASE@=\count95
+LaTeX Info: Redefining \ldots on input line 472.
+LaTeX Info: Redefining \dots on input line 475.
+LaTeX Info: Redefining \cdots on input line 596.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen105
+LaTeX Font Info:    Redeclaring font encoding OML on input line 712.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 713.
+\macc@depth=\count96
+\c@MaxMatrixCols=\count97
+\dotsspace@=\muskip10
+\c@parentequation=\count98
+\dspbrk@lvl=\count99
+\tag@help=\toks15
+\row@=\count100
+\column@=\count101
+\maxfields@=\count102
+\andhelp@=\toks16
+\eqnshift@=\dimen106
+\alignsep@=\dimen107
+\tagshift@=\dimen108
+\tagwidth@=\dimen109
+\totwidth@=\dimen110
+\lineht@=\dimen111
+\@envbody=\toks17
+\multlinegap=\skip50
+\multlinetaggap=\skip51
+\mathdisplay@stack=\toks18
+LaTeX Info: Redefining \[ on input line 2817.
+LaTeX Info: Redefining \] on input line 2818.
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amscls\amsthm.sty"
+Package: amsthm 2015/03/04 v2.20.2
+\thm@style=\toks19
+\thm@bodyfont=\toks20
+\thm@headfont=\toks21
+\thm@notefont=\toks22
+\thm@headpunct=\toks23
+\thm@preskip=\skip52
+\thm@postskip=\skip53
+\thm@headsep=\skip54
+\dth@everypar=\toks24
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsfonts\amsfonts.sty"
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsfonts\amssymb.sty"
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsmath\amsxtra.sty"
+Package: amsxtra 1999/11/15 v1.2c AMS extra commands
+LaTeX Info: Redefining \nobreakspace on input line 54.
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics\graphicx.sty"
+Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics\keyval.sty"
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks25
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics\graphics.sty"
+Package: graphics 2016/10/09 v1.0u Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics\trig.sty"
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics-cfg\graphics.cfg"
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 99.
+ ("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics-def\pdftex.def"
+File: pdftex.def 2017/01/12 v0.06k Graphics/color for pdfTeX
+("C:\Users\Karthik\Pictures\New folder (2)\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+) ("C:\Users\Karthik\Pictures\New folder (2)\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count103
+))
+\Gin@req@height=\dimen112
+\Gin@req@width=\dimen113
+) ("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\multirow\multirow.sty"
+Package: multirow 2016/11/25 v2.2 Span multiple rows of a table
+\multirow@colwidth=\skip55
+\multirow@cntb=\count104
+\multirow@dima=\skip56
+\bigstrutjot=\dimen114
+) ("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics\rotating.sty"
+Package: rotating 2016/08/11 v2.16d rotated objects in LaTeX
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\base\ifthen.sty"
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+\c@r@tfl@t=\count105
+\rotFPtop=\skip57
+\rotFPbot=\skip58
+\rot@float@box=\box28
+\rot@mess@toks=\toks26
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\tools\multicol.sty"
+Package: multicol 2016/04/07 v1.8p multicolumn formatting (FMi)
+\c@tracingmulticols=\count106
+\mult@box=\box29
+\multicol@leftmargin=\dimen115
+\c@unbalance=\count107
+\c@collectmore=\count108
+\doublecol@number=\count109
+\multicoltolerance=\count110
+\multicolpretolerance=\count111
+\full@width=\dimen116
+\page@free=\dimen117
+\premulticols=\dimen118
+\postmulticols=\dimen119
+\multicolsep=\skip59
+\multicolbaselineskip=\skip60
+\partial@page=\box30
+\last@line=\box31
+\maxbalancingoverflow=\dimen120
+\mult@rightbox=\box32
+\mult@grightbox=\box33
+\mult@gfirstbox=\box34
+\mult@firstbox=\box35
+\@tempa=\box36
+\@tempa=\box37
+\@tempa=\box38
+\@tempa=\box39
+\@tempa=\box40
+\@tempa=\box41
+\@tempa=\box42
+\@tempa=\box43
+\@tempa=\box44
+\@tempa=\box45
+\@tempa=\box46
+\@tempa=\box47
+\@tempa=\box48
+\@tempa=\box49
+\@tempa=\box50
+\@tempa=\box51
+\@tempa=\box52
+\c@columnbadness=\count112
+\c@finalcolumnbadness=\count113
+\last@try=\dimen121
+\multicolovershoot=\dimen122
+\multicolundershoot=\dimen123
+\mult@nat@firstbox=\box53
+\colbreak@box=\box54
+\mc@col@check@num=\count114
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\algorithms\algorithmic.sty
+"
+Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
+\c@ALC@unique=\count115
+\c@ALC@line=\count116
+\c@ALC@rem=\count117
+\c@ALC@depth=\count118
+\ALC@tlm=\skip61
+\algorithmicindent=\skip62
+) ("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\tools\longtable.sty"
+Package: longtable 2014/10/28 v4.11 Multi-page Table package (DPC)
+\LTleft=\skip63
+\LTright=\skip64
+\LTpre=\skip65
+\LTpost=\skip66
+\LTchunksize=\count119
+\LTcapwidth=\dimen124
+\LT@head=\box55
+\LT@firsthead=\box56
+\LT@foot=\box57
+\LT@lastfoot=\box58
+\LT@cols=\count120
+\LT@rows=\count121
+\c@LT@tables=\count122
+\c@LT@chunks=\count123
+\LT@p@ftn=\toks27
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\booktabs\booktabs.sty"
+Package: booktabs 2005/04/14 v1.61803 publication quality tables
+\heavyrulewidth=\dimen125
+\lightrulewidth=\dimen126
+\cmidrulewidth=\dimen127
+\belowrulesep=\dimen128
+\belowbottomsep=\dimen129
+\aboverulesep=\dimen130
+\abovetopsep=\dimen131
+\cmidrulesep=\dimen132
+\cmidrulekern=\dimen133
+\defaultaddspace=\dimen134
+\@cmidla=\count124
+\@cmidlb=\count125
+\@aboverulesep=\dimen135
+\@belowrulesep=\dimen136
+\@thisruleclass=\count126
+\@lastruleclass=\count127
+\@thisrulewidth=\dimen137
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\listings\listings.sty"
+\lst@mode=\count128
+\lst@gtempboxa=\box59
+\lst@token=\toks28
+\lst@length=\count129
+\lst@currlwidth=\dimen138
+\lst@column=\count130
+\lst@pos=\count131
+\lst@lostspace=\dimen139
+\lst@width=\dimen140
+\lst@newlines=\count132
+\lst@lineno=\count133
+\lst@maxwidth=\dimen141
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\listings\lstmisc.sty"
+File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
+\c@lstnumber=\count134
+\lst@skipnumbers=\count135
+\lst@framebox=\box60
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\listings\listings.cfg"
+File: listings.cfg 2015/06/04 1.6 listings configuration
+))
+Package: listings 2015/06/04 1.6 (Carsten Heinz)
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\cmap\cmap.sty"
+Package: cmap 2008/03/06 v1.0h CMap support: searchable PDF
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\hyperref\hyperref.sty"
+Package: hyperref 2016/06/24 v6.83q Hypertext links for LaTeX
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\generic\oberdiek\hobsub-hyperref
+.sty"
+Package: hobsub-hyperref 2016/05/16 v1.14 Bundle oberdiek, subset hyperref (HO)
+
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\generic\oberdiek\hobsub-generic.
+sty"
+Package: hobsub-generic 2016/05/16 v1.14 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2016/05/16 v1.14 Construct package bundles (HO)
+Package hobsub Info: Skipping package `infwarerr' (already loaded).
+Package hobsub Info: Skipping package `ltxcmds' (already loaded).
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+Package: intcalc 2016/05/16 v1.2 Expandable calculations with integers (HO)
+Package: ifpdf 2016/05/14 v3.1 Provides the ifpdf switch
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+Package: pdftexcmds 2016/05/21 v0.22 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+Package: pdfescape 2016/05/16 v1.14 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2016/05/16 v1.4 Expandable calculations on big integers (HO
+)
+Package: bitset 2016/05/16 v1.2 Handle bit-vector datatype (HO)
+Package: uniquecounter 2016/05/16 v1.3 Provide unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2016/05/16 v1.5 Let assignment for LaTeX macros (HO)
+Package: hopatch 2016/05/16 v1.3 Wrapper for package hooks (HO)
+Package: xcolor-patch 2016/05/16 xcolor patch
+Package: atveryend 2016/05/16 v1.9 Hooks at the very end of document (HO)
+Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
+Package: refcount 2016/05/16 v3.5 Data extraction from label references (HO)
+Package: hycolor 2016/05/16 v1.8 Color options for hyperref/bookmark (HO)
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\generic\ifxetex\ifxetex.sty"
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\oberdiek\auxhook.sty"
+Package: auxhook 2016/05/16 v1.4 Hooks for auxiliary files (HO)
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\oberdiek\kvoptions.sty"
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+)
+\@linkdim=\dimen142
+\Hy@linkcounter=\count136
+\Hy@pagecounter=\count137
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\hyperref\pd1enc.def"
+File: pd1enc.def 2016/06/24 v6.83q Hyperref: PDFDocEncoding definition (HO)
+)
+\Hy@SavedSpaceFactor=\count138
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\00miktex\hyperref.cfg"
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Hyper figures OFF on input line 4486.
+Package hyperref Info: Link nesting OFF on input line 4491.
+Package hyperref Info: Hyper index ON on input line 4494.
+Package hyperref Info: Plain pages OFF on input line 4501.
+Package hyperref Info: Backreferencing OFF on input line 4506.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4735.
+\c@Hy@tempcnt=\count139
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\url\url.sty"
+\Urlmuskip=\muskip11
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 5088.
+\XeTeXLinkMargin=\dimen143
+\Fld@menulength=\count140
+\Field@Width=\dimen144
+\Fld@charsize=\dimen145
+Package hyperref Info: Hyper figures OFF on input line 6342.
+Package hyperref Info: Link nesting OFF on input line 6347.
+Package hyperref Info: Hyper index ON on input line 6350.
+Package hyperref Info: backreferencing OFF on input line 6357.
+Package hyperref Info: Link coloring OFF on input line 6362.
+Package hyperref Info: Link coloring with OCG OFF on input line 6367.
+Package hyperref Info: PDF/A mode OFF on input line 6372.
+LaTeX Info: Redefining \ref on input line 6412.
+LaTeX Info: Redefining \pageref on input line 6416.
+\Hy@abspage=\count141
+\c@Item=\count142
+\c@Hfootnote=\count143
+)
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\hyperref\hpdftex.def"
+File: hpdftex.def 2016/06/24 v6.83q Hyperref driver for pdfTeX
+\Fld@listcount=\count144
+\c@bookmark@seq@number=\count145
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\oberdiek\rerunfilecheck.st
+y"
+Package: rerunfilecheck 2016/05/16 v1.8 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip67
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 21.
+ ("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\base\fontenc.sty"
+Package: fontenc 2017/01/24 v2.0c Standard LaTeX package
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\base\t1enc.def"
+File: t1enc.def 2017/01/24 v2.0c Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
+)<<t1.cmap>>) ("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\caption\capt
+ion.sty"
+Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\caption\caption3.sty"
+Package: caption3 2016/05/22 v1.7-166 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 67.
+\captionmargin=\dimen146
+\captionmargin@=\dimen147
+\captionwidth=\dimen148
+\caption@tempdima=\dimen149
+\caption@indent=\dimen150
+\caption@parindent=\dimen151
+\caption@hangindent=\dimen152
+Package caption Info: Unknown document class (or package),
+(caption)             standard defaults will be used.
+)
+
+Package caption Warning: Unsupported document class (or package) detected,
+(caption)                usage of the caption package is not recommended.
+See the caption package documentation for explanation.
+
+Package caption Info: \@makecaption = \long macro:#1#2->\vskip \abovecaptionski
+p \sbox \@tempboxa {#1. #2}\ifdim \wd \@tempboxa >\hsize #1. #2\par \else \glob
+al \@minipagefalse \hb@xt@ \hsize {\hfil \box \@tempboxa \hfil }\fi \vskip \bel
+owcaptionskip .
+\c@ContinuedFloat=\count146
+Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
+Package caption Info: longtable package is loaded.
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\caption\ltcaption.sty"
+Package: ltcaption 2013/06/09 v1.4-94 longtable captions (AR)
+)
+Package caption Info: rotating package is loaded.
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics\color.sty"
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics-cfg\color.cfg"
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 147.
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\base\inputenc.sty"
+Package: inputenc 2015/03/17 v1.2c Input encoding file
+\inpenc@prehook=\toks29
+\inpenc@posthook=\toks30
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\ucs\utf8x.def"
+File: utf8x.def 2004/10/17 UCS: Input encoding UTF-8
+))
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\ucs\ucs.sty"
+Package: ucs 2013/05/11 v2.2 UCS: Unicode input support
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\ucs\uni-global.def"
+File: uni-global.def 2013/05/13 UCS: Unicode global data
+)
+\uc@secondtry=\count147
+\uc@combtoks=\toks31
+\uc@combtoksb=\toks32
+\uc@temptokena=\toks33
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\xcolor\xcolor.sty"
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\graphics-cfg\color.cfg"
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+LaTeX Info: Redefining \color on input line 709.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\psnfss\times.sty"
+Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\float\float.sty"
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count148
+\float@exts=\toks34
+\float@box=\box61
+\@float@everytoks=\toks35
+\@floatcapt=\box62
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\enumitem\enumitem.sty"
+Package: enumitem 2011/09/28 v3.5.2 Customized lists
+\labelindent=\skip68
+\enit@outerparindent=\dimen153
+\enit@toks=\toks36
+\enit@inbox=\box63
+\enitdp@description=\count149
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\seqsplit\seqsplit.sty"
+Package: seqsplit 2006/08/07 v0.1 Splitting long sequences (DNA, RNA, proteins,
+ etc.) 
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\base\textcomp.sty"
+Package: textcomp 2017/01/24 v2.0c Standard LaTeX package
+Package textcomp Info: Sub-encoding information:
+(textcomp)               5 = only ISO-Adobe without \textcurrency
+(textcomp)               4 = 5 + \texteuro
+(textcomp)               3 = 4 + \textohm
+(textcomp)               2 = 3 + \textestimated + \textcurrency
+(textcomp)               1 = TS1 - \textcircled - \t
+(textcomp)               0 = TS1 (full)
+(textcomp)             Font families with sub-encoding setting implement
+(textcomp)             only a restricted character set as indicated.
+(textcomp)             Family '?' is the default used for unknown fonts.
+(textcomp)             See the documentation for details.
+Package textcomp Info: Setting ? sub-encoding to TS1/1 on input line 79.
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\base\ts1enc.def"
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+)
+LaTeX Info: Redefining \oldstylenums on input line 334.
+Package textcomp Info: Setting cmr sub-encoding to TS1/0 on input line 349.
+Package textcomp Info: Setting cmss sub-encoding to TS1/0 on input line 350.
+Package textcomp Info: Setting cmtt sub-encoding to TS1/0 on input line 351.
+Package textcomp Info: Setting cmvtt sub-encoding to TS1/0 on input line 352.
+Package textcomp Info: Setting cmbr sub-encoding to TS1/0 on input line 353.
+Package textcomp Info: Setting cmtl sub-encoding to TS1/0 on input line 354.
+Package textcomp Info: Setting ccr sub-encoding to TS1/0 on input line 355.
+Package textcomp Info: Setting ptm sub-encoding to TS1/4 on input line 356.
+Package textcomp Info: Setting pcr sub-encoding to TS1/4 on input line 357.
+Package textcomp Info: Setting phv sub-encoding to TS1/4 on input line 358.
+Package textcomp Info: Setting ppl sub-encoding to TS1/3 on input line 359.
+Package textcomp Info: Setting pag sub-encoding to TS1/4 on input line 360.
+Package textcomp Info: Setting pbk sub-encoding to TS1/4 on input line 361.
+Package textcomp Info: Setting pnc sub-encoding to TS1/4 on input line 362.
+Package textcomp Info: Setting pzc sub-encoding to TS1/4 on input line 363.
+Package textcomp Info: Setting bch sub-encoding to TS1/4 on input line 364.
+Package textcomp Info: Setting put sub-encoding to TS1/5 on input line 365.
+Package textcomp Info: Setting uag sub-encoding to TS1/5 on input line 366.
+Package textcomp Info: Setting ugq sub-encoding to TS1/5 on input line 367.
+Package textcomp Info: Setting ul8 sub-encoding to TS1/4 on input line 368.
+Package textcomp Info: Setting ul9 sub-encoding to TS1/4 on input line 369.
+Package textcomp Info: Setting augie sub-encoding to TS1/5 on input line 370.
+Package textcomp Info: Setting dayrom sub-encoding to TS1/3 on input line 371.
+Package textcomp Info: Setting dayroms sub-encoding to TS1/3 on input line 372.
+
+Package textcomp Info: Setting pxr sub-encoding to TS1/0 on input line 373.
+Package textcomp Info: Setting pxss sub-encoding to TS1/0 on input line 374.
+Package textcomp Info: Setting pxtt sub-encoding to TS1/0 on input line 375.
+Package textcomp Info: Setting txr sub-encoding to TS1/0 on input line 376.
+Package textcomp Info: Setting txss sub-encoding to TS1/0 on input line 377.
+Package textcomp Info: Setting txtt sub-encoding to TS1/0 on input line 378.
+Package textcomp Info: Setting lmr sub-encoding to TS1/0 on input line 379.
+Package textcomp Info: Setting lmdh sub-encoding to TS1/0 on input line 380.
+Package textcomp Info: Setting lmss sub-encoding to TS1/0 on input line 381.
+Package textcomp Info: Setting lmssq sub-encoding to TS1/0 on input line 382.
+Package textcomp Info: Setting lmvtt sub-encoding to TS1/0 on input line 383.
+Package textcomp Info: Setting lmtt sub-encoding to TS1/0 on input line 384.
+Package textcomp Info: Setting qhv sub-encoding to TS1/0 on input line 385.
+Package textcomp Info: Setting qag sub-encoding to TS1/0 on input line 386.
+Package textcomp Info: Setting qbk sub-encoding to TS1/0 on input line 387.
+Package textcomp Info: Setting qcr sub-encoding to TS1/0 on input line 388.
+Package textcomp Info: Setting qcs sub-encoding to TS1/0 on input line 389.
+Package textcomp Info: Setting qpl sub-encoding to TS1/0 on input line 390.
+Package textcomp Info: Setting qtm sub-encoding to TS1/0 on input line 391.
+Package textcomp Info: Setting qzc sub-encoding to TS1/0 on input line 392.
+Package textcomp Info: Setting qhvc sub-encoding to TS1/0 on input line 393.
+Package textcomp Info: Setting futs sub-encoding to TS1/4 on input line 394.
+Package textcomp Info: Setting futx sub-encoding to TS1/4 on input line 395.
+Package textcomp Info: Setting futj sub-encoding to TS1/4 on input line 396.
+Package textcomp Info: Setting hlh sub-encoding to TS1/3 on input line 397.
+Package textcomp Info: Setting hls sub-encoding to TS1/3 on input line 398.
+Package textcomp Info: Setting hlst sub-encoding to TS1/3 on input line 399.
+Package textcomp Info: Setting hlct sub-encoding to TS1/5 on input line 400.
+Package textcomp Info: Setting hlx sub-encoding to TS1/5 on input line 401.
+Package textcomp Info: Setting hlce sub-encoding to TS1/5 on input line 402.
+Package textcomp Info: Setting hlcn sub-encoding to TS1/5 on input line 403.
+Package textcomp Info: Setting hlcw sub-encoding to TS1/5 on input line 404.
+Package textcomp Info: Setting hlcf sub-encoding to TS1/5 on input line 405.
+Package textcomp Info: Setting pplx sub-encoding to TS1/3 on input line 406.
+Package textcomp Info: Setting pplj sub-encoding to TS1/3 on input line 407.
+Package textcomp Info: Setting ptmx sub-encoding to TS1/4 on input line 408.
+Package textcomp Info: Setting ptmj sub-encoding to TS1/4 on input line 409.
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\fancyvrb\fancyvrb.sty"
+Package: fancyvrb 2008/02/07
+
+Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix 
+<2008/02/07> (tvz)
+\FV@CodeLineNo=\count150
+\FV@InFile=\read1
+\FV@TabBox=\box64
+\c@FancyVerbLine=\count151
+\FV@StepNumber=\count152
+\FV@OutFile=\write3
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\listings\lstlang1.sty"
+File: lstlang1.sty 2015/06/04 1.6 listings language file
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\listings\lstlang1.sty"
+File: lstlang1.sty 2015/06/04 1.6 listings language file
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\listings\lstmisc.sty"
+File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\geometry\geometry.sty"
+Package: geometry 2010/09/12 v5.6 Page Geometry
+\Gm@cnth=\count153
+\Gm@cntv=\count154
+\c@Gm@tempcnt=\count155
+\Gm@bindingoffset=\dimen154
+\Gm@wd@mp=\dimen155
+\Gm@odd@mp=\dimen156
+\Gm@even@mp=\dimen157
+\Gm@layoutwidth=\dimen158
+\Gm@layoutheight=\dimen159
+\Gm@layouthoffset=\dimen160
+\Gm@layoutvoffset=\dimen161
+\Gm@dimlist=\toks37
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\geometry\geometry.cfg")
+
+Package geometry Warning: Over-specification in `h'-direction.
+    `width' (433.62pt) is ignored.
+
+
+Package geometry Warning: Over-specification in `v'-direction.
+    `height' (379.4175pt) is ignored.
+
+) (thesis.aux (chap1.aux) (chap2.aux) (chap3.aux) (chap4.aux) (chap5.aux)
+(chap6.aux) (chap7.aux) (chap8.aux) (appA.aux))
+\openout1 = `thesis.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 250.
+LaTeX Font Info:    ... okay on input line 250.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 250.
+LaTeX Font Info:    ... okay on input line 250.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 250.
+LaTeX Font Info:    ... okay on input line 250.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 250.
+LaTeX Font Info:    ... okay on input line 250.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 250.
+LaTeX Font Info:    ... okay on input line 250.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 250.
+LaTeX Font Info:    ... okay on input line 250.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 250.
+LaTeX Font Info:    ... okay on input line 250.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 250.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 250.
+
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\base\ts1cmr.fd"
+File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 250.
+LaTeX Font Info:    Try loading font information for T1+ptm on input line 250.
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\psnfss\t1ptm.fd"
+File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\context\base\supp-pdf.mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count156
+\scratchdimen=\dimen162
+\scratchbox=\box65
+\nofMPsegments=\count157
+\nofMParguments=\count158
+\everyMPshowfont=\toks38
+\MPscratchCnt=\count159
+\MPscratchDim=\dimen163
+\MPnumerator=\count160
+\makeMPintoPDFobject=\count161
+\everyMPtoPDFconversion=\toks39
+)
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\oberdiek\epstopdf-base.sty
+"
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+ ("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\oberdiek\grfext.sty"
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+)
+\c@lstlisting=\count162
+\AtBeginShipoutBox=\box66
+Package hyperref Info: Link coloring ON on input line 250.
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\hyperref\nameref.sty"
+Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\generic\oberdiek\gettitlestring.
+sty"
+Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
+)
+\c@section@level=\count163
+)
+LaTeX Info: Redefining \ref on input line 250.
+LaTeX Info: Redefining \pageref on input line 250.
+LaTeX Info: Redefining \nameref on input line 250.
+ (thesis.out) (thesis.out)
+\@outlinefile=\write4
+\openout4 = `thesis.out'.
+
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
+Package caption Info: End \AtBeginDocument code.
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\ucs\ucsencs.def"
+File: ucsencs.def 2011/01/21 Fixes to fontencodings LGR, T3
+)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(108.405pt, 433.62001pt, 72.26999pt)
+* v-part:(T,H,B)=(90.3375pt, 614.295pt, 90.3375pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=433.62001pt
+* \textheight=614.295pt
+* \oddsidemargin=36.13501pt
+* \evensidemargin=36.13501pt
+* \topmargin=-7.94972pt
+* \headheight=0.72229pt
+* \headsep=25.29494pt
+* \topskip=12.0pt
+* \footskip=36.135pt
+* \marginparwidth=72.26999pt
+* \marginparsep=14.45377pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+\c@@tmppage=\count164
+\@tmpheighta=\skip69
+\@tmpheightb=\skip70
+[1
+
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
+LaTeX Font Info:    Try loading font information for TS1+ptm on input line 301.
+
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\psnfss\ts1ptm.fd"
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)
+[2]<<ot1.cmap>><<oml.cmap>><<oms.cmap>><<omx.cmap>>
+LaTeX Font Info:    Try loading font information for U+msa on input line 301.
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsfonts\umsa.fd"
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 301.
+
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\amsfonts\umsb.fd"
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+[3]
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 301.
+ (abs.tex) [4
+
+] (ack.tex) [5
+
+] (thesis.toc [6
+
+]
+Overfull \vbox (673.88487pt too high) has occurred while \output is active []
+
+
+[7])
+\tf@toc=\write5
+\openout5 = `thesis.toc'.
+
+
+Overfull \vbox (673.88487pt too high) has occurred while \output is active []
+
+
+[8] (thesis.lot
+Underfull \hbox (badness 2698) in paragraph at lines 8--8
+ [][][] [][][]\T1/ptm/m/n/12 Multi-Pattern Search on "ANDYMEETMESOONAT-GOOGLE" 
+
+ []
+
+)
+\tf@lot=\write6
+\openout6 = `thesis.lot'.
+
+ [9
+
+] (thesis.lof [10
+
+])
+\tf@lof=\write7
+\openout7 = `thesis.lof'.
+
+
+Overfull \vbox (673.88487pt too high) has occurred while \output is active []
+
+
+[11]
+\openout2 = `chap1.aux'.
+
+ (chap1.tex
+CHAPTER 1.
+\citation{bib6}
+\citation{bib13}
+\citation{bib24}
+\citation{bib27}
+\citation{bib12}
+\citation{bib25}
+\citation{bib10}
+\citation{bib11}
+\citation{bib9}
+\citation{bib7}
+[1
+
+
+]) [2]
+\openout2 = `chap2.aux'.
+
+ (chap2.tex
+CHAPTER 2.
+\citation{bib11}
+\citation{bib5}
+[3
+
+
+
+]
+\citation{bib8}
+\citation{bib14}
+[4]
+\citation{bib5}
+\citation{bib5}
+<cudablock.png, id=500, 286.82156pt x 279.29344pt>
+File: cudablock.png Graphic file (type png)
+ <use cudablock.png>
+Package pdftex.def Info: cudablock.png used on input line 28.
+(pdftex.def)             Requested size: 284.52756pt x 277.06389pt.
+ [5]
+<pinned.png, id=511, 482.80376pt x 353.32pt>
+File: pinned.png Graphic file (type png)
+ <use pinned.png>
+Package pdftex.def Info: pinned.png used on input line 39.
+(pdftex.def)             Requested size: 284.52756pt x 208.22517pt.
+ [6 <./cudablock.png>]
+\citation{bib5}
+\citation{bib5}
+\citation{bib5}
+[7 <./pinned.png>]
+\citation{bib5}
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\ucs\uni-32.def"
+File: uni-32.def 2013/05/13 UCS: Unicode data U+2000..U+20FF
+)
+\citation{bib30}
+<warpscheduler.png, id=528, 530.98375pt x 517.935pt>
+File: warpscheduler.png Graphic file (type png)
+ <use warpscheduler.png>
+Package pdftex.def Info: warpscheduler.png used on input line 63.
+(pdftex.def)             Requested size: 284.52756pt x 277.539pt.
+
+[8]
+\citation{bib5}
+<warpdivergence.png, id=537, 673.51625pt x 551.05875pt>
+File: warpdivergence.png Graphic file (type png)
+
+<use warpdivergence.png>
+Package pdftex.def Info: warpdivergence.png used on input line 76.
+(pdftex.def)             Requested size: 341.43306pt x 279.35454pt.
+ [9 <./warpscheduler.png>]
+\citation{bib19}
+[10 <./warpdivergence.png>]
+\citation{bib29}
+[11]
+\citation{bib18}
+[12] <trie.png, id=569, 565.11125pt x 228.855pt>
+File: trie.png Graphic file (type png)
+ <use trie.png>
+Package pdftex.def Info: trie.png used on input line 170.
+(pdftex.def)             Requested size: 341.43306pt x 138.27435pt.
+ [13 <./trie.png>] <failure.png, id=579, 567.11874pt x 378.41376pt>
+File: failure.png Graphic file (type png)
+ <use failure.png>
+Package pdftex.def Info: failure.png used on input line 180.
+(pdftex.def)             Requested size: 227.62228pt x 170.71767pt.
+
+\citation{bib16}
+\citation{bib17}
+[14 <./failure.png>] [15] [16]
+\citation{bib31}
+[17]) [18]
+\openout2 = `chap3.aux'.
+
+ (chap3.tex
+CHAPTER 3.
+\citation{bib4}
+<systemorganization.png, id=622, 542.025pt x 287.57437pt>
+File: systemorganization.png Graphic file (type png)
+
+<use systemorganization.png>
+Package pdftex.def Info: systemorganization.png used on input line 12.
+(pdftex.def)             Requested size: 398.33858pt x 211.34926pt.
+
+\citation{bib1}
+\citation{bib1}
+[19
+
+
+
+ <./systemorganization.png>] [20]) [21]
+\openout2 = `chap4.aux'.
+
+ (chap4.tex
+CHAPTER 4.
+<threadlevel.png, id=651, 341.02406pt x 315.42844pt>
+File: threadlevel.png Graphic file (type png)
+ <use threadlevel.png>
+Package pdftex.def Info: threadlevel.png used on input line 7.
+(pdftex.def)             Requested size: 284.52756pt x 263.18687pt.
+
+\citation{bib14}
+[22
+
+
+
+ <./threadlevel.png>] <blocklevel.png, id=658, 341.02406pt x 315.42844pt>
+File: blocklevel.png Graphic file (type png)
+
+<use blocklevel.png>
+Package pdftex.def Info: blocklevel.png used on input line 19.
+(pdftex.def)             Requested size: 284.52756pt x 263.18687pt.
+ [23 <./blocklevel.png>] [24]
+\citation{bib20}
+[25] [26] [27]) [28]
+\openout2 = `chap5.aux'.
+
+ (chap5.tex
+CHAPTER 5.
+\citation{bib3}
+\citation{bib4}
+[29
+
+
+
+]
+\citation{bib3}
+\citation{bib3}
+\citation{bib3}
+\citation{bib3}
+[30]) [31] [32]
+\openout2 = `chap6.aux'.
+
+ (chap6.tex
+CHAPTER 6.
+<parallelism.png, id=868, 375.20175pt x 208.3785pt>
+File: parallelism.png Graphic file (type png)
+ <use parallelism.png>
+Package pdftex.def Info: parallelism.png used on input line 10.
+(pdftex.def)             Requested size: 341.43306pt x 189.6279pt.
+
+[33
+
+
+
+ <./parallelism.png>] [34] <speedup.png, id=882, 289.68225pt x 180.675pt>
+File: speedup.png Graphic file (type png)
+
+<use speedup.png>
+Package pdftex.def Info: speedup.png used on input line 105.
+(pdftex.def)             Requested size: 341.43306pt x 212.96857pt.
+ [35] <issuestallreasons.png, id=888, 289.08pt x 173.448pt>
+File: issuestallreasons.png Graphic file (type png)
+
+<use issuestallreasons.png>
+Package pdftex.def Info: issuestallreasons.png used on input line 120.
+(pdftex.def)             Requested size: 341.43306pt x 204.87065pt.
+ [36 <./speedup.png>]
+\citation{bib5}
+\citation{bib15}
+[37 <./issuestallreasons.png>] [38]
+<smtransactions.png, id=910, 318.59026pt x 174.05025pt>
+File: smtransactions.png Graphic file (type png)
+
+<use smtransactions.png>
+Package pdftex.def Info: smtransactions.png used on input line 177.
+(pdftex.def)             Requested size: 341.43306pt x 186.54529pt.
+ [39] <smreplay.png, id=915, 329.43076pt x 173.448pt>
+File: smreplay.png Graphic file (type png)
+
+<use smreplay.png>
+Package pdftex.def Info: smreplay.png used on input line 187.
+(pdftex.def)             Requested size: 341.43306pt x 179.77823pt.
+ [40 <./smtransactions.png> <./smreplay.png>]
+<warpexecefficiency.png, id=923, 289.08pt x 173.448pt>
+File: warpexecefficiency.png Graphic file (type png)
+
+<use warpexecefficiency.png>
+Package pdftex.def Info: warpexecefficiency.png used on input line 201.
+(pdftex.def)             Requested size: 341.43306pt x 204.87065pt.
+ [41 <./warpexecefficiency.png>] [42]
+<instructionsperwarp.png, id=953, 306.54526pt x 173.448pt>
+File: instructionsperwarp.png Graphic file (type png)
+
+<use instructionsperwarp.png>
+Package pdftex.def Info: instructionsperwarp.png used on input line 269.
+(pdftex.def)             Requested size: 341.43306pt x 193.19385pt.
+ [43 <./instructionsperwarp.png>]
+<smefficiency.png, id=962, 289.08pt x 173.448pt>
+File: smefficiency.png Graphic file (type png)
+ <use smefficiency.png>
+Package pdftex.def Info: smefficiency.png used on input line 282.
+(pdftex.def)             Requested size: 341.43306pt x 204.87065pt.
+
+[44 <./smefficiency.png>]
+\citation{bib5}
+<cachehitrate.png, id=971, 289.08pt x 173.448pt>
+File: cachehitrate.png Graphic file (type png)
+ <use cachehitrate.png>
+Package pdftex.def Info: cachehitrate.png used on input line 299.
+(pdftex.def)             Requested size: 341.43306pt x 204.87065pt.
+
+[45 <./cachehitrate.png>]
+<pinnedmemoryeffic.png, id=978, 304.13625pt x 210.18526pt>
+File: pinnedmemoryeffic.png Graphic file (type png)
+
+<use pinnedmemoryeffic.png>
+Package pdftex.def Info: pinnedmemoryeffic.png used on input line 310.
+(pdftex.def)             Requested size: 341.43306pt x 235.96713pt.
+) [46 <./pinnedmemoryeffic.png>]
+\openout2 = `chap7.aux'.
+
+ (chap7.tex
+CHAPTER 7.
+\citation{bib10}
+\citation{bib6}
+\citation{bib10}
+\citation{bib12}
+[47
+
+
+
+]
+\citation{bib12}
+\citation{bib20}
+\citation{bib11}
+\citation{bib18}
+\citation{bib21}
+\citation{bib17}
+\citation{bib22}
+\citation{bib23}
+) [48]
+\openout2 = `chap8.aux'.
+
+ (chap8.tex
+CHAPTER 8.
+) [49
+
+
+
+] [50] (bib.tex [51
+
+
+]
+("C:\Users\Karthik\Pictures\New folder (2)\tex\latex\ucs\uni-0.def"
+File: uni-0.def 2013/05/13 UCS: Unicode data U+0000..U+00FF
+) [52])
+(thesis.bbl) [53]
+\openout2 = `appA.aux'.
+
+ (appA.tex
+Appendix A.
+
+Package hyperref Warning: bookmark level for unknown chapterapp defaults to 0.
+
+[54
+
+
+] [55] [56] [57] [58] [59] [60] [61] [62] [63] [64] [65] [66] [67] [68]
+[69] [70] [71]) [72]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 320.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 320.
+ (thesis.aux (chap1.aux) (chap2.aux) (chap3.aux) (chap4.aux) (chap5.aux) (chap6
+.aux) (chap7.aux) (chap8.aux) (appA.aux))
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 320.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 320.
+Package rerunfilecheck Info: File `thesis.out' has not changed.
+(rerunfilecheck)             Checksum: F82B2FFA450F72985A079AFEB78BF9FC;4463.
+
+ 
+BibTeX Info: The commands to generate the bibliography and references are: 
+ bibtex thesis
+ 
+\openout13 = `genbib.txt'.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 14898 strings out of 493333
+ 214599 string characters out of 3133585
+ 357290 words of memory out of 3000000
+ 17147 multiletter control sequences out of 15000+200000
+ 25193 words of font info for 53 fonts, out of 3000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 36i,11n,58p,1721b,1820s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Users/Karthik/Pictures/New folder (2)/fonts/enc/dvips/base/8r.enc}<C:/Use
+rs/Karthik/Pictures/New folder (2)/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C
+:/Users/Karthik/Pictures/New folder (2)/fonts/type1/public/amsfonts/cm/cmmi8.pf
+b><C:/Users/Karthik/Pictures/New folder (2)/fonts/type1/public/amsfonts/cm/cmr1
+2.pfb><C:/Users/Karthik/Pictures/New folder (2)/fonts/type1/public/amsfonts/cm/
+cmr8.pfb><C:/Users/Karthik/Pictures/New folder (2)/fonts/type1/public/amsfonts/
+cm/cmsy10.pfb><C:/Users/Karthik/Pictures/New folder (2)/fonts/type1/public/amsf
+onts/cm/cmsy8.pfb><C:/Users/Karthik/Pictures/New folder (2)/fonts/type1/urw/tim
+es/utmb8a.pfb><C:/Users/Karthik/Pictures/New folder (2)/fonts/type1/urw/times/u
+tmr8a.pfb><C:/Users/Karthik/Pictures/New folder (2)/fonts/type1/urw/times/utmri
+8a.pfb>
+Output written on thesis.pdf (83 pages, 658504 bytes).
+PDF statistics:
+ 1867 PDF objects out of 2073 (max. 8388607)
+ 934 named destinations out of 1000 (max. 500000)
+ 604 words of extra memory for PDF output out of 10000 (max. 10000000)
+

@@ -1,0 +1,43 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 1}{\ignorespaces 2D grid with 6 thread blocks, each having 4 threads\relax }}{6}{figure.caption.6}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 2}{\ignorespaces Data transfer from the CPU to the GPU using pinned memory\relax }}{7}{figure.caption.7}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 3}{\ignorespaces A single warp scheduler unit\relax }}{9}{figure.caption.8}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 4}{\ignorespaces Thread divergence\relax }}{10}{figure.caption.9}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 5}{\ignorespaces Trie is constructed for the patterns = {he, she, hers, his}\relax }}{13}{figure.caption.12}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 6}{\ignorespaces Trie is extended to include the failure transitions\relax }}{14}{figure.caption.13}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 7}{\ignorespaces Example for an OpenMP program in C\relax }}{18}{figure.caption.18}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 8}{\ignorespaces System organization}}{19}{figure.caption.19}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 9}{\ignorespaces Thread-level parallelism\relax }}{22}{figure.caption.20}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 10}{\ignorespaces Block-level parallelism\relax }}{23}{figure.caption.21}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 11}{\ignorespaces Parallel implementation of the Rabin-Karp algorithm\relax }}{25}{figure.caption.22}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 12}{\ignorespaces Parallel implementation of the Aho-Corasick algorithm\relax }}{26}{figure.caption.23}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 13}{\ignorespaces Calculating the hash value of the suffix\relax }}{26}{figure.caption.24}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 14}{\ignorespaces Pattern is searched based on the hash value of the prefix\relax }}{27}{figure.caption.25}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 15}{\ignorespaces Using non-pinned memory for data transfer\relax }}{28}{figure.caption.26}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 16}{\ignorespaces Using pinned memory for data transfer\relax }}{28}{figure.caption.27}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 17}{\ignorespaces Pseudo code to store the packet buffer that will be copied to the GPU\relax }}{29}{figure.caption.28}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 18}{\ignorespaces The array of packets of "Max Buffer" size}}{30}{figure.caption.29}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 19}{\ignorespaces Dissect methods and targeted OSI layer methods}}{31}{figure.caption.30}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 20}{\ignorespaces Execution times for packet processing\relax }}{33}{figure.caption.31}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 21}{\ignorespaces Speedup of the algorithms on the GPU over the CPU\relax }}{36}{figure.caption.35}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 22}{\ignorespaces Breakdown for the issue stall reasons\relax }}{37}{figure.caption.36}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 23}{\ignorespaces Shared memory load and store transactions\relax }}{40}{figure.caption.38}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 24}{\ignorespaces Shared memory replays due to bank conflicts\relax }}{40}{figure.caption.39}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 25}{\ignorespaces Average number of active threads executed in a warp\relax }}{41}{figure.caption.40}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 26}{\ignorespaces Branch divergence in the Wu-Manber algorithm\relax }}{42}{figure.caption.41}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 27}{\ignorespaces Branch divergence in the Wu-Manber algorithm\relax }}{42}{figure.caption.42}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 28}{\ignorespaces Branch divergence in the Aho-Corasick algorithm\relax }}{42}{figure.caption.43}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 29}{\ignorespaces An example while loop that causes branch divergence in the Aho-Corasick algorithm\relax }}{42}{figure.caption.44}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 30}{\ignorespaces Branch divergence in the Rabin-Karp algorithm\relax }}{43}{figure.caption.45}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 31}{\ignorespaces The number of instructions executed per warp\relax }}{43}{figure.caption.46}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 32}{\ignorespaces SM efficiency\relax }}{44}{figure.caption.47}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 33}{\ignorespaces L2 hit rate\relax }}{45}{figure.caption.48}
+\contentsline {figure}{\numberline {\global \advance \c@totalfigurecount 1\relax 34}{\ignorespaces Pinned memory efficiency\relax }}{46}{figure.caption.49}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }

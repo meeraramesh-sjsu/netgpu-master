@@ -1,0 +1,61 @@
+\BOOKMARK [0][-]{chapter*.4}{List of Tables}{}% 1
+\BOOKMARK [0][-]{chapter*.5}{List of Figures}{}% 2
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 3
+\BOOKMARK [0][-]{chapter.2}{Background}{}% 4
+\BOOKMARK [1][-]{section.2.1}{Network Intrusion Detection System \(NIDS\)}{chapter.2}% 5
+\BOOKMARK [1][-]{section.2.2}{GPU Architecture}{chapter.2}% 6
+\BOOKMARK [2][-]{subsection.2.2.1}{CUDA Programming Environment}{section.2.2}% 7
+\BOOKMARK [2][-]{subsection.2.2.2}{Pinned Memory}{section.2.2}% 8
+\BOOKMARK [1][-]{section.2.3}{CUDA Thread Execution Model}{chapter.2}% 9
+\BOOKMARK [2][-]{subsection.2.3.1}{Thread Synchronization}{section.2.3}% 10
+\BOOKMARK [2][-]{subsection.2.3.2}{Thread Assignment}{section.2.3}% 11
+\BOOKMARK [2][-]{subsection.2.3.3}{Thread Divergence}{section.2.3}% 12
+\BOOKMARK [1][-]{section.2.4}{Signature Matching}{chapter.2}% 13
+\BOOKMARK [2][-]{subsection.2.4.1}{Rabin-Karp Algorithm}{section.2.4}% 14
+\BOOKMARK [2][-]{subsection.2.4.2}{Aho-Corasick Algorithm}{section.2.4}% 15
+\BOOKMARK [2][-]{subsection.2.4.3}{Wu-Manber Algorithm}{section.2.4}% 16
+\BOOKMARK [1][-]{section.2.5}{Parallelism in CPU Programming with OpenMP}{chapter.2}% 17
+\BOOKMARK [0][-]{chapter.3}{System Organization}{}% 18
+\BOOKMARK [1][-]{section.3.1}{Memory Transfer of Packets to the GPU}{chapter.3}% 19
+\BOOKMARK [1][-]{section.3.2}{Packet Capture Class}{chapter.3}% 20
+\BOOKMARK [1][-]{section.3.3}{Analysis}{chapter.3}% 21
+\BOOKMARK [0][-]{chapter.4}{Parallel IDS Design on GPUs}{}% 22
+\BOOKMARK [1][-]{section.4.1}{Overview of Parallelism Approaches}{chapter.4}% 23
+\BOOKMARK [2][-]{subsection.4.1.1}{Thread-Level Parallelism}{section.4.1}% 24
+\BOOKMARK [2][-]{subsection.4.1.2}{Block-Level Parallelism}{section.4.1}% 25
+\BOOKMARK [1][-]{section.4.2}{Header Checking}{chapter.4}% 26
+\BOOKMARK [1][-]{section.4.3}{Parallel Pattern-Matching Algorithms using CUDA}{chapter.4}% 27
+\BOOKMARK [2][-]{subsection.4.3.1}{Rabin-Karp Algorithm}{section.4.3}% 28
+\BOOKMARK [2][-]{subsection.4.3.2}{Aho-Corasick Algorithm}{section.4.3}% 29
+\BOOKMARK [2][-]{subsection.4.3.3}{Wu-Manber Algorithm}{section.4.3}% 30
+\BOOKMARK [1][-]{section.4.4}{Utilization of Pinned Memory}{chapter.4}% 31
+\BOOKMARK [0][-]{chapter.5}{Implementation}{}% 32
+\BOOKMARK [1][-]{section.5.1}{Packet Capture and Transfer to the GPU}{chapter.5}% 33
+\BOOKMARK [2][-]{subsection.5.1.1}{Capturing the Network Packets}{section.5.1}% 34
+\BOOKMARK [2][-]{subsection.5.1.2}{Buffer the Network Packets}{section.5.1}% 35
+\BOOKMARK [1][-]{section.5.2}{Dissectors}{chapter.5}% 36
+\BOOKMARK [2][-]{subsection.5.2.1}{PreAnalyzerDissector}{section.5.2}% 37
+\BOOKMARK [0][-]{chapter.6}{Evaluation}{}% 38
+\BOOKMARK [1][-]{section.6.1}{Block-Level Parallelism vs. Thread-Level Parallelism}{chapter.6}% 39
+\BOOKMARK [1][-]{section.6.2}{Comparison between OpenMP, CPU and GPU solutions}{chapter.6}% 40
+\BOOKMARK [1][-]{section.6.3}{Stall Breakdown}{chapter.6}% 41
+\BOOKMARK [1][-]{section.6.4}{Resource Utilization}{chapter.6}% 42
+\BOOKMARK [2][-]{subsection.6.4.1}{Memory Utilization}{section.6.4}% 43
+\BOOKMARK [2][-]{subsection.6.4.2}{Warp Utilization}{section.6.4}% 44
+\BOOKMARK [2][-]{subsection.6.4.3}{SM Utilization}{section.6.4}% 45
+\BOOKMARK [1][-]{section.6.5}{Cache Hit Rate}{chapter.6}% 46
+\BOOKMARK [1][-]{section.6.6}{Pinned Memory Efficiency}{chapter.6}% 47
+\BOOKMARK [0][-]{chapter.7}{Related Work}{}% 48
+\BOOKMARK [0][-]{chapter.8}{Conclusion}{}% 49
+\BOOKMARK [0][-]{chapter*.50}{References}{}% 50
+\BOOKMARK [0][-]{appendix.A}{Code snippets}{}% 51
+\BOOKMARK [1][-]{section.A.1}{Header Checking in Block-Level Parallelism}{appendix.A}% 52
+\BOOKMARK [1][-]{section.A.2}{Rabin-Karp Algorithm}{appendix.A}% 53
+\BOOKMARK [2][-]{subsection.A.2.1}{Sequential Pattern-Matching Algorithm using C}{section.A.2}% 54
+\BOOKMARK [2][-]{subsection.A.2.2}{Parallel Pattern-Matching Algorithm using CUDA}{section.A.2}% 55
+\BOOKMARK [1][-]{section.A.3}{Wu-Manber Algorithm}{appendix.A}% 56
+\BOOKMARK [2][-]{subsection.A.3.1}{Parallel Pattern-Matching Algorithm using OpenMP}{section.A.3}% 57
+\BOOKMARK [2][-]{subsection.A.3.2}{Parallel Pattern-Matching Algorithm using CUDA}{section.A.3}% 58
+\BOOKMARK [1][-]{section.A.4}{Aho-Corasick algorithm}{appendix.A}% 59
+\BOOKMARK [2][-]{subsection.A.4.1}{Sequential Pattern-Matching Algorithm using C}{section.A.4}% 60
+\BOOKMARK [2][-]{subsection.A.4.2}{Parallel Pattern-Matching Algorithm using OpenMP}{section.A.4}% 61

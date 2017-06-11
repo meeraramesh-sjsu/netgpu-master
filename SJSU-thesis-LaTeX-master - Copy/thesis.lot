@@ -1,0 +1,19 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 1}{\ignorespaces Hash Value Calculation Example (Pattern = 59372)\relax }}{11}{table.caption.10}
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 2}{\ignorespaces Hash Value Calculation Example with Horner's Method\relax }}{11}{table.caption.11}
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 3}{\ignorespaces FSM Transition Example (Pattern = "ushers")\relax }}{14}{table.caption.14}
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 4}{\ignorespaces Shift Table Generated after Preprocessing\relax }}{16}{table.caption.15}
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 5}{\ignorespaces Prefix Table Generated after Preprocessing\relax }}{16}{table.caption.16}
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 6}{\ignorespaces Multi-Pattern Search on "ANDYMEETMESOONATGOOGLE" Using Pre-processed Shift and Prefix Tables\relax }}{17}{table.caption.17}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 7}{\ignorespaces Execution Times on the GPU\relax }}{34}{table.caption.32}
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 8}{\ignorespaces Performance of Pattern-Matching Algorithms\relax }}{35}{table.caption.33}
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 9}{\ignorespaces Comparison of Execution Times for the Wu-Manber Algorithm\relax }}{35}{table.caption.34}
+\contentsline {table}{\numberline {\global \advance \c@totaltablecount 1\relax 10}{\ignorespaces Pipeline Stall Breakdown\relax }}{38}{table.caption.37}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
