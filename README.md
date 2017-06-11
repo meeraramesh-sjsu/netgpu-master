@@ -25,4 +25,42 @@ The openMp branch contains the above pattern matching algorithms writtern in Ope
 The Meera branch contains the above pattern matching algorithms writtern in CUDA
 
 
+dependencies & requirements
+------------------
 
+Hardware
+      A CUDA-enabled graphical processor unit (GPU) installed (http://www.nvidia.com/object/cuda_learn_products.html).
+
+Software
+      	GNU/Linux system. 
+      	GCC 4.4 or above
+      	Autotools 1.11 or above
+      	CUDA libraries 7.5
+      	LibPCAP (http://www.tcpdump.org/)
+      	POSIX threads (lpthreads)
+      	unixODBC 
+
+	Debian packages list:
+		build-essential
+		automake
+		autoconf
+		gcc4-3 
+		g++4.3 
+		libpcap-dev
+		unixodbc-dev	
+
+
+LIBRARY Installation steps
+--------------
+
+To compile and install the framework's LIBRARY and the MODULES:
+
+	./setup
+	cd ./build
+	../configure
+	make 
+	make install
+
+To uninstall it, simply:
+
+	make uninstall
